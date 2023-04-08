@@ -1,0 +1,54 @@
+name: CI (main)
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - "**/*.md"
+      - "**/*.gitignore"
+      - "**/*.gitattributes"
+
+  workflow_dispatch:
+
+env:
+  PACKAGE_ID: Nanorm
+
+jobs:
+  build:
+    name: Build & Test
+    uses: ./.github/workflows/_build.yml
+    with:
+      packShipCandidate: true
+
+  deploy:
+    name: Deploy
+    needs: build
+    runs-on: ubuntu-latest
+    env:
+      DOTNET_CLI_TELEMETRY_OPTOUT: 1
+      DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
+      DOTNET_NOLOGO: true
+      DOTNET_GENERATE_ASPNET_CERTIFICATE: false
+      DOTNET_ADD_GLOBAL_TOOLS_TO_PATH: false
+      DOTNET_MULTILEVEL_LOOKUP: 0
+      DOTNET_SYSTEM_CONSOLE_ALLOW_ANSI_COLOR_REDIRECTION: true
+
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v3
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v3
+
+      - name: Add GitHub Package Repository source
+        run: dotnet nuget add source --username DamianEdwards --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text --name GPR "https://nuget.pkg.github.com/DamianEdwards/index.json"
+
+      - name: Push to GitHub Packages
+        run: dotnet nuget push **/ci/*.nupkg --source "GPR" --skip-duplicate
+
+      - name: Delete old packages
+        uses: actions/delete-package-versions@v4
+        with:
+          min-versions-to-keep: 5
+          package-type: 'nuget'
+          package-name: '${{ env.PACKAGE_ID }}'

@@ -1,0 +1,71 @@
+name: Build
+
+on:
+  workflow_call:
+    inputs:
+      packShipCandidate:
+        required: false
+        type: boolean
+        default: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: Build & Test
+    env:
+      DOTNET_CLI_TELEMETRY_OPTOUT: 1
+      DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
+      DOTNET_NOLOGO: true
+      DOTNET_GENERATE_ASPNET_CERTIFICATE: false
+      DOTNET_ADD_GLOBAL_TOOLS_TO_PATH: false
+      DOTNET_MULTILEVEL_LOOKUP: 0
+      DOTNET_SYSTEM_CONSOLE_ALLOW_ANSI_COLOR_REDIRECTION: true
+
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Install .NET SDK
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: 6.0.x
+        global-json-file: "./global.json"
+    
+    - name: Restore dependencies
+      run: dotnet restore
+      
+    - name: Create build number
+      run: |
+        now=$(date +'%Y%m%d')
+        buildNumber=$now.$GITHUB_RUN_NUMBER
+        echo "BUILD_NUMBER=$buildNumber" >> $GITHUB_ENV
+        echo "$buildNumber"
+
+    - name: Build
+      run: dotnet build --configuration Release --no-restore -p:BuildNumber=$BUILD_NUMBER -p:SourceRevisionId=$GITHUB_SHA -p:ContinuousIntegrationBuild=true
+
+    - name: Test
+      run: dotnet test --configuration Release --no-restore --no-build
+
+    - name: Publish samples
+      run: |
+        for projectPath in ./samples/**/*.csproj ; do
+          for tfm in "net6.0" "net7.0"; do
+            projectFileName=${projectPath##*/}
+            projectName=${projectFileName%.*}
+            dotnet publish "$projectPath" --output "./artifacts/$projectName" --framework $tfm --configuration Release --no-build --verbosity normal
+          done;
+        done;
+      
+    - name: Pack (ci)
+      run: dotnet pack --configuration Release --output ./artifacts/ci --verbosity normal -p:BuildNumber=$BUILD_NUMBER -p:SourceRevisionId=$GITHUB_SHA -p:ContinuousIntegrationBuild=true
+
+    - name: Pack (ship candidate)
+      if: ${{ inputs.packShipCandidate }}
+      run: dotnet pack --configuration Release --output ./artifacts/ship --verbosity normal -p:BuildNumber=$BUILD_NUMBER -p:SourceRevisionId=$GITHUB_SHA -p:ContinuousIntegrationBuild=true -p:IsShipCandidate=true
+
+    - name: Upload artifacts (packages)
+      uses: actions/upload-artifact@master
+      with:
+        name: nupkg
+        path: ./artifacts/**/*.nupkg
+        retention-days: 5
