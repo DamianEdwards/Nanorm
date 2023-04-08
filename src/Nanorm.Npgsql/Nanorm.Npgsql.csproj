@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
-    <PackageTags>ado.net database data orm native aot trimming</PackageTags>
+    <PackageTags>ado.net database npgsql postgres postgresql data orm native aot trimming</PackageTags>
     <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
 
@@ -10,6 +10,7 @@
     <None Include="../../README.md" Pack="true" PackagePath="\" />
     <None Include="..\..\.editorconfig" Link=".editorconfig" />
     <PackageReference Include="Microsoft.SourceLink.GitHub" PrivateAssets="All" />
+    <PackageReference Include="Npgsql" />
   </ItemGroup>
 
 </Project>

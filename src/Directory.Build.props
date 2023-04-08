@@ -21,6 +21,10 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <LangVersion>preview</LangVersion>
+    <AnalysisMode>Recommended</AnalysisMode>
+    <AnalysisModeReliability>All</AnalysisModeReliability>
+    <AnalysisModePerformance>All</AnalysisModePerformance>
+    <AnalysisModeSecurity>All</AnalysisModeSecurity>
   </PropertyGroup>
 
 </Project>
