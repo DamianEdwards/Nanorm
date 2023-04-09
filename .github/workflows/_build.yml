@@ -41,7 +41,13 @@ jobs:
         echo "$buildNumber"
 
     - name: Build
-      run: dotnet build --configuration Release --no-restore -p:BuildNumber=$BUILD_NUMBER -p:SourceRevisionId=$GITHUB_SHA -p:ContinuousIntegrationBuild=true
+      run: >-
+        dotnet build
+        --configuration Release
+        --no-restore
+        -p:BuildNumber=$BUILD_NUMBER
+        -p:SourceRevisionId=$GITHUB_SHA
+        -p:ContinuousIntegrationBuild=true
 
     - name: Test
       run: dotnet test --configuration Release --no-restore --no-build
@@ -57,11 +63,26 @@ jobs:
         done;
       
     - name: Pack (ci)
-      run: dotnet pack --configuration Release --output ./artifacts/ci --verbosity normal -p:BuildNumber=$BUILD_NUMBER -p:SourceRevisionId=$GITHUB_SHA -p:ContinuousIntegrationBuild=true
+      run: >-
+        dotnet pack
+        --configuration Release
+        --output ./artifacts/ci
+        --verbosity normal
+        -p:BuildNumber=$BUILD_NUMBER
+        -p:SourceRevisionId=$GITHUB_SHA
+        -p:ContinuousIntegrationBuild=true
 
     - name: Pack (ship candidate)
       if: ${{ inputs.packShipCandidate }}
-      run: dotnet pack --configuration Release --output ./artifacts/ship --verbosity normal -p:BuildNumber=$BUILD_NUMBER -p:SourceRevisionId=$GITHUB_SHA -p:ContinuousIntegrationBuild=true -p:IsShipCandidate=true
+      run: >-
+        dotnet pack
+        --configuration Release
+        --output ./artifacts/ship
+        --verbosity normal
+        -p:BuildNumber=$BUILD_NUMBER
+        -p:SourceRevisionId=$GITHUB_SHA
+        -p:ContinuousIntegrationBuild=true
+        -p:IsShipCandidate=true
 
     - name: Upload artifacts (packages)
       uses: actions/upload-artifact@master
