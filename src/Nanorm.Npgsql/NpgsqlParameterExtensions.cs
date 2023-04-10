@@ -1,7 +1,7 @@
 ﻿namespace Npgsql;
 
 /// <summary>
-/// Extension methods for <see cref="NpgsqlParameterExtensions"/> from the <c>Nanorm.Npgsql</c> package.
+/// Extension methods related to working with <see cref="NpgsqlParameter"/> from the <c>Nanorm.Npgsql</c> package.
 /// </summary>
 public static class NpgsqlParameterExtensions
 {

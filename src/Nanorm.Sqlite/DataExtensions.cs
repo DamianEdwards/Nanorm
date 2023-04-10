@@ -104,12 +104,12 @@ public static class DataExtensions
 
     private static string CleanParameterName(string name)
     {
-        ArgumentException.ThrowIfNullOrEmpty(name);
+        ExceptionHelpers.ThrowIfNullOrEmpty(name);
 
         var lastIndexOfPeriod = name.LastIndexOf('.');
         if (lastIndexOfPeriod > 0)
         {
-            return name.Substring(lastIndexOfPeriod + 1);
+            return name[(lastIndexOfPeriod + 1)..];
         }
         return name;
     }

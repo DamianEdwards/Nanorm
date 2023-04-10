@@ -1,4 +1,5 @@
-﻿using System.Data;
+﻿#if NET7_0_OR_GREATER
+using System.Data;
 using System.Runtime.CompilerServices;
 using Nanorm.Npgsql;
 
@@ -18,7 +19,7 @@ public static class NpgsqlDataSourceExtensions
     public static async Task<int> ExecuteAsync(this NpgsqlDataSource dataSource, string commandText)
     {
         ArgumentNullException.ThrowIfNull(dataSource);
-        ArgumentException.ThrowIfNullOrEmpty(commandText);
+        ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
         await using var cmd = dataSource.CreateCommand(commandText);
 
@@ -35,7 +36,7 @@ public static class NpgsqlDataSourceExtensions
     public static async Task<int> ExecuteAsync(this NpgsqlDataSource dataSource, string commandText, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(dataSource);
-        ArgumentException.ThrowIfNullOrEmpty(commandText);
+        ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
         await using var cmd = dataSource.CreateCommand(commandText);
 
@@ -47,17 +48,23 @@ public static class NpgsqlDataSourceExtensions
     /// </summary>
     /// <param name="dataSource">The <see cref="NpgsqlDataSource"/>.</param>
     /// <param name="commandText">The SQL command text.</param>
-    /// <param name="parameters">Parameters to use when executing the command text.</param>
+    /// <param name="parameters">
+    /// Parameters to use when executing the command text. Use the <see cref="NpgsqlParameterExtensions.AsTypedDbParameter{T}(T)"/>
+    /// method to convert values to <see cref="NpgsqlParameter{T}"/>, e.g. <c>myValue.AsTypedDbParameter()</c>.
+    /// </param>
     /// <returns>A task representing the asynchronous operation, with the number of rows affected if known; -1 otherwise.</returns>
     public static async Task<int> ExecuteAsync(this NpgsqlDataSource dataSource, string commandText, params NpgsqlParameter[] parameters)
     {
         ArgumentNullException.ThrowIfNull(dataSource);
-        ArgumentException.ThrowIfNullOrEmpty(commandText);
+        ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
         await using var cmd = dataSource.CreateCommand(commandText, parameters);
 
         return await cmd.ExecuteNonQueryAsync();
     }
+
+    // TODO: Create new overloads (1-16) with generic parameters to avoid the params array allocation (for NpgsqlConnection too), e.g.
+    //       ExecuteAsync<T1, T2>(this NpgsqlDataSource dataSource, string commandText, T1? parameter1, T2? parameter2)
 
     /// <summary>
     /// Executes a command that does not return any results.
@@ -65,12 +72,15 @@ public static class NpgsqlDataSourceExtensions
     /// <param name="dataSource">The <see cref="NpgsqlDataSource"/>.</param>
     /// <param name="commandText">The SQL command text.</param>
     /// <param name="cancellationToken">A token to cancel the asynchronous operation.</param>
-    /// <param name="parameters">Parameters to use when executing the command text.</param>
+    /// <param name="parameters">
+    /// Parameters to use when executing the command text. Use the <see cref="NpgsqlParameterExtensions.AsTypedDbParameter{T}(T)"/>
+    /// method to convert values to <see cref="NpgsqlParameter{T}"/>, e.g. <c>myValue.AsTypedDbParameter()</c>.
+    /// </param>
     /// <returns>A task representing the asynchronous operation, with the number of rows affected if known; -1 otherwise.</returns>
     public static async Task<int> ExecuteAsync(this NpgsqlDataSource dataSource, string commandText, CancellationToken cancellationToken, params NpgsqlParameter[] parameters)
     {
         ArgumentNullException.ThrowIfNull(dataSource);
-        ArgumentException.ThrowIfNullOrEmpty(commandText);
+        ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
         await using var cmd = dataSource.CreateCommand(commandText, parameters);
 
@@ -87,7 +97,7 @@ public static class NpgsqlDataSourceExtensions
     public static async Task<int> ExecuteAsync(this NpgsqlDataSource dataSource, string commandText, Action<NpgsqlParameterCollection> configureParameters)
     {
         ArgumentNullException.ThrowIfNull(dataSource);
-        ArgumentException.ThrowIfNullOrEmpty(commandText);
+        ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
         await using var cmd = dataSource.CreateCommand(commandText, configureParameters);
 
@@ -105,7 +115,7 @@ public static class NpgsqlDataSourceExtensions
     public static async Task<int> ExecuteAsync(this NpgsqlDataSource dataSource, string commandText, Action<NpgsqlParameterCollection> configureParameters, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(dataSource);
-        ArgumentException.ThrowIfNullOrEmpty(commandText);
+        ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
         await using var cmd = dataSource.CreateCommand(commandText, configureParameters);
 
@@ -122,7 +132,7 @@ public static class NpgsqlDataSourceExtensions
     public static async Task<object?> ExecuteScalarAsync(this NpgsqlDataSource dataSource, string commandText)
     {
         ArgumentNullException.ThrowIfNull(dataSource);
-        ArgumentException.ThrowIfNullOrEmpty(commandText);
+        ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
         await using var cmd = dataSource.CreateCommand(commandText);
 
@@ -140,7 +150,7 @@ public static class NpgsqlDataSourceExtensions
     public static async Task<object?> ExecuteScalarAsync(this NpgsqlDataSource dataSource, string commandText, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(dataSource);
-        ArgumentException.ThrowIfNullOrEmpty(commandText);
+        ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
         await using var cmd = dataSource.CreateCommand(commandText);
 
@@ -153,12 +163,15 @@ public static class NpgsqlDataSourceExtensions
     /// </summary>
     /// <param name="dataSource">The <see cref="NpgsqlDataSource"/>.</param>
     /// <param name="commandText">The SQL command text.</param>
-    /// <param name="parameters">Parameters to use when executing the command text.</param>
+    /// <param name="parameters">
+    /// Parameters to use when executing the command text. Use the <see cref="NpgsqlParameterExtensions.AsTypedDbParameter{T}(T)"/>
+    /// method to convert values to <see cref="NpgsqlParameter{T}"/>, e.g. <c>myValue.AsTypedDbParameter()</c>.
+    /// </param>
     /// <returns>A task representing the asynchronous operation with the value.</returns>
     public static async Task<object?> ExecuteScalarAsync(this NpgsqlDataSource dataSource, string commandText, params NpgsqlParameter[] parameters)
     {
         ArgumentNullException.ThrowIfNull(dataSource);
-        ArgumentException.ThrowIfNullOrEmpty(commandText);
+        ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
         await using var cmd = dataSource.CreateCommand(commandText, parameters);
 
@@ -172,12 +185,15 @@ public static class NpgsqlDataSourceExtensions
     /// <param name="dataSource">The <see cref="NpgsqlDataSource"/>.</param>
     /// <param name="commandText">The SQL command text.</param>
     /// <param name="cancellationToken">A token to cancel the asynchronous operation.</param>
-    /// <param name="parameters">Parameters to use when executing the command text.</param>
+    /// <param name="parameters">
+    /// Parameters to use when executing the command text. Use the <see cref="NpgsqlParameterExtensions.AsTypedDbParameter{T}(T)"/>
+    /// method to convert values to <see cref="NpgsqlParameter{T}"/>, e.g. <c>myValue.AsTypedDbParameter()</c>.
+    /// </param>
     /// <returns>A task representing the asynchronous operation with the value.</returns>
     public static async Task<object?> ExecuteScalarAsync(this NpgsqlDataSource dataSource, string commandText, CancellationToken cancellationToken, params NpgsqlParameter[] parameters)
     {
         ArgumentNullException.ThrowIfNull(dataSource);
-        ArgumentException.ThrowIfNullOrEmpty(commandText);
+        ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
         await using var cmd = dataSource.CreateCommand(commandText, parameters);
 
@@ -195,7 +211,7 @@ public static class NpgsqlDataSourceExtensions
     public static async Task<object?> ExecuteScalarAsync(this NpgsqlDataSource dataSource, string commandText, Action<NpgsqlParameterCollection> configureParameters)
     {
         ArgumentNullException.ThrowIfNull(dataSource);
-        ArgumentException.ThrowIfNullOrEmpty(commandText);
+        ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
         await using var cmd = dataSource.CreateCommand(commandText, configureParameters);
 
@@ -214,13 +230,14 @@ public static class NpgsqlDataSourceExtensions
     public static async Task<object?> ExecuteScalarAsync(this NpgsqlDataSource dataSource, string commandText, Action<NpgsqlParameterCollection> configureParameters, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(dataSource);
-        ArgumentException.ThrowIfNullOrEmpty(commandText);
+        ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
         await using var cmd = dataSource.CreateCommand(commandText, configureParameters);
 
         return await cmd.ExecuteScalarAsync(cancellationToken);
     }
 
+#if NET7_0_OR_GREATER
     /// <summary>
     /// Executes a command maps the first row returned to an instance of <typeparamref name="T"/>.
     /// </summary>
@@ -232,7 +249,7 @@ public static class NpgsqlDataSourceExtensions
         where T : IDataReaderMapper<T>
     {
         ArgumentNullException.ThrowIfNull(dataSource);
-        ArgumentException.ThrowIfNullOrEmpty(commandText);
+        ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
         await using var cmd = dataSource.CreateCommand(commandText);
 
@@ -253,7 +270,7 @@ public static class NpgsqlDataSourceExtensions
         where T : IDataReaderMapper<T>
     {
         ArgumentNullException.ThrowIfNull(dataSource);
-        ArgumentException.ThrowIfNullOrEmpty(commandText);
+        ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
         await using var cmd = dataSource.CreateCommand(commandText);
 
@@ -268,13 +285,16 @@ public static class NpgsqlDataSourceExtensions
     /// <typeparam name="T">The type the result is being map to.</typeparam>
     /// <param name="dataSource">The <see cref="NpgsqlDataSource"/>.</param>
     /// <param name="commandText">The SQL command text.</param>
-    /// <param name="parameters">Parameters to use when executing the command text.</param>
+    /// <param name="parameters">
+    /// Parameters to use when executing the command text. Use the <see cref="NpgsqlParameterExtensions.AsTypedDbParameter{T}(T)"/>
+    /// method to convert values to <see cref="NpgsqlParameter{T}"/>, e.g. <c>myValue.AsTypedDbParameter()</c>.
+    /// </param>
     /// <returns>A task representing the asynchronous operation with the mapped <typeparamref name="T"/>.</returns>
     public static async Task<T?> QuerySingleAsync<T>(this NpgsqlDataSource dataSource, string commandText, params NpgsqlParameter[] parameters)
         where T : IDataReaderMapper<T>
     {
         ArgumentNullException.ThrowIfNull(dataSource);
-        ArgumentException.ThrowIfNullOrEmpty(commandText);
+        ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
         await using var cmd = dataSource.CreateCommand(commandText, parameters);
 
@@ -290,13 +310,16 @@ public static class NpgsqlDataSourceExtensions
     /// <param name="dataSource">The <see cref="NpgsqlDataSource"/>.</param>
     /// <param name="commandText">The SQL command text.</param>
     /// <param name="cancellationToken">A token to cancel the asynchronous operation.</param>
-    /// <param name="parameters">Parameters to use when executing the command text.</param>
+    /// <param name="parameters">
+    /// Parameters to use when executing the command text. Use the <see cref="NpgsqlParameterExtensions.AsTypedDbParameter{T}(T)"/>
+    /// method to convert values to <see cref="NpgsqlParameter{T}"/>, e.g. <c>myValue.AsTypedDbParameter()</c>.
+    /// </param>
     /// <returns>A task representing the asynchronous operation with the mapped <typeparamref name="T"/>.</returns>
     public static async Task<T?> QuerySingleAsync<T>(this NpgsqlDataSource dataSource, string commandText, CancellationToken cancellationToken, params NpgsqlParameter[] parameters)
         where T : IDataReaderMapper<T>
     {
         ArgumentNullException.ThrowIfNull(dataSource);
-        ArgumentException.ThrowIfNullOrEmpty(commandText);
+        ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
         await using var cmd = dataSource.CreateCommand(commandText, parameters);
 
@@ -317,7 +340,7 @@ public static class NpgsqlDataSourceExtensions
         where T : IDataReaderMapper<T>
     {
         ArgumentNullException.ThrowIfNull(dataSource);
-        ArgumentException.ThrowIfNullOrEmpty(commandText);
+        ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
         await using var cmd = dataSource.CreateCommand(commandText, configureParameters);
 
@@ -339,7 +362,7 @@ public static class NpgsqlDataSourceExtensions
         where T : IDataReaderMapper<T>
     {
         ArgumentNullException.ThrowIfNull(dataSource);
-        ArgumentException.ThrowIfNullOrEmpty(commandText);
+        ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
         await using var cmd = dataSource.CreateCommand(commandText, configureParameters);
 
@@ -359,7 +382,7 @@ public static class NpgsqlDataSourceExtensions
         where T : IDataReaderMapper<T>
     {
         ArgumentNullException.ThrowIfNull(dataSource);
-        ArgumentException.ThrowIfNullOrEmpty(commandText);
+        ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
         await using var cmd = dataSource.CreateCommand(commandText);
 
@@ -383,7 +406,7 @@ public static class NpgsqlDataSourceExtensions
         where T : IDataReaderMapper<T>
     {
         ArgumentNullException.ThrowIfNull(dataSource);
-        ArgumentException.ThrowIfNullOrEmpty(commandText);
+        ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
         await using var cmd = dataSource.CreateCommand(commandText);
 
@@ -401,13 +424,16 @@ public static class NpgsqlDataSourceExtensions
     /// <typeparam name="T">The type the result is being map to.</typeparam>
     /// <param name="dataSource">The <see cref="NpgsqlDataSource"/>.</param>
     /// <param name="commandText">The SQL command text.</param>
-    /// <param name="parameters">Parameters to use when executing the command text.</param>
+    /// <param name="parameters">
+    /// Parameters to use when executing the command text. Use the <see cref="NpgsqlParameterExtensions.AsTypedDbParameter{T}(T)"/>
+    /// method to convert values to <see cref="NpgsqlParameter{T}"/>, e.g. <c>myValue.AsTypedDbParameter()</c>.
+    /// </param>
     /// <returns>A task representing the asynchronous operation with the mapped <typeparamref name="T"/>s.</returns>
     public static async IAsyncEnumerable<T> QueryAsync<T>(this NpgsqlDataSource dataSource, string commandText, params NpgsqlParameter[] parameters)
         where T : IDataReaderMapper<T>
     {
         ArgumentNullException.ThrowIfNull(dataSource);
-        ArgumentException.ThrowIfNullOrEmpty(commandText);
+        ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
         await using var cmd = dataSource.CreateCommand(commandText, parameters);
 
@@ -426,13 +452,16 @@ public static class NpgsqlDataSourceExtensions
     /// <param name="dataSource">The <see cref="NpgsqlDataSource"/>.</param>
     /// <param name="commandText">The SQL command text.</param>
     /// <param name="cancellationToken">A token to cancel the asynchronous operation.</param>
-    /// <param name="parameters">Parameters to use when executing the command text.</param>
+    /// <param name="parameters">
+    /// Parameters to use when executing the command text. Use the <see cref="NpgsqlParameterExtensions.AsTypedDbParameter{T}(T)"/>
+    /// method to convert values to <see cref="NpgsqlParameter{T}"/>, e.g. <c>myValue.AsTypedDbParameter()</c>.
+    /// </param>
     /// <returns>A task representing the asynchronous operation with the mapped <typeparamref name="T"/>s.</returns>
     public static async IAsyncEnumerable<T> QueryAsync<T>(this NpgsqlDataSource dataSource, string commandText, [EnumeratorCancellation] CancellationToken cancellationToken, params NpgsqlParameter[] parameters)
         where T : IDataReaderMapper<T>
     {
         ArgumentNullException.ThrowIfNull(dataSource);
-        ArgumentException.ThrowIfNullOrEmpty(commandText);
+        ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
         await using var cmd = dataSource.CreateCommand(commandText, parameters);
 
@@ -456,7 +485,7 @@ public static class NpgsqlDataSourceExtensions
         where T : IDataReaderMapper<T>
     {
         ArgumentNullException.ThrowIfNull(dataSource);
-        ArgumentException.ThrowIfNullOrEmpty(commandText);
+        ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
         await using var cmd = dataSource.CreateCommand(commandText, configureParameters);
 
@@ -481,7 +510,7 @@ public static class NpgsqlDataSourceExtensions
         where T : IDataReaderMapper<T>
     {
         ArgumentNullException.ThrowIfNull(dataSource);
-        ArgumentException.ThrowIfNullOrEmpty(commandText);
+        ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
         await using var cmd = dataSource.CreateCommand(commandText, configureParameters);
 
@@ -492,6 +521,7 @@ public static class NpgsqlDataSourceExtensions
             yield return item;
         }
     }
+#endif
 
     /// <summary>
     /// Executes a command and returns the <see cref="NpgsqlDataReader"/>.
@@ -499,12 +529,15 @@ public static class NpgsqlDataSourceExtensions
     /// <param name="dataSource">The <see cref="NpgsqlDataSource"/>.</param>
     /// <param name="commandText">The SQL command text.</param>
     /// <param name="commandBehavior">The <see cref="CommandBehavior"/>.</param>
-    /// <param name="parameters">Parameters to use when executing the command text.</param>
+    /// <param name="parameters">
+    /// Parameters to use when executing the command text. Use the <see cref="NpgsqlParameterExtensions.AsTypedDbParameter{T}(T)"/>
+    /// method to convert values to <see cref="NpgsqlParameter{T}"/>, e.g. <c>myValue.AsTypedDbParameter()</c>.
+    /// </param>
     /// <returns>A task representing the asynchronous operation with the <see cref="NpgsqlDataReader"/>.</returns>
     public static async Task<NpgsqlDataReader> QueryAsync(this NpgsqlDataSource dataSource, string commandText, CommandBehavior commandBehavior, params NpgsqlParameter[] parameters)
     {
         ArgumentNullException.ThrowIfNull(dataSource);
-        ArgumentException.ThrowIfNullOrEmpty(commandText);
+        ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
         await using var cmd = dataSource.CreateCommand(commandText, parameters);
 
@@ -518,12 +551,15 @@ public static class NpgsqlDataSourceExtensions
     /// <param name="commandText">The SQL command text.</param>
     /// <param name="commandBehavior">The <see cref="CommandBehavior"/>.</param>
     /// <param name="cancellationToken">A token to cancel the asynchronous operation.</param>
-    /// <param name="parameters">Parameters to use when executing the command text.</param>
+    /// <param name="parameters">
+    /// Parameters to use when executing the command text. Use the <see cref="NpgsqlParameterExtensions.AsTypedDbParameter{T}(T)"/>
+    /// method to convert values to <see cref="NpgsqlParameter{T}"/>, e.g. <c>myValue.AsTypedDbParameter()</c>.
+    /// </param>
     /// <returns>A task representing the asynchronous operation with the <see cref="NpgsqlDataReader"/>.</returns>
     public static async Task<NpgsqlDataReader> QueryAsync(this NpgsqlDataSource dataSource, string commandText, CommandBehavior commandBehavior, CancellationToken cancellationToken, params NpgsqlParameter[] parameters)
     {
         ArgumentNullException.ThrowIfNull(dataSource);
-        ArgumentException.ThrowIfNullOrEmpty(commandText);
+        ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
         await using var cmd = dataSource.CreateCommand(commandText, parameters);
 
@@ -541,7 +577,7 @@ public static class NpgsqlDataSourceExtensions
     public static async Task<NpgsqlDataReader> QueryAsync(this NpgsqlDataSource dataSource, string commandText, CommandBehavior commandBehavior, Action<NpgsqlParameterCollection> configureParameters)
     {
         ArgumentNullException.ThrowIfNull(dataSource);
-        ArgumentException.ThrowIfNullOrEmpty(commandText);
+        ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
         await using var cmd = dataSource.CreateCommand(commandText, configureParameters);
 
@@ -560,7 +596,7 @@ public static class NpgsqlDataSourceExtensions
     public static async Task<NpgsqlDataReader> QueryAsync(this NpgsqlDataSource dataSource, string commandText, CommandBehavior commandBehavior, Action<NpgsqlParameterCollection> configureParameters, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(dataSource);
-        ArgumentException.ThrowIfNullOrEmpty(commandText);
+        ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
         await using var cmd = dataSource.CreateCommand(commandText, configureParameters);
 
@@ -573,3 +609,4 @@ public static class NpgsqlDataSourceExtensions
     private static NpgsqlCommand CreateCommand(this NpgsqlDataSource dataSource, string commandText, Action<NpgsqlParameterCollection>? configureParameters = null) =>
         dataSource.CreateCommand(commandText).Configure(configureParameters);
 }
+#endif

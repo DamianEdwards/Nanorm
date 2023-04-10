@@ -2,10 +2,11 @@
 
 namespace Nanorm.Npgsql;
 
+#if NET7_0_OR_GREATER
 /// <summary>
 /// Interface for statically creating an instance of <typeparamref name="T"/> from an <see cref="NpgsqlDataReader"/>.
 /// </summary>
-/// <typeparam name="T"></typeparam>
+/// <typeparam name="T">The type that the implementer of <see cref="IDataReaderMapper{T}"/> can create instances of.</typeparam>
 public interface IDataReaderMapper<T> where T : IDataReaderMapper<T>
 {
     /// <summary>
@@ -17,3 +18,4 @@ public interface IDataReaderMapper<T> where T : IDataReaderMapper<T>
     abstract static T Map(NpgsqlDataReader dataReader);
 #pragma warning restore CA1000 // Do not declare static members on generic types
 }
+#endif

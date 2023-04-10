@@ -1,19 +1,19 @@
-﻿using System.Data;
+﻿using Nanorm;
 
-namespace Npgsql;
+namespace System.Data.Common;
 
 /// <summary>
-/// Extension methods for <see cref="NpgsqlCommand"/> from the <c>Nanorm.Npgsql</c> package.
+/// Extension methods for <see cref="DbCommand"/> from the <c>Nanorm</c> package.
 /// </summary>
-public static class NpgsqlCommandExtensions
+public static class DbCommandExtensions
 {
     /// <summary>
     /// Executes a command with the <see cref="CommandBehavior.SingleResult"/> and <see cref="CommandBehavior.SingleRow"/> behaviors
-    /// and returns the <see cref="NpgsqlDataReader"/>.
+    /// and returns the <see cref="DbDataReader"/>.
     /// </summary>
     /// <param name="command">The command.</param>
-    /// <returns>A task representing the asynchronous operation with the <see cref="NpgsqlDataReader"/>.</returns>
-    public static Task<NpgsqlDataReader> QuerySingleAsync(this NpgsqlCommand command)
+    /// <returns>A task representing the asynchronous operation with the <see cref="DbDataReader"/>.</returns>
+    public static Task<DbDataReader> QuerySingleAsync(this DbCommand command)
     {
         ArgumentNullException.ThrowIfNull(command);
 
@@ -22,23 +22,23 @@ public static class NpgsqlCommandExtensions
 
     /// <summary>
     /// Executes a command with the <see cref="CommandBehavior.SingleResult"/> and <see cref="CommandBehavior.SingleRow"/> behaviors
-    /// and returns the <see cref="NpgsqlDataReader"/>.
+    /// and returns the <see cref="DbDataReader"/>.
     /// </summary>
     /// <param name="command">The command.</param>
     /// <param name="cancellationToken">A token to cancel the asynchronous operation.</param>
-    /// <returns>A task representing the asynchronous operation with the <see cref="NpgsqlDataReader"/>.</returns>
-    public static Task<NpgsqlDataReader> QuerySingleAsync(this NpgsqlCommand command, CancellationToken cancellationToken)
+    /// <returns>A task representing the asynchronous operation with the <see cref="DbDataReader"/>.</returns>
+    public static Task<DbDataReader> QuerySingleAsync(this DbCommand command, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(command);
         return QueryAsync(command, CommandBehavior.SingleResult | CommandBehavior.SingleRow, cancellationToken);
     }
 
     /// <summary>
-    /// Executes a command and returns the <see cref="NpgsqlDataReader"/>.
+    /// Executes a command and returns the <see cref="DbDataReader"/>.
     /// </summary>
     /// <param name="command">The command.</param>
-    /// <returns>A task representing the asynchronous operation with the <see cref="NpgsqlDataReader"/>.</returns>
-    public static Task<NpgsqlDataReader> QueryAsync(this NpgsqlCommand command)
+    /// <returns>A task representing the asynchronous operation with the <see cref="DbDataReader"/>.</returns>
+    public static Task<DbDataReader> QueryAsync(this DbCommand command)
     {
         ArgumentNullException.ThrowIfNull(command);
 
@@ -46,12 +46,12 @@ public static class NpgsqlCommandExtensions
     }
 
     /// <summary>
-    /// Executes a command and returns the <see cref="NpgsqlDataReader"/>.
+    /// Executes a command and returns the <see cref="DbDataReader"/>.
     /// </summary>
     /// <param name="command">The command.</param>
     /// <param name="cancellationToken">A token to cancel the asynchronous operation.</param>
-    /// <returns>A task representing the asynchronous operation with the <see cref="NpgsqlDataReader"/>.</returns>
-    public static Task<NpgsqlDataReader> QueryAsync(this NpgsqlCommand command, CancellationToken cancellationToken)
+    /// <returns>A task representing the asynchronous operation with the <see cref="DbDataReader"/>.</returns>
+    public static Task<DbDataReader> QueryAsync(this DbCommand command, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(command);
 
@@ -59,12 +59,12 @@ public static class NpgsqlCommandExtensions
     }
 
     /// <summary>
-    /// Executes a command and returns the <see cref="NpgsqlDataReader"/>.
+    /// Executes a command and returns the <see cref="DbDataReader"/>.
     /// </summary>
     /// <param name="command">The command.</param>
     /// <param name="commandBehavior">The command behavior to use when executing the command.</param>
-    /// <returns>A task representing the asynchronous operation with the <see cref="NpgsqlDataReader"/>.</returns>
-    public static Task<NpgsqlDataReader> QueryAsync(this NpgsqlCommand command, CommandBehavior commandBehavior)
+    /// <returns>A task representing the asynchronous operation with the <see cref="DbDataReader"/>.</returns>
+    public static Task<DbDataReader> QueryAsync(this DbCommand command, CommandBehavior commandBehavior)
     {
         ArgumentNullException.ThrowIfNull(command);
 
@@ -72,13 +72,13 @@ public static class NpgsqlCommandExtensions
     }
 
     /// <summary>
-    /// Executes a command and returns the <see cref="NpgsqlDataReader"/>.
+    /// Executes a command and returns the <see cref="DbDataReader"/>.
     /// </summary>
     /// <param name="command">The command.</param>
     /// <param name="commandBehavior">The command behavior to use when executing the command.</param>
     /// <param name="cancellationToken">A token to cancel the asynchronous operation.</param>
-    /// <returns>A task representing the asynchronous operation with the <see cref="NpgsqlDataReader"/>.</returns>
-    public static Task<NpgsqlDataReader> QueryAsync(this NpgsqlCommand command, CommandBehavior commandBehavior, CancellationToken cancellationToken)
+    /// <returns>A task representing the asynchronous operation with the <see cref="DbDataReader"/>.</returns>
+    public static Task<DbDataReader> QueryAsync(this DbCommand command, CommandBehavior commandBehavior, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(command);
 
@@ -86,12 +86,15 @@ public static class NpgsqlCommandExtensions
     }
 
     /// <summary>
-    /// Adds the specified parameters to the command's <see cref="NpgsqlParameterCollection"/>.
+    /// Adds the specified parameters to the command's <see cref="DbParameterCollection"/>.
     /// </summary>
     /// <param name="command">The command.</param>
-    /// <param name="parameters">The parameters.</param>
+    /// <param name="parameters">
+    /// Parameters to use when executing the command. Use the <see cref="DbParameterExtensions.AsDbParameter(object?, string?)"/>
+    /// method to convert values into <see cref="DbPlaceholderParameter"/> instances, e.g. <c>myValue.AsDbParameter()</c>.
+    /// </param>
     /// <returns>The command.</returns>
-    public static NpgsqlCommand AddParameters(this NpgsqlCommand command, NpgsqlParameter[] parameters)
+    public static DbCommand AddParameters(this DbCommand command, DbPlaceholderParameter[] parameters)
     {
         ArgumentNullException.ThrowIfNull(command);
 
@@ -104,7 +107,10 @@ public static class NpgsqlCommandExtensions
         {
             for (var i = 0; i < parameters.Length; i++)
             {
-                parameterCollection.Add(parameters[i]);
+                var dbParameter = command.CreateParameter();
+                dbParameter.ParameterName = parameters[i].Name;
+                dbParameter.Value = parameters[i].Value;
+                parameterCollection.Add(dbParameter);
             }
         });
     }
@@ -115,7 +121,7 @@ public static class NpgsqlCommandExtensions
     /// <param name="command">The command.</param>
     /// <param name="configureParameters">A delegate to configure the parameters.</param>
     /// <returns>The command.</returns>
-    public static NpgsqlCommand Configure(this NpgsqlCommand command, Action<NpgsqlParameterCollection>? configureParameters = null)
+    public static DbCommand Configure(this DbCommand command, Action<DbParameterCollection>? configureParameters = null)
     {
         ArgumentNullException.ThrowIfNull(command);
 
