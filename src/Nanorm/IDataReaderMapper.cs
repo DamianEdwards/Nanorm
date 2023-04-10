@@ -12,7 +12,7 @@ public interface IDataReaderMapper<T> where T : IDataReaderMapper<T>
     /// <summary>
     /// Maps the <paramref name="dataReader"/> to an instance of <typeparamref name="T"/>.
     /// </summary>
-    /// <param name="dataReader"></param>
+    /// <param name="dataReader">The <see cref="DbDataReader"/>.</param>
     /// <returns>A new instance of <typeparamref name="T"/>.</returns>
 #pragma warning disable CA1000 // Do not declare static members on generic types
     abstract static T Map(DbDataReader dataReader);
