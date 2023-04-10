@@ -4,6 +4,8 @@ using System.Runtime.CompilerServices;
 
 using System.Data;
 using Nanorm.Sqlite;
+using System.Threading;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Microsoft.Data.Sqlite;
 
@@ -24,6 +26,7 @@ public static class SqliteConnectionExtensions
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
         await using var cmd = connection.CreateCommand(commandText);
+        await connection.OpenAsync();
 
         return await cmd.ExecuteNonQueryAsync();
     }
@@ -41,6 +44,7 @@ public static class SqliteConnectionExtensions
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
         await using var cmd = connection.CreateCommand(commandText);
+        await connection.OpenAsync(cancellationToken);
 
         return await cmd.ExecuteNonQueryAsync(cancellationToken);
     }
@@ -61,6 +65,7 @@ public static class SqliteConnectionExtensions
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
         await using var cmd = connection.CreateCommand(commandText, parameters);
+        await connection.OpenAsync();
 
         return await cmd.ExecuteNonQueryAsync();
     }
@@ -82,6 +87,7 @@ public static class SqliteConnectionExtensions
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
         await using var cmd = connection.CreateCommand(commandText, parameters);
+        await connection.OpenAsync(cancellationToken);
 
         return await cmd.ExecuteNonQueryAsync(cancellationToken);
     }
@@ -99,6 +105,7 @@ public static class SqliteConnectionExtensions
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
         await using var cmd = connection.CreateCommand(commandText, configureParameters);
+        await connection.OpenAsync();
 
         return await cmd.ExecuteNonQueryAsync();
     }
@@ -117,6 +124,7 @@ public static class SqliteConnectionExtensions
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
         await using var cmd = connection.CreateCommand(commandText, configureParameters);
+        await connection.OpenAsync(cancellationToken);
 
         return await cmd.ExecuteNonQueryAsync(cancellationToken);
     }
@@ -134,6 +142,7 @@ public static class SqliteConnectionExtensions
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
         await using var cmd = connection.CreateCommand(commandText);
+        await connection.OpenAsync();
 
         return await cmd.ExecuteScalarAsync();
     }
@@ -152,6 +161,7 @@ public static class SqliteConnectionExtensions
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
         await using var cmd = connection.CreateCommand(commandText);
+        await connection.OpenAsync(cancellationToken);
 
         return await cmd.ExecuteScalarAsync(cancellationToken);
     }
@@ -173,6 +183,7 @@ public static class SqliteConnectionExtensions
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
         await using var cmd = connection.CreateCommand(commandText, parameters);
+        await connection.OpenAsync();
 
         return await cmd.ExecuteScalarAsync();
     }
@@ -195,6 +206,7 @@ public static class SqliteConnectionExtensions
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
         await using var cmd = connection.CreateCommand(commandText, parameters);
+        await connection.OpenAsync(cancellationToken);
 
         return await cmd.ExecuteScalarAsync(cancellationToken);
     }
@@ -213,6 +225,7 @@ public static class SqliteConnectionExtensions
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
         await using var cmd = connection.CreateCommand(commandText, configureParameters);
+        await connection.OpenAsync();
 
         return await cmd.ExecuteScalarAsync();
     }
@@ -232,6 +245,7 @@ public static class SqliteConnectionExtensions
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
         await using var cmd = connection.CreateCommand(commandText, configureParameters);
+        await connection.OpenAsync(cancellationToken);
 
         return await cmd.ExecuteScalarAsync(cancellationToken);
     }
@@ -251,6 +265,7 @@ public static class SqliteConnectionExtensions
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
         await using var cmd = connection.CreateCommand(commandText);
+        await connection.OpenAsync();
 
         await using var reader = await cmd.QuerySingleAsync();
 
@@ -272,6 +287,7 @@ public static class SqliteConnectionExtensions
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
         await using var cmd = connection.CreateCommand(commandText);
+        await connection.OpenAsync(cancellationToken);
 
         await using var reader = await cmd.QuerySingleAsync(cancellationToken);
 
@@ -296,6 +312,7 @@ public static class SqliteConnectionExtensions
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
         await using var cmd = connection.CreateCommand(commandText, parameters);
+        await connection.OpenAsync();
 
         await using var reader = await cmd.QuerySingleAsync();
 
@@ -321,6 +338,7 @@ public static class SqliteConnectionExtensions
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
         await using var cmd = connection.CreateCommand(commandText, parameters);
+        await connection.OpenAsync(cancellationToken);
 
         await using var reader = await cmd.QuerySingleAsync(cancellationToken);
 
@@ -342,6 +360,7 @@ public static class SqliteConnectionExtensions
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
         await using var cmd = connection.CreateCommand(commandText, configureParameters);
+        await connection.OpenAsync();
 
         await using var reader = await cmd.QuerySingleAsync();
 
@@ -364,6 +383,7 @@ public static class SqliteConnectionExtensions
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
         await using var cmd = connection.CreateCommand(commandText, configureParameters);
+        await connection.OpenAsync(cancellationToken);
 
         await using var reader = await cmd.QuerySingleAsync(cancellationToken);
 
@@ -384,6 +404,7 @@ public static class SqliteConnectionExtensions
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
         await using var cmd = connection.CreateCommand(commandText);
+        await connection.OpenAsync();
 
         await using var reader = await cmd.QueryAsync();
 
@@ -408,6 +429,7 @@ public static class SqliteConnectionExtensions
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
         await using var cmd = connection.CreateCommand(commandText);
+        await connection.OpenAsync(cancellationToken);
 
         await using var reader = await cmd.QueryAsync(cancellationToken);
 
@@ -435,6 +457,7 @@ public static class SqliteConnectionExtensions
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
         await using var cmd = connection.CreateCommand(commandText, parameters);
+        await connection.OpenAsync();
 
         await using var reader = await cmd.QueryAsync();
 
@@ -463,6 +486,7 @@ public static class SqliteConnectionExtensions
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
         await using var cmd = connection.CreateCommand(commandText, parameters);
+        await connection.OpenAsync(cancellationToken);
 
         await using var reader = await cmd.QueryAsync(cancellationToken);
 
@@ -487,6 +511,7 @@ public static class SqliteConnectionExtensions
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
         await using var cmd = connection.CreateCommand(commandText, configureParameters);
+        await connection.OpenAsync();
 
         await using var reader = await cmd.QueryAsync();
 
@@ -512,6 +537,7 @@ public static class SqliteConnectionExtensions
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
         await using var cmd = connection.CreateCommand(commandText, configureParameters);
+        await connection.OpenAsync(cancellationToken);
 
         await using var reader = await cmd.QueryAsync(cancellationToken);
 
@@ -539,6 +565,7 @@ public static class SqliteConnectionExtensions
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
         await using var cmd = connection.CreateCommand(commandText, parameters);
+        await connection.OpenAsync();
 
         return await cmd.ExecuteReaderAsync(commandBehavior);
     }
@@ -561,6 +588,7 @@ public static class SqliteConnectionExtensions
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
         await using var cmd = connection.CreateCommand(commandText, parameters);
+        await connection.OpenAsync(cancellationToken);
 
         return await cmd.ExecuteReaderAsync(commandBehavior, cancellationToken);
     }
@@ -579,6 +607,7 @@ public static class SqliteConnectionExtensions
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
         await using var cmd = connection.CreateCommand(commandText, configureParameters);
+        await connection.OpenAsync();
 
         return await cmd.ExecuteReaderAsync(commandBehavior);
     }
@@ -598,6 +627,7 @@ public static class SqliteConnectionExtensions
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
         await using var cmd = connection.CreateCommand(commandText, configureParameters);
+        await connection.OpenAsync(cancellationToken);
 
         return await cmd.ExecuteReaderAsync(commandBehavior, cancellationToken);
     }
@@ -605,6 +635,13 @@ public static class SqliteConnectionExtensions
     private static SqliteCommand CreateCommand(this SqliteConnection connection, string commandText, params SqliteParameter[] parameters) =>
         connection.CreateCommand(commandText).AddParameters(parameters);
 
-    private static SqliteCommand CreateCommand(this SqliteConnection connection, string commandText, Action<SqliteParameterCollection>? configureParameters = null) =>
-        connection.CreateCommand(commandText).Configure(configureParameters);
+    private static SqliteCommand CreateCommand(this SqliteConnection connection, string commandText, Action<SqliteParameterCollection>? configureParameters = null)
+    {
+        var command = connection.CreateCommand();
+#pragma warning disable CA2100 // Review SQL queries for security vulnerabilities
+        command.CommandText = commandText;
+#pragma warning restore CA2100 // Review SQL queries for security vulnerabilities
+        command.Configure(configureParameters);
+        return command;
+    }
 }

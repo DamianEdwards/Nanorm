@@ -1,5 +1,6 @@
 ﻿using System.Data;
 using System.Runtime.CompilerServices;
+using System.Threading;
 using Nanorm.Npgsql;
 
 namespace Npgsql;
@@ -21,6 +22,7 @@ public static class NpgsqlConnectionExtensions
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
         await using var cmd = connection.CreateCommand(commandText);
+        await connection.OpenAsync();
 
         return await cmd.ExecuteNonQueryAsync();
     }
@@ -38,6 +40,7 @@ public static class NpgsqlConnectionExtensions
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
         await using var cmd = connection.CreateCommand(commandText);
+        await connection.OpenAsync(cancellationToken);
 
         return await cmd.ExecuteNonQueryAsync(cancellationToken);
     }
@@ -55,6 +58,7 @@ public static class NpgsqlConnectionExtensions
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
         await using var cmd = connection.CreateCommand(commandText, parameters);
+        await connection.OpenAsync();
 
         return await cmd.ExecuteNonQueryAsync();
     }
@@ -572,6 +576,13 @@ public static class NpgsqlConnectionExtensions
     private static NpgsqlCommand CreateCommand(this NpgsqlConnection connection, string commandText, params NpgsqlParameter[] parameters) =>
         connection.CreateCommand(commandText).AddParameters(parameters);
 
-    private static NpgsqlCommand CreateCommand(this NpgsqlConnection connection, string commandText, Action<NpgsqlParameterCollection>? configureParameters = null) =>
-        connection.CreateCommand(commandText).Configure(configureParameters);
+    private static NpgsqlCommand CreateCommand(this NpgsqlConnection connection, string commandText, Action<NpgsqlParameterCollection>? configureParameters = null)
+    {
+        var command = connection.CreateCommand();
+#pragma warning disable CA2100 // Review SQL queries for security vulnerabilities
+        command.CommandText = commandText;
+#pragma warning restore CA2100 // Review SQL queries for security vulnerabilities
+        command.Configure(configureParameters);
+        return command;
+    }
 }

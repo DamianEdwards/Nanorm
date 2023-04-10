@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <PublishRelease>true</PublishRelease>
+    <PublishAot>true</PublishAot>
+    <TrimmerSingleWarn>false</TrimmerSingleWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Nanorm.Sqlite\Nanorm.Sqlite.csproj" />
+    <!-- Analyze the whole library -->
+    <TrimmerRootAssembly Include="Nanorm.Sqlite" />
+  </ItemGroup>
+</Project>

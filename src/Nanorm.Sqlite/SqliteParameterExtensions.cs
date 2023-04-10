@@ -15,6 +15,21 @@ public static class SqliteParameterExtensions
     /// <returns>The parameter.</returns>
     public static SqliteParameter AsDbParameter(this object? value, [CallerArgumentExpression(nameof(value))] string? name = null)
     {
-        return new SqliteParameter(name, value);
+        return new SqliteParameter(CleanParameterName(name), value);
+    }
+
+    private static string? CleanParameterName(string? name)
+    {
+        if (string.IsNullOrEmpty(name))
+        {
+            return name;
+        }
+
+        var lastIndexOfPeriod = name.LastIndexOf('.');
+        if (lastIndexOfPeriod > 0)
+        {
+            return name[(lastIndexOfPeriod + 1)..];
+        }
+        return name;
     }
 }

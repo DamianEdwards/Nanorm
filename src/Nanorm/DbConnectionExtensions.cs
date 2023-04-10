@@ -22,6 +22,7 @@ public static class DbConnectionExtensions
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
         await using var cmd = connection.CreateCommand(commandText);
+        await connection.OpenAsync();
 
         return await cmd.ExecuteNonQueryAsync();
     }
@@ -39,6 +40,7 @@ public static class DbConnectionExtensions
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
         await using var cmd = connection.CreateCommand(commandText);
+        await connection.OpenAsync(cancellationToken);
 
         return await cmd.ExecuteNonQueryAsync(cancellationToken);
     }
@@ -59,6 +61,7 @@ public static class DbConnectionExtensions
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
         await using var cmd = connection.CreateCommand(commandText, parameters);
+        await connection.OpenAsync();
 
         return await cmd.ExecuteNonQueryAsync();
     }
@@ -80,6 +83,7 @@ public static class DbConnectionExtensions
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
         await using var cmd = connection.CreateCommand(commandText, parameters);
+        await connection.OpenAsync(cancellationToken);
 
         return await cmd.ExecuteNonQueryAsync(cancellationToken);
     }
@@ -97,6 +101,7 @@ public static class DbConnectionExtensions
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
         await using var cmd = connection.CreateCommand(commandText, configureParameters);
+        await connection.OpenAsync();
 
         return await cmd.ExecuteNonQueryAsync();
     }
@@ -115,6 +120,7 @@ public static class DbConnectionExtensions
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
         await using var cmd = connection.CreateCommand(commandText, configureParameters);
+        await connection.OpenAsync(cancellationToken);
 
         return await cmd.ExecuteNonQueryAsync(cancellationToken);
     }
@@ -132,6 +138,7 @@ public static class DbConnectionExtensions
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
         await using var cmd = connection.CreateCommand(commandText);
+        await connection.OpenAsync();
 
         return await cmd.ExecuteScalarAsync();
     }
@@ -150,6 +157,7 @@ public static class DbConnectionExtensions
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
         await using var cmd = connection.CreateCommand(commandText);
+        await connection.OpenAsync(cancellationToken);
 
         return await cmd.ExecuteScalarAsync(cancellationToken);
     }
@@ -171,6 +179,7 @@ public static class DbConnectionExtensions
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
         await using var cmd = connection.CreateCommand(commandText, parameters);
+        await connection.OpenAsync();
 
         return await cmd.ExecuteScalarAsync();
     }
@@ -193,6 +202,7 @@ public static class DbConnectionExtensions
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
         await using var cmd = connection.CreateCommand(commandText, parameters);
+        await connection.OpenAsync(cancellationToken);
 
         return await cmd.ExecuteScalarAsync(cancellationToken);
     }
@@ -211,6 +221,7 @@ public static class DbConnectionExtensions
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
         await using var cmd = connection.CreateCommand(commandText, configureParameters);
+        await connection.OpenAsync();
 
         return await cmd.ExecuteScalarAsync();
     }
@@ -230,6 +241,7 @@ public static class DbConnectionExtensions
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
         await using var cmd = connection.CreateCommand(commandText, configureParameters);
+        await connection.OpenAsync(cancellationToken);
 
         return await cmd.ExecuteScalarAsync(cancellationToken);
     }
@@ -249,6 +261,7 @@ public static class DbConnectionExtensions
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
         await using var cmd = connection.CreateCommand(commandText);
+        await connection.OpenAsync();
 
         await using var reader = await cmd.QuerySingleAsync();
 
@@ -270,6 +283,7 @@ public static class DbConnectionExtensions
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
         await using var cmd = connection.CreateCommand(commandText);
+        await connection.OpenAsync(cancellationToken);
 
         await using var reader = await cmd.QuerySingleAsync(cancellationToken);
 
@@ -294,6 +308,7 @@ public static class DbConnectionExtensions
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
         await using var cmd = connection.CreateCommand(commandText, parameters);
+        await connection.OpenAsync();
 
         await using var reader = await cmd.QuerySingleAsync();
 
@@ -319,6 +334,7 @@ public static class DbConnectionExtensions
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
         await using var cmd = connection.CreateCommand(commandText, parameters);
+        await connection.OpenAsync(cancellationToken);
 
         await using var reader = await cmd.QuerySingleAsync(cancellationToken);
 
@@ -340,6 +356,7 @@ public static class DbConnectionExtensions
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
         await using var cmd = connection.CreateCommand(commandText, configureParameters);
+        await connection.OpenAsync();
 
         await using var reader = await cmd.QuerySingleAsync();
 
@@ -362,6 +379,7 @@ public static class DbConnectionExtensions
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
         await using var cmd = connection.CreateCommand(commandText, configureParameters);
+        await connection.OpenAsync(cancellationToken);
 
         await using var reader = await cmd.QuerySingleAsync(cancellationToken);
 
@@ -382,6 +400,7 @@ public static class DbConnectionExtensions
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
         await using var cmd = connection.CreateCommand(commandText);
+        await connection.OpenAsync();
 
         await using var reader = await cmd.QueryAsync();
 
@@ -406,6 +425,7 @@ public static class DbConnectionExtensions
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
         await using var cmd = connection.CreateCommand(commandText);
+        await connection.OpenAsync(cancellationToken);
 
         await using var reader = await cmd.QueryAsync(cancellationToken);
 
@@ -433,6 +453,7 @@ public static class DbConnectionExtensions
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
         await using var cmd = connection.CreateCommand(commandText, parameters);
+        await connection.OpenAsync();
 
         await using var reader = await cmd.QueryAsync();
 
@@ -461,6 +482,7 @@ public static class DbConnectionExtensions
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
         await using var cmd = connection.CreateCommand(commandText, parameters);
+        await connection.OpenAsync(cancellationToken);
 
         await using var reader = await cmd.QueryAsync(cancellationToken);
 
@@ -485,6 +507,7 @@ public static class DbConnectionExtensions
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
         await using var cmd = connection.CreateCommand(commandText, configureParameters);
+        await connection.OpenAsync();
 
         await using var reader = await cmd.QueryAsync();
 
@@ -510,6 +533,7 @@ public static class DbConnectionExtensions
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
         await using var cmd = connection.CreateCommand(commandText, configureParameters);
+        await connection.OpenAsync(cancellationToken);
 
         await using var reader = await cmd.QueryAsync(cancellationToken);
 
@@ -537,6 +561,7 @@ public static class DbConnectionExtensions
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
         await using var cmd = connection.CreateCommand(commandText, parameters);
+        await connection.OpenAsync();
 
         return await cmd.ExecuteReaderAsync(commandBehavior);
     }
@@ -559,6 +584,7 @@ public static class DbConnectionExtensions
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
         await using var cmd = connection.CreateCommand(commandText, parameters);
+        await connection.OpenAsync(cancellationToken);
 
         return await cmd.ExecuteReaderAsync(commandBehavior, cancellationToken);
     }
@@ -577,6 +603,7 @@ public static class DbConnectionExtensions
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
         await using var cmd = connection.CreateCommand(commandText, configureParameters);
+        await connection.OpenAsync();
 
         return await cmd.ExecuteReaderAsync(commandBehavior);
     }
@@ -596,6 +623,7 @@ public static class DbConnectionExtensions
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
         await using var cmd = connection.CreateCommand(commandText, configureParameters);
+        await connection.OpenAsync(cancellationToken);
 
         return await cmd.ExecuteReaderAsync(commandBehavior, cancellationToken);
     }

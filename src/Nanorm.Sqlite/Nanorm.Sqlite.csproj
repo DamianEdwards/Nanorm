@@ -4,6 +4,8 @@
     <TargetFrameworks>net6.0;net7.0;net8.0</TargetFrameworks>
     <PackageTags>ado.net database sqlite data orm native aot trimming</PackageTags>
     <PackageReadmeFile>README.md</PackageReadmeFile>
+    <IsTrimmable>true</IsTrimmable>
+    <TrimmerDefaultAction Condition=" '$(TargetFramework)' == 'net6.0' ">link</TrimmerDefaultAction>
   </PropertyGroup>
 
   <ItemGroup>
