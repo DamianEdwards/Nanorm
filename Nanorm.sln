@@ -19,11 +19,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		Directory.Build.props = Directory.Build.props
 		Directory.Packages.props = Directory.Packages.props
 		global.json = global.json
+		nuget.config = nuget.config
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nanorm.Npgsql", "src\Nanorm.Npgsql\Nanorm.Npgsql.csproj", "{739FDCEA-3C87-409B-B5E0-E69308CA8F2B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nanorm.Npgsql", "src\Nanorm.Npgsql\Nanorm.Npgsql.csproj", "{739FDCEA-3C87-409B-B5E0-E69308CA8F2B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nanorm.Sqlite", "src\Nanorm.Sqlite\Nanorm.Sqlite.csproj", "{B69703CB-77C1-4CA6-8A49-5CF002932187}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nanorm.Sqlite", "src\Nanorm.Sqlite\Nanorm.Sqlite.csproj", "{B69703CB-77C1-4CA6-8A49-5CF002932187}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nanorm.Samples.Console.Todos.Sqlite", "samples\Nanorm.Samples.Console.Todos.Sqlite\Nanorm.Samples.Console.Todos.Sqlite.csproj", "{C60C9193-5184-42F5-8B54-B446B08CCA8C}"
 EndProject
