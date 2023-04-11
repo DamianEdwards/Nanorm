@@ -136,15 +136,11 @@ sealed class Todo : IDataReaderMapper<Todo>
 
     public bool IsComplete { get; set; }
 
-    public static Todo Map(SqliteDataReader dataReader)
-    {
-        return !dataReader.HasRows
-            ? throw new InvalidOperationException("Data reader had no rows")
-            : new()
-            {
-                Id = dataReader.GetInt32(nameof(Id)),
-                Title = dataReader.GetString(nameof(Title)),
-                IsComplete = dataReader.GetBoolean(nameof(IsComplete))
-            };
-    }
+    public static Todo Map(SqliteDataReader dataReader) => 
+        new()
+        {
+            Id = dataReader.GetInt32(nameof(Id)),
+            Title = dataReader.GetString(nameof(Title)),
+            IsComplete = dataReader.GetBoolean(nameof(IsComplete))
+        };
 }
