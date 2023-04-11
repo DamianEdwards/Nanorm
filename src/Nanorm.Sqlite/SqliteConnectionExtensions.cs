@@ -1,11 +1,8 @@
-﻿#if NET7_0_OR_GREATER
+﻿using System.Data;
+#if NET7_0_OR_GREATER
 using System.Runtime.CompilerServices;
-#endif
-
-using System.Data;
 using Nanorm.Sqlite;
-using System.Threading;
-using System.Diagnostics.CodeAnalysis;
+#endif
 
 namespace Microsoft.Data.Sqlite;
 
