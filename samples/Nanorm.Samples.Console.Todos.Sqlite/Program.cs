@@ -12,18 +12,20 @@ await ListCurrentTodos(db);
 await AddTodo(db, "Do the groceries");
 await AddTodo(db, "Give the dog a bath");
 await AddTodo(db, "Wash the car");
+await AddTodoWithParamObj(db, "Walk the dog");
 
 Console.WriteLine();
 
 await ListCurrentTodos(db);
 
 await MarkComplete(db, "Wash the car");
+await MarkCompleteWithParamObj(db, "Walk the dog");
 
 await ListCurrentTodos(db);
 
 var deletedCount = await DeleteAllTodos(db);
 Console.WriteLine($"Deleted all {deletedCount} todos!");
-Console.WriteLine();
+ Console.WriteLine();
 
 static async Task ListCurrentTodos(SqliteConnection db)
 {
@@ -81,6 +83,22 @@ static async Task AddTodo(SqliteConnection db, string title)
     Console.WriteLine($"Added todo {createdTodo?.Id}");
 }
 
+static async Task AddTodoWithParamObj(SqliteConnection db, string title)
+{
+    var todo = new Todo { Title = title };
+
+    var createdTodo = await db.QuerySingleAsync<Todo>("""
+        INSERT INTO Todos(Title, IsComplete)
+        Values(?1, ?2)
+        RETURNING *
+        """,
+        new object[] { todo.Title, todo.IsComplete }.AsDbParameter()
+        );
+
+    Console.WriteLine($"Added todo {createdTodo?.Id}");
+}
+
+
 static async Task MarkComplete(SqliteConnection db, string title)
 {
     var result = await db.ExecuteAsync("""
@@ -91,6 +109,25 @@ static async Task MarkComplete(SqliteConnection db, string title)
         """,
         title.AsDbParameter());
     
+    if (result == 0)
+    {
+        throw new InvalidOperationException($"No incomplete todo with title '{title}' was found!");
+    }
+
+    Console.WriteLine($"Todo '{title}' completed!");
+    Console.WriteLine();
+}
+
+static async Task MarkCompleteWithParamObj(SqliteConnection db, string title)
+{
+    var result = await db.ExecuteAsync("""
+        UPDATE Todos
+        SET IsComplete = true
+        WHERE Title = ?1
+          AND IsComplete = false
+        """,
+        new string[] { title }.AsDbParameter());
+
     if (result == 0)
     {
         throw new InvalidOperationException($"No incomplete todo with title '{title}' was found!");

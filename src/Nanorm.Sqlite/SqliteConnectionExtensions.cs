@@ -1,4 +1,5 @@
 ﻿using System.Data;
+using Nanorm.Sqlite;
 #if NET7_0_OR_GREATER
 using System.Runtime.CompilerServices;
 using Nanorm.Sqlite;
@@ -630,7 +631,7 @@ public static class SqliteConnectionExtensions
     }
 
     private static SqliteCommand CreateCommand(this SqliteConnection connection, string commandText, params SqliteParameter[] parameters) =>
-        connection.CreateCommand(commandText).AddParameters(parameters);
+        connection.CreateCommand(commandText.ParseQuery()).AddParameters(parameters);
 
     private static SqliteCommand CreateCommand(this SqliteConnection connection, string commandText, Action<SqliteParameterCollection>? configureParameters = null)
     {

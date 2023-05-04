@@ -32,4 +32,21 @@ public static class SqliteParameterExtensions
         }
         return name;
     }
+
+    /// <summary>
+    /// Creates an array of <see cref="SqliteParameter"/> from the value
+    /// </summary>
+    /// <param name="value">An array of parameter values</param>
+    /// <returns>An array of parameters</returns>
+    public static SqliteParameter[] AsDbParameter(this object[]? value)
+    {
+        var parameters = new SqliteParameter[value.Length];
+
+        ExceptionHelpers.ThrowIfNullOrEmpty(value);
+
+        for (var i = 0; i < value.Length; i++)
+            parameters[i] = new SqliteParameter($"param{i+1}", value[i]);
+
+        return parameters;
+    }
 }
