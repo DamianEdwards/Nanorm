@@ -58,11 +58,11 @@ public ref struct NpgsqlInterpolatedStringHandler
     /// <param name="value">The value to append.</param>
     public void AppendFormatted<T>(T value)
     {
-        _parameters![_parameterIndex] = new NpgsqlParameter<T> { Value = value };
+        _parameters![_parameterIndex++] = new NpgsqlParameter<T> { Value = value };
         _builder[_builderIndex++] = _parameterMarker;
 
         // Increase by length of parameter placeholder (marker char + count of digits in parameter index)
-        _totalLength += _parameterMarkerLength + (int)Math.Floor(Math.Log10(_parameterIndex++) + 1);
+        _totalLength += _parameterMarkerLength + (int)Math.Floor(Math.Log10(_parameterIndex) + 1);
     }
 
     internal readonly NpgsqlCommand GetCommand(NpgsqlConnection connection)
