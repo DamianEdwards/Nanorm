@@ -62,14 +62,7 @@ public ref struct NpgsqlInterpolatedStringHandler
     {
         var command = connection.CreateCommand(GetCommandText());
 
-        if (_parameterCount > 0)
-        {
-            for (int i = 0; i < _parameterCount; i++)
-            {
-                command.Parameters.Add(_parameters![i]);
-            }
-            ArrayPool<NpgsqlParameter>.Shared.Return(_parameters!);
-        }
+        ApplyParameters(command);
         return command;
     }
 
@@ -78,6 +71,14 @@ public ref struct NpgsqlInterpolatedStringHandler
     {
         var command = npgsqlDataSource.CreateCommand(GetCommandText());
 
+        ApplyParameters(command);
+        return command;
+    }
+#endif
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private readonly void ApplyParameters(NpgsqlCommand command)
+    {
         if (_parameterCount > 0)
         {
             for (int i = 0; i < _parameterCount; i++)
@@ -86,9 +87,7 @@ public ref struct NpgsqlInterpolatedStringHandler
             }
             ArrayPool<NpgsqlParameter>.Shared.Return(_parameters!);
         }
-        return command;
     }
-#endif
 
     private readonly string GetCommandText()
     {
