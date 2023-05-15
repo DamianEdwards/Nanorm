@@ -7,7 +7,7 @@ using System.Text;
 
 namespace Nanorm.Npgsql;
 
-internal class StringBuilderPool
+internal sealed class StringBuilderPool
 {
     private const int DefaultCapacity = 1386;
     private const int MaxBuilderSize = DefaultCapacity * 3;

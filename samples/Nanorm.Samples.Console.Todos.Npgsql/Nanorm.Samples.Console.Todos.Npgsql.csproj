@@ -5,10 +5,16 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <PublishRelease>true</PublishRelease>
+    <LangVersion>11</LangVersion>
+    <PublishAot Condition=" '$(TargetFramework)' == 'net8.0' ">true</PublishAot>
+    <TrimmerSingleWarn Condition=" '$(TargetFramework)' == 'net8.0' ">false</TrimmerSingleWarn>
   </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Nanorm.Npgsql\Nanorm.Npgsql.csproj" />
+    <!-- Analyze the whole library -->
+    <TrimmerRootAssembly Include="Nanorm.Npgsql" />
   </ItemGroup>
 
 </Project>
