@@ -114,8 +114,8 @@ public ref struct NpgsqlInterpolatedStringHandler
                     if (item.AsSpan().SequenceEqual(parameterMarker))
                     {
                         // Copy in the parameter marker
-                        span[index..][0] = parameterMarker[0];
-                        index++;
+                        parameterMarker.CopyTo(span[index..]);
+                        index += _parameterMarkerLength;
 
                         // Copy in the parameter index
                         if (!parameterIndex.TryFormat(parameterPlaceholder, out var charsWritten, default, CultureInfo.InvariantCulture))
