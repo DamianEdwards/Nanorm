@@ -1,6 +1,7 @@
 ﻿using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Text;
+using Nanorm.Npgsql;
 using Npgsql;
 
 namespace Nanorm.Sqlite;
@@ -21,7 +22,7 @@ public readonly ref struct NpgsqlInterpolatedStringHandler
     /// <param name="formattedCount">The count of formatted placeholders.</param>
     public NpgsqlInterpolatedStringHandler(int literalLength, int formattedCount)
     {
-        _sb = new(literalLength);
+        _sb = StringBuilderPool.Acquire(literalLength);
         _parameters = new(formattedCount);
     }
 
@@ -56,7 +57,7 @@ public readonly ref struct NpgsqlInterpolatedStringHandler
     /// Gets the SQL command text.
     /// </summary>
     /// <returns>The SQL command text.</returns>
-    public string GetSqlCommandText() => _sb.ToString();
+    public string GetSqlCommandText() => StringBuilderPool.GetStringAndRelease(_sb);
 
     /// <summary>
     /// Gets the parameters for the SQL command.
