@@ -98,7 +98,7 @@ public ref struct NpgsqlInterpolatedStringHandler
 
     private readonly string GetCommandText()
     {
-        var commandText = _generatedQueries.GetOrAdd(_hashCode, (key, data) =>
+        var commandText = _generatedQueries.GetOrAdd(_hashCode, static (key, data) =>
         {
             return string.Create(data._totalLength, data, static (span, data) =>
             {
