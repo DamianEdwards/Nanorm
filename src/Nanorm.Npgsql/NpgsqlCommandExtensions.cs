@@ -111,53 +111,6 @@ public static class NpgsqlCommandExtensions
     }
 
     /// <summary>
-    /// Adds the specified parameters to the command's <see cref="NpgsqlParameterCollection"/>.
-    /// </summary>
-    /// <param name="command">The command.</param>
-    /// <param name="parameters">The parameters.</param>
-    /// <returns>The command.</returns>
-    public static NpgsqlCommand AddParameters(this NpgsqlCommand command, IEnumerable<NpgsqlParameter> parameters)
-    {
-        ArgumentNullException.ThrowIfNull(command);
-
-        if (parameters is null)
-        {
-            return command;
-        }
-
-        foreach (var parameter in parameters)
-        {
-            command.Parameters.Add(parameter);
-        }
-
-        return command;
-    }
-
-    /// <summary>
-    /// Adds the specified parameters to the command's <see cref="NpgsqlParameterCollection"/>.
-    /// </summary>
-    /// <param name="command">The command.</param>
-    /// <param name="parameters">The parameters.</param>
-    /// <returns>The command.</returns>
-    public static NpgsqlCommand AddParameters(this NpgsqlCommand command, IList<NpgsqlParameter> parameters)
-    {
-        ArgumentNullException.ThrowIfNull(command);
-
-        if (parameters is null || parameters.Count == 0)
-        {
-            return command;
-        }
-
-        return command.Configure(parameterCollection =>
-        {
-            for (var i = 0; i < parameters.Count; i++)
-            {
-                parameterCollection.Add(parameters[i]);
-            }
-        });
-    }
-
-    /// <summary>
     /// Configures the command using the specified delegate.
     /// </summary>
     /// <param name="command">The command.</param>

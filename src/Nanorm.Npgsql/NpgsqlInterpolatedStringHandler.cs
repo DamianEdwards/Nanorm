@@ -129,7 +129,6 @@ public ref struct NpgsqlInterpolatedStringHandler
                     else
                     {
                         item.AsSpan().CopyTo(span[index..]);
-
                         index += item.Length;
                     }
                 }
