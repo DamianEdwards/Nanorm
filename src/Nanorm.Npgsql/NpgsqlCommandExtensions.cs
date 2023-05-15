@@ -1,4 +1,6 @@
 ﻿using System.Data;
+using System.Reflection.Metadata;
+using System.Runtime.CompilerServices;
 
 namespace Npgsql;
 
@@ -100,15 +102,36 @@ public static class NpgsqlCommandExtensions
             return command;
         }
 
-        return command.Configure(parameterCollection =>
+        for (int i = 0; i < parameters.Length; i++)
         {
-            for (var i = 0; i < parameters.Length; i++)
-            {
-                parameterCollection.Add(parameters[i]);
-            }
-        });
+            command.Parameters.Add(parameters[i]);
+        }
+
+        return command;
     }
 
+    /// <summary>
+    /// Adds the specified parameters to the command's <see cref="NpgsqlParameterCollection"/>.
+    /// </summary>
+    /// <param name="command">The command.</param>
+    /// <param name="parameters">The parameters.</param>
+    /// <returns>The command.</returns>
+    public static NpgsqlCommand AddParameters(this NpgsqlCommand command, IEnumerable<NpgsqlParameter> parameters)
+    {
+        ArgumentNullException.ThrowIfNull(command);
+
+        if (parameters is null)
+        {
+            return command;
+        }
+
+        foreach (var parameter in parameters)
+        {
+            command.Parameters.Add(parameter);
+        }
+
+        return command;
+    }
 
     /// <summary>
     /// Adds the specified parameters to the command's <see cref="NpgsqlParameterCollection"/>.
@@ -133,12 +156,14 @@ public static class NpgsqlCommandExtensions
             }
         });
     }
+
     /// <summary>
     /// Configures the command using the specified delegate.
     /// </summary>
     /// <param name="command">The command.</param>
     /// <param name="configureParameters">A delegate to configure the parameters.</param>
     /// <returns>The command.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static NpgsqlCommand Configure(this NpgsqlCommand command, Action<NpgsqlParameterCollection>? configureParameters = null)
     {
         ArgumentNullException.ThrowIfNull(command);

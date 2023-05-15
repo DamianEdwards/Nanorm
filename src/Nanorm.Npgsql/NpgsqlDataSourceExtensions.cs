@@ -749,9 +749,7 @@ public static class NpgsqlDataSourceExtensions
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static NpgsqlCommand CreateCommand(this NpgsqlDataSource dataSource, NpgsqlInterpolatedStringHandler commandTextHandler)
     {
-        var cmd = dataSource.CreateCommand(commandTextHandler.GetSqlCommandText());
-        cmd.AddParameters(commandTextHandler.GetParameters());
-        return cmd;
+        return commandTextHandler.GetCommand(dataSource);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
