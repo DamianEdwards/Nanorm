@@ -16,7 +16,7 @@ public ref struct NpgsqlInterpolatedStringHandler
     // !! This must be kept in sync with length of const string above !!
     private const int _parameterMarkerLength = 1;
 
-    private static ConcurrentDictionary<int, string> _generatedQueries = new(Environment.ProcessorCount * 2, 10);
+    private static readonly ConcurrentDictionary<int, string> _generatedQueries = new(Environment.ProcessorCount * 2, 10);
 
     private string[] _builder;
     private int _builderIndex;
