@@ -91,6 +91,8 @@ public ref struct NpgsqlInterpolatedStringHandler
 
     private readonly string GetCommandText()
     {
+        // TODO: Cache this based on literals & formattedCount
+
         var commandText = string.Create(_totalLength, (_builder, _builderIndex, _parameters), static (span, data) =>
         {
             var (array, count, parameters) = data;
