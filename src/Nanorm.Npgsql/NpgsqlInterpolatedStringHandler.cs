@@ -1,4 +1,5 @@
 ﻿using System.Buffers;
+using System.Collections.Concurrent;
 using System.Globalization;
 using System.Runtime.CompilerServices;
 using Npgsql;
@@ -14,12 +15,16 @@ public ref struct NpgsqlInterpolatedStringHandler
     private const string _parameterMarker = "$";
     // !! This must be kept in sync with length of const string above !!
     private const int _parameterMarkerLength = 1;
+
+    private static ConcurrentDictionary<int, string> _generatedQueries = new ConcurrentDictionary<int, string>(Environment.ProcessorCount * 2, 10);
+
     private string[] _builder;
     private int _builderIndex;
     private readonly NpgsqlParameter[]? _parameters;
     private readonly int _parameterCount;
     private int _parameterIndex;
     private int _totalLength;
+    private int _hashCode;
 
     /// <summary>
     /// Creates a new <see cref="NpgsqlInterpolatedStringHandler"/> instance.
@@ -32,6 +37,7 @@ public ref struct NpgsqlInterpolatedStringHandler
         _builder = ArrayPool<string>.Shared.Rent(literalLength + formattedCount);
         _parameterCount = formattedCount;
         _parameters = formattedCount > 0 ? ArrayPool<NpgsqlParameter>.Shared.Rent(_parameterCount) : null;
+        _hashCode = HashCode.Combine(_parameterCount);
     }
 
     /// <summary>
@@ -42,6 +48,7 @@ public ref struct NpgsqlInterpolatedStringHandler
     {
         _builder[_builderIndex++] = value;
         _totalLength += value.Length;
+        _hashCode = HashCode.Combine(_hashCode, value);
     }
 
     /// <summary>
@@ -91,42 +98,44 @@ public ref struct NpgsqlInterpolatedStringHandler
 
     private readonly string GetCommandText()
     {
-        // TODO: Cache this based on literals & formattedCount
-
-        var commandText = string.Create(_totalLength, (_builder, _builderIndex, _parameters), static (span, data) =>
+        var commandText = _generatedQueries.GetOrAdd(_hashCode, (key, data) =>
         {
-            var (array, count, parameters) = data;
-
-            var index = 0;
-            var parameterIndex = 1;
-            var parameterMarker = _parameterMarker.AsSpan();
-            Span<char> parameterPlaceholder = stackalloc char[5]; // max of 99999 parameters
-
-            foreach (var item in array.AsSpan(0, count))
+            return string.Create(data._totalLength, data, static (span, data) =>
             {
-                if (item.AsSpan().SequenceEqual(parameterMarker))
-                {
-                    // Copy in the parameter marker
-                    span[index..][0] = parameterMarker[0];
-                    index++;
+                var (_, array, count, parameters) = data;
 
-                    // Copy in the parameter index
-                    if (!parameterIndex.TryFormat(parameterPlaceholder, out var charsWritten, default, CultureInfo.InvariantCulture))
+                var index = 0;
+                var parameterIndex = 1;
+                var parameterMarker = _parameterMarker.AsSpan();
+                Span<char> parameterPlaceholder = stackalloc char[5]; // max of 99999 parameters
+
+                foreach (var item in array.AsSpan(0, count))
+                {
+                    if (item.AsSpan().SequenceEqual(parameterMarker))
                     {
-                        throw new InvalidOperationException("Could not format parameter placeholder.");
-                    }
-                    parameterPlaceholder[..charsWritten].CopyTo(span[index..]);
-                    parameterIndex++;
-                    index += charsWritten;
-                }
-                else
-                {
-                    item.AsSpan().CopyTo(span[index..]);
+                        // Copy in the parameter marker
+                        span[index..][0] = parameterMarker[0];
+                        index++;
 
-                    index += item.Length;
+                        // Copy in the parameter index
+                        if (!parameterIndex.TryFormat(parameterPlaceholder, out var charsWritten, default, CultureInfo.InvariantCulture))
+                        {
+                            throw new InvalidOperationException("Could not format parameter placeholder.");
+                        }
+                        parameterPlaceholder[..charsWritten].CopyTo(span[index..]);
+                        parameterIndex++;
+                        index += charsWritten;
+                    }
+                    else
+                    {
+                        item.AsSpan().CopyTo(span[index..]);
+
+                        index += item.Length;
+                    }
                 }
-            }
-        });
+            });
+        }, (_totalLength, _builder, _builderIndex, _parameters));
+
         ArrayPool<string>.Shared.Return(_builder);
         return commandText;
     }
