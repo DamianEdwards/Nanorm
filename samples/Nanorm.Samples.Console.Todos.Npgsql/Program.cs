@@ -3,7 +3,7 @@ using Nanorm.Npgsql;
 using Npgsql;
 
 var connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING") ?? "Server=localhost;Port=5432;Username=postgres;Database=postgres";
-await using var db = new NpgsqlDataSourceBuilder(connectionString).Build();
+await using var db = NpgsqlDataSource.Create(connectionString);
 
 await EnsureDb(db);
 
@@ -108,7 +108,7 @@ async Task EnsureDb(NpgsqlDataSource db)
     {
         Console.WriteLine($"Ensuring database exists and is up to date at connection string '{connectionString}'");
 
-        var sql = $"""
+        const string sql = $"""
                   CREATE TABLE IF NOT EXISTS public.Todos
                   (
                       {nameof(Todo.Id)} SERIAL PRIMARY KEY,

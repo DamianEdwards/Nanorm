@@ -331,7 +331,7 @@ public static class NpgsqlDataSourceExtensions
 
         var cmd = dataSource.CreateCommand(commandText);
 
-        return QuerySinglAsync<T>(cmd, CancellationToken.None);
+        return QuerySingleAsync<T>(cmd, CancellationToken.None);
     }
 
     /// <summary>
@@ -348,7 +348,7 @@ public static class NpgsqlDataSourceExtensions
 
         var cmd = dataSource.CreateCommand(commandTextHandler);
 
-        return QuerySinglAsync<T>(cmd, CancellationToken.None);
+        return QuerySingleAsync<T>(cmd, CancellationToken.None);
     }
 
     /// <summary>
@@ -367,7 +367,7 @@ public static class NpgsqlDataSourceExtensions
 
         var cmd = dataSource.CreateCommand(commandText);
 
-        return QuerySinglAsync<T>(cmd, cancellationToken);
+        return QuerySingleAsync<T>(cmd, cancellationToken);
     }
 
     /// <summary>
@@ -385,7 +385,7 @@ public static class NpgsqlDataSourceExtensions
 
         var cmd = dataSource.CreateCommand(commandTextHandler);
 
-        return QuerySinglAsync<T>(cmd, cancellationToken);
+        return QuerySingleAsync<T>(cmd, cancellationToken);
     }
 
     /// <summary>
@@ -407,7 +407,7 @@ public static class NpgsqlDataSourceExtensions
 
         var cmd = dataSource.CreateCommand(commandText, parameters);
 
-        return QuerySinglAsync<T>(cmd, CancellationToken.None);
+        return QuerySingleAsync<T>(cmd, CancellationToken.None);
     }
 
     /// <summary>
@@ -430,7 +430,7 @@ public static class NpgsqlDataSourceExtensions
 
         var cmd = dataSource.CreateCommand(commandText, parameters);
 
-        return QuerySinglAsync<T>(cmd, cancellationToken);
+        return QuerySingleAsync<T>(cmd, cancellationToken);
     }
 
     /// <summary>
@@ -449,7 +449,7 @@ public static class NpgsqlDataSourceExtensions
 
         var cmd = dataSource.CreateCommand(commandText, configureParameters);
 
-        return QuerySinglAsync<T>(cmd, CancellationToken.None);
+        return QuerySingleAsync<T>(cmd, CancellationToken.None);
     }
 
     /// <summary>
@@ -469,15 +469,15 @@ public static class NpgsqlDataSourceExtensions
 
         var cmd = dataSource.CreateCommand(commandText, configureParameters);
 
-        return QuerySinglAsync<T>(cmd, cancellationToken);
+        return QuerySingleAsync<T>(cmd, cancellationToken);
     }
 
-    private static async Task<T?> QuerySinglAsync<T>(NpgsqlCommand command, CancellationToken cancellationToken)
+    private static async Task<T?> QuerySingleAsync<T>(NpgsqlCommand command, CancellationToken cancellationToken)
         where T : IDataReaderMapper<T>
     {
         await using (command)
         {
-            var reader = await command.QuerySingleAsync(cancellationToken);
+            await using var reader = await command.QuerySingleAsync(cancellationToken);
 
             return await reader.MapSingleAsync<T>(cancellationToken);
         }

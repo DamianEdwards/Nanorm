@@ -16,13 +16,13 @@ public ref struct NpgsqlInterpolatedStringHandler
     // !! This must be kept in sync with length of const string above !!
     private const int _parameterMarkerLength = 1;
 
-    private static readonly ConcurrentDictionary<int, string> _generatedQueries = new(Environment.ProcessorCount * 2, 10);
+    private static readonly ConcurrentDictionary<int, string> _generatedQueryCache = new(Environment.ProcessorCount * 2, 10);
 
-    private string[] _builder;
-    private int _builderIndex;
-    private readonly NpgsqlParameter[]? _parameters;
+    private readonly NpgsqlParameter[] _parameters;
     private readonly int _parameterCount;
+    private readonly string[] _builder;
     private int _parameterIndex;
+    private int _builderIndex;
     private int _totalLength;
     private int _hashCode;
 
@@ -36,7 +36,7 @@ public ref struct NpgsqlInterpolatedStringHandler
         // Total number of string fragments
         _builder = ArrayPool<string>.Shared.Rent(literalLength + formattedCount);
         _parameterCount = formattedCount;
-        _parameters = formattedCount > 0 ? ArrayPool<NpgsqlParameter>.Shared.Rent(_parameterCount) : null;
+        _parameters = formattedCount > 0 ? ArrayPool<NpgsqlParameter>.Shared.Rent(_parameterCount) : Array.Empty<NpgsqlParameter>();
         _hashCode = HashCode.Combine(_parameterCount);
     }
 
@@ -58,7 +58,7 @@ public ref struct NpgsqlInterpolatedStringHandler
     /// <param name="value">The value to append.</param>
     public void AppendFormatted<T>(T value)
     {
-        _parameters![_parameterIndex++] = new NpgsqlParameter<T> { Value = value };
+        _parameters[_parameterIndex++] = new NpgsqlParameter<T> { Value = value };
         _builder[_builderIndex++] = _parameterMarker;
 
         // Increase by length of parameter placeholder (marker char + count of digits in parameter index)
@@ -90,17 +90,17 @@ public ref struct NpgsqlInterpolatedStringHandler
         {
             for (int i = 0; i < _parameterCount; i++)
             {
-                command.Parameters.Add(_parameters![i]);
+                command.Parameters.Add(_parameters[i]);
             }
-            ArrayPool<NpgsqlParameter>.Shared.Return(_parameters!);
+            ArrayPool<NpgsqlParameter>.Shared.Return(_parameters);
         }
     }
 
     private readonly string GetCommandText()
     {
-        var commandText = _generatedQueries.GetOrAdd(_hashCode, static (key, data) =>
+        var commandText = _generatedQueryCache.GetOrAdd(_hashCode, static (key, getOrAddData) =>
         {
-            return string.Create(data._totalLength, data, static (span, data) =>
+            return string.Create(getOrAddData._totalLength, getOrAddData, static (span, data) =>
             {
                 var (_, array, count, parameters) = data;
 
