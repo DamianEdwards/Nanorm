@@ -1,16 +1,14 @@
 ﻿#if NET7_0_OR_GREATER
 using System.Data;
 using System.Runtime.CompilerServices;
-using System.Threading;
 using Nanorm.Npgsql;
-using Nanorm.Sqlite;
 
 namespace Npgsql;
 
 /// <summary>
 /// Extension methods for <see cref="NpgsqlDataSource"/> from the <c>Nanorm.Npgsql</c> package.
 /// </summary>
-public static class NpgsqlDataSourceExtensions
+public static partial class NpgsqlDataSourceExtensions
 {
     /// <summary>
     /// Executes a command that does not return any results.

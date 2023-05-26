@@ -9,6 +9,7 @@ BenchmarkRunner.Run<DbParametersVsStringInterpolation>();
 [MemoryDiagnoser]
 public class DbParametersVsStringInterpolation
 {
+    private readonly Todo _todo = new Todo { Title = "Wash the dishes" };
     private NpgsqlDataSource _dataSource = null!;
 
     [GlobalSetup]
@@ -30,24 +31,23 @@ public class DbParametersVsStringInterpolation
     [GlobalCleanup]
     public void GlobalCleanup()
     {
-        _dataSource?.Dispose();
+        const string sql = "DELETE FROM Todos";
+        _dataSource.ExecuteAsync(sql).GetAwaiter().GetResult();
+        _dataSource.Dispose();
     }
 
     [Benchmark(Baseline = true)]
     public async Task<Todo?> DbParameters()
     {
-        var todo = new Todo { Title = "Wash the dishes" };
-
-        await using var db = _dataSource.CreateConnection();
-        await db.OpenAsync();
-
-        var createdTodo = await db.QuerySingleAsync<Todo>($"""
+        const string sql = """
             INSERT INTO Todos(Title, IsComplete)
             Values($1, $2)
             RETURNING *
-            """,
-            todo.Title.AsTypedDbParameter(),
-            todo.IsComplete.AsTypedDbParameter());
+            """;
+        var createdTodo = await _dataSource.QuerySingleAsync<Todo>(
+            sql,
+            _todo.Title.AsTypedDbParameter(),
+            _todo.IsComplete.AsTypedDbParameter());
 
         return createdTodo;
     }
@@ -55,11 +55,9 @@ public class DbParametersVsStringInterpolation
     [Benchmark]
     public async Task<Todo?> StringInterpolation()
     {
-        var todo = new Todo { Title = "Wash the dishes" };
-
         var createdTodo = await _dataSource.QuerySingleAsync<Todo>($"""
             INSERT INTO Todos(Title, IsComplete)
-            Values({todo.Title}, {todo.IsComplete})
+            Values({_todo.Title}, {_todo.IsComplete})
             RETURNING *
             """);
 

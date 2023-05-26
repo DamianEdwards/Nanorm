@@ -4,7 +4,7 @@ using System.Globalization;
 using System.Runtime.CompilerServices;
 using Npgsql;
 
-namespace Nanorm.Sqlite;
+namespace Nanorm.Npgsql;
 
 /// <summary>
 /// Custom interpolated string handler for Npgsql queries.
