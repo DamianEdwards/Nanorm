@@ -573,10 +573,12 @@ public static class NpgsqlConnectionExtensions
         return await cmd.ExecuteReaderAsync(commandBehavior, cancellationToken);
     }
 
-    private static NpgsqlCommand CreateCommand(this NpgsqlConnection connection, string commandText, params NpgsqlParameter[] parameters) =>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    internal static NpgsqlCommand CreateCommand(this NpgsqlConnection connection, string commandText, params NpgsqlParameter[] parameters) =>
         connection.CreateCommand(commandText).AddParameters(parameters);
 
-    private static NpgsqlCommand CreateCommand(this NpgsqlConnection connection, string commandText, Action<NpgsqlParameterCollection>? configureParameters = null)
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    internal static NpgsqlCommand CreateCommand(this NpgsqlConnection connection, string commandText, Action<NpgsqlParameterCollection>? configureParameters = null)
     {
         var command = connection.CreateCommand();
 #pragma warning disable CA2100 // Review SQL queries for security vulnerabilities

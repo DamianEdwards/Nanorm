@@ -1,0 +1,100 @@
+﻿﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ output extension=".cs" #>
+<#
+    
+#>
+#if NET7_0_OR_GREATER
+using System.CodeDom.Compiler;
+using Nanorm.Npgsql;
+
+namespace Npgsql;
+
+/// <summary>
+/// Extension methods for <see cref="NpgsqlDataSource"/> from the <c>Nanorm.Npgsql</c> package.
+/// </summary>
+[GeneratedCode("TextTemplatingFileGenerator", "1.0.0.0")]
+public static partial class NpgsqlDataSourceExtensions
+{
+<# for (var i = 1; i <= 8; i++) { #>
+    /// <summary>
+    /// Executes a command maps the first row returned to an instance of <typeparamref name="T"/>.
+    /// </summary>
+    /// <typeparam name="T">The type the result is being map to.</typeparam>
+    /// <param name="dataSource">The <see cref="NpgsqlDataSource"/>.</param>
+    /// <param name="commandText">The SQL command text.</param>
+<#      for (var j = 1; j <= i; j++) { #>
+    /// <param name="param<#= j #>">
+    /// A parameter to use when executing the command text. Use the <see cref="NpgsqlParameterExtensions.AsTypedDbParameter{T}(T)"/>
+    /// method to convert values to <see cref="NpgsqlParameter{T}"/>, e.g. <c>myValue.AsTypedDbParameter()</c>.
+    /// </param>
+<#      } #>
+    /// <returns>A task representing the asynchronous operation with the mapped <typeparamref name="T"/>.</returns>
+    public static Task<T?> QuerySingleAsync<T>(
+        this NpgsqlDataSource dataSource,
+        string commandText,
+<#          for (var j = 1; j <= i; j++) {
+                var paramNum = j < i ? j.ToString() + ", " : j.ToString();
+#>
+        NpgsqlParameter param<#= paramNum #>
+<#          } #>
+        )
+        where T : IDataReaderMapper<T>
+    {
+        ArgumentNullException.ThrowIfNull(dataSource);
+        ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
+<#          for (var j = 1; j <= i; j++) { #>
+        ArgumentNullException.ThrowIfNull(param<#= j #>);
+<#          } #>
+
+        var cmd = dataSource.CreateCommand(commandText);
+<#          for (var j = 1; j <= i; j++) { #>
+        cmd.Parameters.Add(param<#= j #>);
+<#          } #>
+
+        return QuerySingleAsync<T>(cmd, CancellationToken.None);
+    }
+
+    /// <summary>
+    /// Executes a command maps the first row returned to an instance of <typeparamref name="T"/>.
+    /// </summary>
+    /// <typeparam name="T">The type the result is being map to.</typeparam>
+    /// <param name="dataSource">The <see cref="NpgsqlDataSource"/>.</param>
+    /// <param name="commandText">The SQL command text.</param>
+<#      for (var j = 1; j <= i; j++) { #>
+    /// <param name="param<#= j #>">
+    /// A parameter to use when executing the command text. Use the <see cref="NpgsqlParameterExtensions.AsTypedDbParameter{T}(T)"/>
+    /// method to convert values to <see cref="NpgsqlParameter{T}"/>, e.g. <c>myValue.AsTypedDbParameter()</c>.
+    /// </param>
+<#      } #>
+    /// <param name="cancellationToken">A token to cancel the asynchronous operation.</param>
+    /// <returns>A task representing the asynchronous operation with the mapped <typeparamref name="T"/>.</returns>
+    public static Task<T?> QuerySingleAsync<T>(
+        this NpgsqlDataSource dataSource,
+        string commandText,
+<#          for (var j = 1; j <= i; j++) { #>
+        NpgsqlParameter param<#= j #>,
+<#          } #>
+        CancellationToken cancellationToken
+        )
+        where T : IDataReaderMapper<T>
+    {
+        ArgumentNullException.ThrowIfNull(dataSource);
+        ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
+<#          for (var j = 1; j <= i; j++) { #>
+        ArgumentNullException.ThrowIfNull(param<#= j #>);
+<#          } #>
+
+        var cmd = dataSource.CreateCommand(commandText);
+<#          for (var j = 1; j <= i; j++) { #>
+        cmd.Parameters.Add(param<#= j #>);
+<#          } #>
+
+        return QuerySingleAsync<T>(cmd, cancellationToken);
+    }
+<# } #>
+}
+#endif

@@ -1,4 +1,6 @@
 ﻿using System.Data;
+using System.Reflection.Metadata;
+using System.Runtime.CompilerServices;
 
 namespace Npgsql;
 
@@ -100,13 +102,12 @@ public static class NpgsqlCommandExtensions
             return command;
         }
 
-        return command.Configure(parameterCollection =>
+        for (int i = 0; i < parameters.Length; i++)
         {
-            for (var i = 0; i < parameters.Length; i++)
-            {
-                parameterCollection.Add(parameters[i]);
-            }
-        });
+            command.Parameters.Add(parameters[i]);
+        }
+
+        return command;
     }
 
     /// <summary>
@@ -115,6 +116,7 @@ public static class NpgsqlCommandExtensions
     /// <param name="command">The command.</param>
     /// <param name="configureParameters">A delegate to configure the parameters.</param>
     /// <returns>The command.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static NpgsqlCommand Configure(this NpgsqlCommand command, Action<NpgsqlParameterCollection>? configureParameters = null)
     {
         ArgumentNullException.ThrowIfNull(command);
