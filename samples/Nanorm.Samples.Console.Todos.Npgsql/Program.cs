@@ -109,15 +109,15 @@ async Task EnsureDb(NpgsqlDataSource db)
         Console.WriteLine($"Ensuring database exists and is up to date at connection string '{connectionString}'");
 
         const string sql = $"""
-                  CREATE TABLE IF NOT EXISTS public.Todos
-                  (
-                      {nameof(Todo.Id)} SERIAL PRIMARY KEY,
-                      {nameof(Todo.Title)} text NOT NULL,
-                      {nameof(Todo.IsComplete)} boolean NOT NULL DEFAULT false
-                  );
+            CREATE TABLE IF NOT EXISTS public.Todos
+            (
+                {nameof(Todo.Id)} SERIAL PRIMARY KEY,
+                {nameof(Todo.Title)} text NOT NULL,
+                {nameof(Todo.IsComplete)} boolean NOT NULL DEFAULT false
+            );
 
-                  DELETE FROM Todos;
-                  """;
+            DELETE FROM Todos;
+            """;
         await db.ExecuteAsync(sql);
 
         Console.WriteLine();

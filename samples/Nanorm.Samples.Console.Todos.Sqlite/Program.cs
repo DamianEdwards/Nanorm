@@ -70,26 +70,23 @@ static async Task AddTodo(SqliteConnection db, string title)
 {
     var todo = new Todo { Title = title };
 
-    var createdTodo = await db.QuerySingleAsync<Todo>("""
+    var createdTodo = await db.QuerySingleAsync<Todo>($"""
         INSERT INTO Todos(Title, IsComplete)
-        Values(@Title, @IsComplete)
+        Values({todo.Title}, {todo.IsComplete})
         RETURNING *
-        """,
-        todo.Title.AsDbParameter(),
-        todo.IsComplete.AsDbParameter());
+        """);
     
     Console.WriteLine($"Added todo {createdTodo?.Id}");
 }
 
 static async Task MarkComplete(SqliteConnection db, string title)
 {
-    var result = await db.ExecuteAsync("""
+    var result = await db.ExecuteAsync($"""
         UPDATE Todos
         SET IsComplete = true
-        WHERE Title = @title
+        WHERE Title = {title}
           AND IsComplete = false
-        """,
-        title.AsDbParameter());
+        """);
     
     if (result == 0)
     {
@@ -111,13 +108,14 @@ async Task EnsureDb(SqliteConnection db)
     {
         Console.WriteLine($"Ensuring database exists and is up to date at connection string '{connectionString}'");
 
-        var sql = $"""
-                  CREATE TABLE IF NOT EXISTS Todos (
-                  {nameof(Todo.Id)} INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-                  {nameof(Todo.Title)} TEXT NOT NULL,
-                  {nameof(Todo.IsComplete)} INTEGER DEFAULT 0 NOT NULL CHECK({nameof(Todo.IsComplete)} IN (0, 1))
-                  );
-               """;
+        const string sql = $"""
+            CREATE TABLE IF NOT EXISTS Todos
+            (
+                {nameof(Todo.Id)} INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                {nameof(Todo.Title)} TEXT NOT NULL,
+                {nameof(Todo.IsComplete)} INTEGER DEFAULT 0 NOT NULL CHECK({nameof(Todo.IsComplete)} IN (0, 1))
+            );
+            """;
         await db.ExecuteAsync(sql);
 
         Console.WriteLine();
