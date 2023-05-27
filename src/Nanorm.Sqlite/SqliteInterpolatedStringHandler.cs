@@ -2,23 +2,24 @@
 using System.Collections.Concurrent;
 using System.Globalization;
 using System.Runtime.CompilerServices;
-using Npgsql;
+using Microsoft.Data.Sqlite;
 
-namespace Nanorm.Npgsql;
+namespace Nanorm.Sqlite;
 
 /// <summary>
-/// Custom interpolated string handler for Npgsql queries.
+/// Custom interpolated string handler for Sqlite queries.
 /// </summary>
 [InterpolatedStringHandler]
-public ref struct NpgsqlInterpolatedStringHandler
+public ref struct SqliteInterpolatedStringHandler
 {
     private const string _parameterMarker = "$";
     // !! This must be kept in sync with length of const string above !!
     private const int _parameterMarkerLength = 1;
 
+    private static readonly string[] _parameterNamesCache = Enumerable.Range(1, 9).Select(i => FormattableString.Invariant($"{_parameterMarker}{i}")).ToArray();
     private static readonly ConcurrentDictionary<int, string> _generatedQueryCache = new(Environment.ProcessorCount, 10);
 
-    private readonly NpgsqlParameter[] _parameters;
+    private readonly SqliteParameter[] _parameters;
     private readonly int _parameterCount;
     private readonly string[] _builder;
     private int _parameterIndex;
@@ -27,16 +28,16 @@ public ref struct NpgsqlInterpolatedStringHandler
     private int _hashCode;
 
     /// <summary>
-    /// Creates a new <see cref="NpgsqlInterpolatedStringHandler"/> instance.
+    /// Creates a new <see cref="SqliteInterpolatedStringHandler"/> instance.
     /// </summary>
     /// <param name="literalLength">The length of the interpolated string literal.</param>
     /// <param name="formattedCount">The count of formatted placeholders.</param>
-    public NpgsqlInterpolatedStringHandler(int literalLength, int formattedCount)
+    public SqliteInterpolatedStringHandler(int literalLength, int formattedCount)
     {
         // Total number of string fragments
         _builder = ArrayPool<string>.Shared.Rent(literalLength + formattedCount);
         _parameterCount = formattedCount;
-        _parameters = formattedCount > 0 ? ArrayPool<NpgsqlParameter>.Shared.Rent(_parameterCount) : Array.Empty<NpgsqlParameter>();
+        _parameters = formattedCount > 0 ? ArrayPool<SqliteParameter>.Shared.Rent(_parameterCount) : Array.Empty<SqliteParameter>();
         _hashCode = HashCode.Combine(_parameterCount);
     }
 
@@ -58,7 +59,9 @@ public ref struct NpgsqlInterpolatedStringHandler
     /// <param name="value">The value to append.</param>
     public void AppendFormatted<T>(T value)
     {
-        _parameters[_parameterIndex] = new NpgsqlParameter<T> { Value = value };
+        var parameterName = GetParameterName(_parameterIndex);
+
+        _parameters[_parameterIndex] = new SqliteParameter(parameterName, value);
         _builder[_builderIndex] = _parameterMarker;
 
         _parameterIndex++;
@@ -68,7 +71,7 @@ public ref struct NpgsqlInterpolatedStringHandler
         _totalLength += _parameterMarkerLength + (int)Math.Floor(Math.Log10(_parameterIndex) + 1);
     }
 
-    internal readonly NpgsqlCommand GetCommand(NpgsqlConnection connection)
+    internal readonly SqliteCommand GetCommand(SqliteConnection connection)
     {
         var command = connection.CreateCommand(GetCommandText());
 
@@ -76,18 +79,8 @@ public ref struct NpgsqlInterpolatedStringHandler
         return command;
     }
 
-#if NET7_0_OR_GREATER
-    internal readonly NpgsqlCommand GetCommand(NpgsqlDataSource npgsqlDataSource)
-    {
-        var command = npgsqlDataSource.CreateCommand(GetCommandText());
-
-        ApplyParameters(command);
-        return command;
-    }
-#endif
-
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private readonly void ApplyParameters(NpgsqlCommand command)
+    private readonly void ApplyParameters(SqliteCommand command)
     {
         if (_parameterCount > 0)
         {
@@ -95,7 +88,7 @@ public ref struct NpgsqlInterpolatedStringHandler
             {
                 command.Parameters.Add(_parameters[i]);
             }
-            ArrayPool<NpgsqlParameter>.Shared.Return(_parameters);
+            ArrayPool<SqliteParameter>.Shared.Return(_parameters);
         }
     }
 
@@ -110,7 +103,7 @@ public ref struct NpgsqlInterpolatedStringHandler
                 var index = 0;
                 var parameterIndex = 1;
                 var parameterMarker = _parameterMarker.AsSpan();
-                Span<char> parameterPlaceholder = stackalloc char[5]; // max of 99999 parameters
+                Span<char> parameterPlaceholder = stackalloc char[5]; // max of 99999 parameters, SQLite max is actually 32766 https://www.sqlite.org/limits.html#max_variable_number
 
                 foreach (var item in array.AsSpan(0, count))
                 {
@@ -140,5 +133,16 @@ public ref struct NpgsqlInterpolatedStringHandler
 
         ArrayPool<string>.Shared.Return(_builder);
         return commandText;
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static string GetParameterName(int _parameterIndex)
+    {
+        // Microsoft.Data.Sqlite doesn't support unnamed parameters so we have to generate a name: https://github.com/dotnet/efcore/issues/24480
+        var parameterName = _parameterIndex < _parameterNamesCache.Length
+            ? _parameterNamesCache[_parameterIndex]
+            // TODO: Optimize parameter name generation for names beyond initial cache
+            : _parameterMarker + (_parameterIndex + 1).ToString(CultureInfo.InvariantCulture);
+        return parameterName;
     }
 }

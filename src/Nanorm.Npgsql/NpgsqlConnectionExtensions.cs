@@ -1,6 +1,5 @@
 ﻿using System.Data;
 using System.Runtime.CompilerServices;
-using System.Threading;
 using Nanorm.Npgsql;
 
 namespace Npgsql;
@@ -574,17 +573,28 @@ public static class NpgsqlConnectionExtensions
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static NpgsqlCommand CreateCommand(this NpgsqlConnection connection, NpgsqlInterpolatedStringHandler commandTextHandler) =>
+        commandTextHandler.GetCommand(connection);
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     internal static NpgsqlCommand CreateCommand(this NpgsqlConnection connection, string commandText, params NpgsqlParameter[] parameters) =>
         connection.CreateCommand(commandText).AddParameters(parameters);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    internal static NpgsqlCommand CreateCommand(this NpgsqlConnection connection, string commandText, Action<NpgsqlParameterCollection>? configureParameters = null)
+    internal static NpgsqlCommand CreateCommand(this NpgsqlConnection connection, string commandText, Action<NpgsqlParameterCollection> configureParameters)
+    {
+        var command = connection.CreateCommand(commandText);
+        command.Configure(configureParameters);
+        return command;
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    internal static NpgsqlCommand CreateCommand(this NpgsqlConnection connection, string commandText)
     {
         var command = connection.CreateCommand();
 #pragma warning disable CA2100 // Review SQL queries for security vulnerabilities
         command.CommandText = commandText;
 #pragma warning restore CA2100 // Review SQL queries for security vulnerabilities
-        command.Configure(configureParameters);
         return command;
     }
 }

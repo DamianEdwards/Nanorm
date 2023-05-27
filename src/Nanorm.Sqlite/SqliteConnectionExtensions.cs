@@ -1,8 +1,6 @@
 ﻿using System.Data;
-#if NET7_0_OR_GREATER
 using System.Runtime.CompilerServices;
 using Nanorm.Sqlite;
-#endif
 
 namespace Microsoft.Data.Sqlite;
 
@@ -32,6 +30,21 @@ public static class SqliteConnectionExtensions
     /// Executes a command that does not return any results.
     /// </summary>
     /// <param name="connection">The <see cref="SqliteConnection"/>.</param>
+    /// <param name="commandTextHandler">The SQL command text.</param>
+    /// <returns>A task representing the asynchronous operation, with the number of rows affected if known; -1 otherwise.</returns>
+    public static Task<int> ExecuteAsync(this SqliteConnection connection, SqliteInterpolatedStringHandler commandTextHandler)
+    {
+        ArgumentNullException.ThrowIfNull(connection);
+
+        var command = connection.CreateCommand(commandTextHandler);
+
+        return ExecuteNonQueryAsync(connection, command, CancellationToken.None);
+    }
+
+    /// <summary>
+    /// Executes a command that does not return any results.
+    /// </summary>
+    /// <param name="connection">The <see cref="SqliteConnection"/>.</param>
     /// <param name="commandText">The SQL command text.</param>
     /// <param name="cancellationToken">A token to cancel the asynchronous operation.</param>
     /// <returns>A task representing the asynchronous operation, with the number of rows affected if known; -1 otherwise.</returns>
@@ -44,6 +57,22 @@ public static class SqliteConnectionExtensions
         await connection.OpenAsync(cancellationToken);
 
         return await cmd.ExecuteNonQueryAsync(cancellationToken);
+    }
+
+    /// <summary>
+    /// Executes a command that does not return any results.
+    /// </summary>
+    /// <param name="connection">The <see cref="SqliteConnection"/>.</param>
+    /// <param name="commandTextHandler">The SQL command text.</param>
+    /// <param name="cancellationToken">A token to cancel the asynchronous operation.</param>
+    /// <returns>A task representing the asynchronous operation, with the number of rows affected if known; -1 otherwise.</returns>
+    public static Task<int> ExecuteAsync(this SqliteConnection connection, SqliteInterpolatedStringHandler commandTextHandler, CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(connection);
+
+        var cmd = connection.CreateCommand(commandTextHandler);
+
+        return ExecuteNonQueryAsync(connection, cmd, cancellationToken);
     }
 
     /// <summary>
@@ -126,6 +155,15 @@ public static class SqliteConnectionExtensions
         return await cmd.ExecuteNonQueryAsync(cancellationToken);
     }
 
+    private static async Task<int> ExecuteNonQueryAsync(SqliteConnection connection, SqliteCommand command, CancellationToken cancellationToken)
+    {
+        await connection.OpenAsync(cancellationToken);
+        await using (command)
+        {
+            return await command.ExecuteNonQueryAsync(cancellationToken);
+        }
+    }
+
     /// <summary>
     /// Executes a command and returns the first column of the first row in the first returned result set.
     /// All other columns, rows, and result sets are ignored.
@@ -149,6 +187,22 @@ public static class SqliteConnectionExtensions
     /// All other columns, rows, and result sets are ignored.
     /// </summary>
     /// <param name="connection">The <see cref="SqliteConnection"/>.</param>
+    /// <param name="commandTextHandler">The SQL command text.</param>
+    /// <returns>A task representing the asynchronous operation with the value.</returns>
+    public static Task<object?> ExecuteScalarAsync(this SqliteConnection connection, SqliteInterpolatedStringHandler commandTextHandler)
+    {
+        ArgumentNullException.ThrowIfNull(connection);
+
+        var cmd = connection.CreateCommand(commandTextHandler);
+
+        return ExecuteScalarAsync(connection, cmd, CancellationToken.None);
+    }
+
+    /// <summary>
+    /// Executes a command and returns the first column of the first row in the first returned result set.
+    /// All other columns, rows, and result sets are ignored.
+    /// </summary>
+    /// <param name="connection">The <see cref="SqliteConnection"/>.</param>
     /// <param name="commandText">The SQL command text.</param>
     /// <param name="cancellationToken">A token to cancel the asynchronous operation.</param>
     /// <returns>A task representing the asynchronous operation with the value.</returns>
@@ -161,6 +215,32 @@ public static class SqliteConnectionExtensions
         await connection.OpenAsync(cancellationToken);
 
         return await cmd.ExecuteScalarAsync(cancellationToken);
+    }
+
+    /// <summary>
+    /// Executes a command and returns the first column of the first row in the first returned result set.
+    /// All other columns, rows, and result sets are ignored.
+    /// </summary>
+    /// <param name="connection">The <see cref="SqliteConnection"/>.</param>
+    /// <param name="commandTextHandler">The SQL command text.</param>
+    /// <param name="cancellationToken">A token to cancel the asynchronous operation.</param>
+    /// <returns>A task representing the asynchronous operation with the value.</returns>
+    public static Task<object?> ExecuteScalarAsync(this SqliteConnection connection, SqliteInterpolatedStringHandler commandTextHandler, CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(connection);
+
+        var cmd = connection.CreateCommand(commandTextHandler);
+
+        return ExecuteScalarAsync(connection, cmd, cancellationToken);
+    }
+
+    private static async Task<object?> ExecuteScalarAsync(SqliteConnection connection, SqliteCommand command, CancellationToken cancellationToken)
+    {
+        await connection.OpenAsync(cancellationToken);
+        await using (command)
+        {
+            return await command.ExecuteScalarAsync(cancellationToken);
+        }
     }
 
     /// <summary>
@@ -274,6 +354,23 @@ public static class SqliteConnectionExtensions
     /// </summary>
     /// <typeparam name="T">The type the result is being map to.</typeparam>
     /// <param name="connection">The <see cref="SqliteConnection"/>.</param>
+    /// <param name="commandTextHandler">The SQL command text.</param>
+    /// <returns>A task representing the asynchronous operation with the mapped <typeparamref name="T"/>.</returns>
+    public static Task<T?> QuerySingleAsync<T>(this SqliteConnection connection, SqliteInterpolatedStringHandler commandTextHandler)
+        where T : IDataReaderMapper<T>
+    {
+        ArgumentNullException.ThrowIfNull(connection);
+
+        var cmd = connection.CreateCommand(commandTextHandler);
+
+        return QuerySingleAsync<T>(connection, cmd, CancellationToken.None);
+    }
+
+    /// <summary>
+    /// Executes a command maps the first row returned to an instance of <typeparamref name="T"/>.
+    /// </summary>
+    /// <typeparam name="T">The type the result is being map to.</typeparam>
+    /// <param name="connection">The <see cref="SqliteConnection"/>.</param>
     /// <param name="commandText">The SQL command text.</param>
     /// <param name="cancellationToken">A token to cancel the asynchronous operation.</param>
     /// <returns>A task representing the asynchronous operation with the mapped <typeparamref name="T"/>.</returns>
@@ -289,6 +386,24 @@ public static class SqliteConnectionExtensions
         await using var reader = await cmd.QuerySingleAsync(cancellationToken);
 
         return await reader.MapSingleAsync<T>();
+    }
+
+    /// <summary>
+    /// Executes a command maps the first row returned to an instance of <typeparamref name="T"/>.
+    /// </summary>
+    /// <typeparam name="T">The type the result is being map to.</typeparam>
+    /// <param name="connection">The <see cref="SqliteConnection"/>.</param>
+    /// <param name="commandTextHandler">The SQL command text.</param>
+    /// <param name="cancellationToken">A token to cancel the asynchronous operation.</param>
+    /// <returns>A task representing the asynchronous operation with the mapped <typeparamref name="T"/>.</returns>
+    public static Task<T?> QuerySingleAsync<T>(this SqliteConnection connection, SqliteInterpolatedStringHandler commandTextHandler, CancellationToken cancellationToken)
+        where T : IDataReaderMapper<T>
+    {
+        ArgumentNullException.ThrowIfNull(connection);
+
+        var cmd = connection.CreateCommand(commandTextHandler);
+
+        return QuerySingleAsync<T>(connection, cmd, cancellationToken);
     }
 
     /// <summary>
@@ -387,6 +502,18 @@ public static class SqliteConnectionExtensions
         return await reader.MapSingleAsync<T>();
     }
 
+    private static async Task<T?> QuerySingleAsync<T>(SqliteConnection connection, SqliteCommand command, CancellationToken cancellationToken)
+        where T : IDataReaderMapper<T>
+    {
+        await connection.OpenAsync(cancellationToken);
+        await using (command)
+        {
+            await using var reader = await command.QuerySingleAsync(cancellationToken);
+
+            return await reader.MapSingleAsync<T>(cancellationToken);
+        }
+    }
+
     /// <summary>
     /// Executes a command and returns the rows mapped to instances of <typeparamref name="T"/>.
     /// </summary>
@@ -416,6 +543,23 @@ public static class SqliteConnectionExtensions
     /// </summary>
     /// <typeparam name="T">The type the result is being map to.</typeparam>
     /// <param name="connection">The <see cref="SqliteConnection"/>.</param>
+    /// <param name="commandTextHandler">The SQL command text.</param>
+    /// <returns>A task representing the asynchronous operation with the mapped <typeparamref name="T"/>s.</returns>
+    public static IAsyncEnumerable<T> QueryAsync<T>(this SqliteConnection connection, SqliteInterpolatedStringHandler commandTextHandler)
+        where T : IDataReaderMapper<T>
+    {
+        ArgumentNullException.ThrowIfNull(connection);
+
+        var cmd = connection.CreateCommand(commandTextHandler);
+
+        return QueryAsync<T>(connection, cmd, CancellationToken.None);
+    }
+
+    /// <summary>
+    /// Executes a command and returns the rows mapped to instances of <typeparamref name="T"/>.
+    /// </summary>
+    /// <typeparam name="T">The type the result is being map to.</typeparam>
+    /// <param name="connection">The <see cref="SqliteConnection"/>.</param>
     /// <param name="commandText">The SQL command text.</param>
     /// <param name="cancellationToken">A token to cancel the asynchronous operation.</param>
     /// <returns>A task representing the asynchronous operation with the mapped <typeparamref name="T"/>s.</returns>
@@ -433,6 +577,39 @@ public static class SqliteConnectionExtensions
         await foreach (var item in reader.MapAsync<T>())
         {
             yield return item;
+        }
+    }
+
+    /// <summary>
+    /// Executes a command and returns the rows mapped to instances of <typeparamref name="T"/>.
+    /// </summary>
+    /// <typeparam name="T">The type the result is being map to.</typeparam>
+    /// <param name="connection">The <see cref="SqliteConnection"/>.</param>
+    /// <param name="commandTextHandler">The SQL command text.</param>
+    /// <param name="cancellationToken">A token to cancel the asynchronous operation.</param>
+    /// <returns>A task representing the asynchronous operation with the mapped <typeparamref name="T"/>s.</returns>
+    public static IAsyncEnumerable<T> QueryAsync<T>(this SqliteConnection connection, SqliteInterpolatedStringHandler commandTextHandler, CancellationToken cancellationToken)
+        where T : IDataReaderMapper<T>
+    {
+        ArgumentNullException.ThrowIfNull(connection);
+
+        var cmd = connection.CreateCommand(commandTextHandler);
+
+        return QueryAsync<T>(connection, cmd, cancellationToken);
+    }
+
+    private static async IAsyncEnumerable<T> QueryAsync<T>(SqliteConnection connection, SqliteCommand command, [EnumeratorCancellation] CancellationToken cancellationToken)
+        where T : IDataReaderMapper<T>
+    {
+        await connection.OpenAsync(cancellationToken);
+        await using (command)
+        {
+            await using var reader = await command.QueryAsync(cancellationToken);
+
+            await foreach (var item in reader.MapAsync<T>())
+            {
+                yield return item;
+            }
         }
     }
 
@@ -629,16 +806,29 @@ public static class SqliteConnectionExtensions
         return await cmd.ExecuteReaderAsync(commandBehavior, cancellationToken);
     }
 
-    private static SqliteCommand CreateCommand(this SqliteConnection connection, string commandText, params SqliteParameter[] parameters) =>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static SqliteCommand CreateCommand(this SqliteConnection connection, SqliteInterpolatedStringHandler commandTextHandler) =>
+        commandTextHandler.GetCommand(connection);
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    internal static SqliteCommand CreateCommand(this SqliteConnection connection, string commandText, params SqliteParameter[] parameters) =>
         connection.CreateCommand(commandText).AddParameters(parameters);
 
-    private static SqliteCommand CreateCommand(this SqliteConnection connection, string commandText, Action<SqliteParameterCollection>? configureParameters = null)
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    internal static SqliteCommand CreateCommand(this SqliteConnection connection, string commandText, Action<SqliteParameterCollection>? configureParameters = null)
+    {
+        var command = connection.CreateCommand(commandText);
+        command.Configure(configureParameters);
+        return command;
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    internal static SqliteCommand CreateCommand(this SqliteConnection connection, string commandText)
     {
         var command = connection.CreateCommand();
 #pragma warning disable CA2100 // Review SQL queries for security vulnerabilities
         command.CommandText = commandText;
 #pragma warning restore CA2100 // Review SQL queries for security vulnerabilities
-        command.Configure(configureParameters);
         return command;
     }
 }

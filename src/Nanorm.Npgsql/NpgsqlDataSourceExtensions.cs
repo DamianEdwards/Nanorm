@@ -57,6 +57,7 @@ public static partial class NpgsqlDataSourceExtensions
 
         return ExecuteNonQueryAsync(cmd, cancellationToken);
     }
+
     /// <summary>
     /// Executes a command that does not return any results.
     /// </summary>
@@ -518,21 +519,7 @@ public static partial class NpgsqlDataSourceExtensions
 
         var cmd = dataSource.CreateCommand(commandTextHandler);
 
-        return QueryAsync<T>(cmd);
-    }
-
-    private static async IAsyncEnumerable<T> QueryAsync<T>(NpgsqlCommand command)
-        where T : IDataReaderMapper<T>
-    {
-        await using (command)
-        { 
-            await using var reader = await command.QueryAsync();
-
-            await foreach (var item in reader.MapAsync<T>())
-            {
-                yield return item;
-            }
-        }
+        return QueryAsync<T>(cmd, CancellationToken.None);
     }
 
     /// <summary>
@@ -556,6 +543,38 @@ public static partial class NpgsqlDataSourceExtensions
         await foreach (var item in reader.MapAsync<T>())
         {
             yield return item;
+        }
+    }
+
+    /// <summary>
+    /// Executes a command and returns the rows mapped to instances of <typeparamref name="T"/>.
+    /// </summary>
+    /// <typeparam name="T">The type the result is being map to.</typeparam>
+    /// <param name="dataSource">The <see cref="NpgsqlDataSource"/>.</param>
+    /// <param name="commandTextHandler">The SQL command text.</param>
+    /// <param name="cancellationToken">A token to cancel the asynchronous operation.</param>
+    /// <returns>A task representing the asynchronous operation with the mapped <typeparamref name="T"/>s.</returns>
+    public static IAsyncEnumerable<T> QueryAsync<T>(this NpgsqlDataSource dataSource, NpgsqlInterpolatedStringHandler commandTextHandler, CancellationToken cancellationToken)
+        where T : IDataReaderMapper<T>
+    {
+        ArgumentNullException.ThrowIfNull(dataSource);
+
+        var cmd = dataSource.CreateCommand(commandTextHandler);
+
+        return QueryAsync<T>(cmd, cancellationToken);
+    }
+
+    private static async IAsyncEnumerable<T> QueryAsync<T>(NpgsqlCommand command, [EnumeratorCancellation] CancellationToken cancellationToken)
+        where T : IDataReaderMapper<T>
+    {
+        await using (command)
+        {
+            await using var reader = await command.QueryAsync(cancellationToken);
+
+            await foreach (var item in reader.MapAsync<T>())
+            {
+                yield return item;
+            }
         }
     }
 
@@ -745,10 +764,8 @@ public static partial class NpgsqlDataSourceExtensions
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static NpgsqlCommand CreateCommand(this NpgsqlDataSource dataSource, NpgsqlInterpolatedStringHandler commandTextHandler)
-    {
-        return commandTextHandler.GetCommand(dataSource);
-    }
+    private static NpgsqlCommand CreateCommand(this NpgsqlDataSource dataSource, NpgsqlInterpolatedStringHandler commandTextHandler) =>
+        commandTextHandler.GetCommand(dataSource);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static NpgsqlCommand CreateCommand(this NpgsqlDataSource dataSource, string commandText, params NpgsqlParameter[] parameters) =>
