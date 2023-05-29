@@ -554,20 +554,15 @@ public static partial class NpgsqlDataSourceExtensions
     /// method to convert values to <see cref="NpgsqlParameter{T}"/>, e.g. <c>myValue.AsTypedDbParameter()</c>.
     /// </param>
     /// <returns>A task representing the asynchronous operation with the mapped <typeparamref name="T"/>s.</returns>
-    public static async IAsyncEnumerable<T> QueryAsync<T>(this NpgsqlDataSource dataSource, string commandText, params NpgsqlParameter[] parameters)
+    public static IAsyncEnumerable<T> QueryAsync<T>(this NpgsqlDataSource dataSource, string commandText, params NpgsqlParameter[] parameters)
         where T : IDataReaderMapper<T>
     {
         ArgumentNullException.ThrowIfNull(dataSource);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
-        await using var cmd = dataSource.CreateCommand(commandText, parameters);
+        var cmd = dataSource.CreateCommand(commandText, parameters);
 
-        await using var reader = await cmd.QueryAsync();
-
-        await foreach (var item in reader.MapAsync<T>())
-        {
-            yield return item;
-        }
+        return cmd.QueryAsyncImpl<T>(default);
     }
 
     /// <summary>
@@ -582,20 +577,15 @@ public static partial class NpgsqlDataSourceExtensions
     /// method to convert values to <see cref="NpgsqlParameter{T}"/>, e.g. <c>myValue.AsTypedDbParameter()</c>.
     /// </param>
     /// <returns>A task representing the asynchronous operation with the mapped <typeparamref name="T"/>s.</returns>
-    public static async IAsyncEnumerable<T> QueryAsync<T>(this NpgsqlDataSource dataSource, string commandText, [EnumeratorCancellation] CancellationToken cancellationToken, params NpgsqlParameter[] parameters)
+    public static IAsyncEnumerable<T> QueryAsync<T>(this NpgsqlDataSource dataSource, string commandText, CancellationToken cancellationToken, params NpgsqlParameter[] parameters)
         where T : IDataReaderMapper<T>
     {
         ArgumentNullException.ThrowIfNull(dataSource);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
-        await using var cmd = dataSource.CreateCommand(commandText, parameters);
+        var cmd = dataSource.CreateCommand(commandText, parameters);
 
-        await using var reader = await cmd.QueryAsync(cancellationToken);
-
-        await foreach (var item in reader.MapAsync<T>())
-        {
-            yield return item;
-        }
+        return cmd.QueryAsyncImpl<T>(cancellationToken);
     }
 
     /// <summary>
@@ -606,20 +596,15 @@ public static partial class NpgsqlDataSourceExtensions
     /// <param name="commandText">The SQL command text.</param>
     /// <param name="configureParameters">A delegate to configured the <see cref="NpgsqlParameterCollection"/> before the command is executed.</param>
     /// <returns>A task representing the asynchronous operation with the mapped <typeparamref name="T"/>s.</returns>
-    public static async IAsyncEnumerable<T> QueryAsync<T>(this NpgsqlDataSource dataSource, string commandText, Action<NpgsqlParameterCollection> configureParameters)
+    public static IAsyncEnumerable<T> QueryAsync<T>(this NpgsqlDataSource dataSource, string commandText, Action<NpgsqlParameterCollection> configureParameters)
         where T : IDataReaderMapper<T>
     {
         ArgumentNullException.ThrowIfNull(dataSource);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
-        await using var cmd = dataSource.CreateCommand(commandText, configureParameters);
+        var cmd = dataSource.CreateCommand(commandText, configureParameters);
 
-        await using var reader = await cmd.QueryAsync();
-
-        await foreach (var item in reader.MapAsync<T>())
-        {
-            yield return item;
-        }
+        return cmd.QueryAsyncImpl<T>(default);
     }
 
     /// <summary>
@@ -631,20 +616,15 @@ public static partial class NpgsqlDataSourceExtensions
     /// <param name="configureParameters">A delegate to configured the <see cref="NpgsqlParameterCollection"/> before the command is executed.</param>
     /// <param name="cancellationToken">A token to cancel the asynchronous operation.</param>
     /// <returns>A task representing the asynchronous operation with the mapped <typeparamref name="T"/>s.</returns>
-    public static async IAsyncEnumerable<T> QueryAsync<T>(this NpgsqlDataSource dataSource, string commandText, Action<NpgsqlParameterCollection> configureParameters, [EnumeratorCancellation] CancellationToken cancellationToken)
+    public static IAsyncEnumerable<T> QueryAsync<T>(this NpgsqlDataSource dataSource, string commandText, Action<NpgsqlParameterCollection> configureParameters, CancellationToken cancellationToken)
         where T : IDataReaderMapper<T>
     {
         ArgumentNullException.ThrowIfNull(dataSource);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
-        await using var cmd = dataSource.CreateCommand(commandText, configureParameters);
+        var cmd = dataSource.CreateCommand(commandText, configureParameters);
 
-        await using var reader = await cmd.QueryAsync(cancellationToken);
-
-        await foreach (var item in reader.MapAsync<T>())
-        {
-            yield return item;
-        }
+        return cmd.QueryAsyncImpl<T>(cancellationToken);
     }
 #endif
 

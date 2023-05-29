@@ -1,6 +1,5 @@
 ﻿using System.Data;
 using System.Runtime.CompilerServices;
-using System.Threading;
 using Nanorm.Npgsql;
 
 namespace Npgsql;
@@ -77,6 +76,7 @@ public static class NpgsqlConnectionExtensions
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
         await using var cmd = connection.CreateCommand(commandText, parameters);
+        await connection.OpenAsync(cancellationToken);
 
         return await cmd.ExecuteNonQueryAsync(cancellationToken);
     }
@@ -94,6 +94,7 @@ public static class NpgsqlConnectionExtensions
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
         await using var cmd = connection.CreateCommand(commandText, configureParameters);
+        await connection.OpenAsync();
 
         return await cmd.ExecuteNonQueryAsync();
     }
@@ -112,6 +113,7 @@ public static class NpgsqlConnectionExtensions
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
         await using var cmd = connection.CreateCommand(commandText, configureParameters);
+        await connection.OpenAsync(cancellationToken);
 
         return await cmd.ExecuteNonQueryAsync(cancellationToken);
     }
@@ -129,6 +131,7 @@ public static class NpgsqlConnectionExtensions
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
         await using var cmd = connection.CreateCommand(commandText);
+        await connection.OpenAsync();
 
         return await cmd.ExecuteScalarAsync();
     }
@@ -147,6 +150,7 @@ public static class NpgsqlConnectionExtensions
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
         await using var cmd = connection.CreateCommand(commandText);
+        await connection.OpenAsync(cancellationToken);
 
         return await cmd.ExecuteScalarAsync(cancellationToken);
     }
@@ -165,6 +169,7 @@ public static class NpgsqlConnectionExtensions
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
         await using var cmd = connection.CreateCommand(commandText, parameters);
+        await connection.OpenAsync();
 
         return await cmd.ExecuteScalarAsync();
     }
@@ -184,6 +189,7 @@ public static class NpgsqlConnectionExtensions
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
         await using var cmd = connection.CreateCommand(commandText, parameters);
+        await connection.OpenAsync(cancellationToken);
 
         return await cmd.ExecuteScalarAsync(cancellationToken);
     }
@@ -202,6 +208,7 @@ public static class NpgsqlConnectionExtensions
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
         await using var cmd = connection.CreateCommand(commandText, configureParameters);
+        await connection.OpenAsync();
 
         return await cmd.ExecuteScalarAsync();
     }
@@ -221,6 +228,7 @@ public static class NpgsqlConnectionExtensions
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
         await using var cmd = connection.CreateCommand(commandText, configureParameters);
+        await connection.OpenAsync(cancellationToken);
 
         return await cmd.ExecuteScalarAsync(cancellationToken);
     }
@@ -471,6 +479,7 @@ public static class NpgsqlConnectionExtensions
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
         await using var cmd = connection.CreateCommand(commandText, parameters);
+        await connection.OpenAsync();
 
         return await cmd.ExecuteReaderAsync(commandBehavior);
     }
@@ -490,6 +499,7 @@ public static class NpgsqlConnectionExtensions
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
         await using var cmd = connection.CreateCommand(commandText, parameters);
+        await connection.OpenAsync();
 
         return await cmd.ExecuteReaderAsync(commandBehavior, cancellationToken);
     }
@@ -508,6 +518,7 @@ public static class NpgsqlConnectionExtensions
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
         await using var cmd = connection.CreateCommand(commandText, configureParameters);
+        await connection.OpenAsync();
 
         return await cmd.ExecuteReaderAsync(commandBehavior);
     }

@@ -1,6 +1,4 @@
-﻿#if NET7_0_OR_GREATER
-using System.Runtime.CompilerServices;
-#endif
+﻿using System.Runtime.CompilerServices;
 using Nanorm;
 
 namespace System.Data.Common;
@@ -254,18 +252,15 @@ public static class DbConnectionExtensions
     /// <param name="connection">The <see cref="DbConnection"/>.</param>
     /// <param name="commandText">The SQL command text.</param>
     /// <returns>A task representing the asynchronous operation with the mapped <typeparamref name="T"/>.</returns>
-    public static async Task<T?> QuerySingleAsync<T>(this DbConnection connection, string commandText)
+    public static Task<T?> QuerySingleAsync<T>(this DbConnection connection, string commandText)
         where T : IDataReaderMapper<T>
     {
         ArgumentNullException.ThrowIfNull(connection);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
-        await using var cmd = connection.CreateCommand(commandText);
-        await connection.OpenAsync();
+        var cmd = connection.CreateCommand(commandText);
 
-        await using var reader = await cmd.QuerySingleAsync();
-
-        return await reader.MapSingleAsync<T>();
+        return cmd.QuerySingleAsyncImpl<T>(connection, default);
     }
 
     /// <summary>
@@ -276,18 +271,15 @@ public static class DbConnectionExtensions
     /// <param name="commandText">The SQL command text.</param>
     /// <param name="cancellationToken">A token to cancel the asynchronous operation.</param>
     /// <returns>A task representing the asynchronous operation with the mapped <typeparamref name="T"/>.</returns>
-    public static async Task<T?> QuerySingleAsync<T>(this DbConnection connection, string commandText, CancellationToken cancellationToken)
+    public static Task<T?> QuerySingleAsync<T>(this DbConnection connection, string commandText, CancellationToken cancellationToken)
         where T : IDataReaderMapper<T>
     {
         ArgumentNullException.ThrowIfNull(connection);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
-        await using var cmd = connection.CreateCommand(commandText);
-        await connection.OpenAsync(cancellationToken);
+        var cmd = connection.CreateCommand(commandText);
 
-        await using var reader = await cmd.QuerySingleAsync(cancellationToken);
-
-        return await reader.MapSingleAsync<T>();
+        return cmd.QuerySingleAsyncImpl<T>(connection, cancellationToken);
     }
 
     /// <summary>
@@ -301,18 +293,15 @@ public static class DbConnectionExtensions
     /// method to convert values into <see cref="DbPlaceholderParameter"/> instances, e.g. <c>myValue.AsDbParameter()</c>.
     /// </param>
     /// <returns>A task representing the asynchronous operation with the mapped <typeparamref name="T"/>.</returns>
-    public static async Task<T?> QuerySingleAsync<T>(this DbConnection connection, string commandText, params DbPlaceholderParameter[] parameters)
+    public static Task<T?> QuerySingleAsync<T>(this DbConnection connection, string commandText, params DbPlaceholderParameter[] parameters)
         where T : IDataReaderMapper<T>
     {
         ArgumentNullException.ThrowIfNull(connection);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
-        await using var cmd = connection.CreateCommand(commandText, parameters);
-        await connection.OpenAsync();
+        var cmd = connection.CreateCommand(commandText, parameters);
 
-        await using var reader = await cmd.QuerySingleAsync();
-
-        return await reader.MapSingleAsync<T>();
+        return cmd.QuerySingleAsyncImpl<T>(connection, default);
     }
 
     /// <summary>
@@ -327,18 +316,15 @@ public static class DbConnectionExtensions
     /// method to convert values into <see cref="DbPlaceholderParameter"/> instances, e.g. <c>myValue.AsDbParameter()</c>.
     /// </param>
     /// <returns>A task representing the asynchronous operation with the mapped <typeparamref name="T"/>.</returns>
-    public static async Task<T?> QuerySingleAsync<T>(this DbConnection connection, string commandText, CancellationToken cancellationToken, params DbPlaceholderParameter[] parameters)
+    public static Task<T?> QuerySingleAsync<T>(this DbConnection connection, string commandText, CancellationToken cancellationToken, params DbPlaceholderParameter[] parameters)
         where T : IDataReaderMapper<T>
     {
         ArgumentNullException.ThrowIfNull(connection);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
-        await using var cmd = connection.CreateCommand(commandText, parameters);
-        await connection.OpenAsync(cancellationToken);
+        var cmd = connection.CreateCommand(commandText, parameters);
 
-        await using var reader = await cmd.QuerySingleAsync(cancellationToken);
-
-        return await reader.MapSingleAsync<T>();
+        return cmd.QuerySingleAsyncImpl<T>(connection, cancellationToken);
     }
 
     /// <summary>
@@ -349,18 +335,15 @@ public static class DbConnectionExtensions
     /// <param name="commandText">The SQL command text.</param>
     /// <param name="configureParameters">A delegate to configured the <see cref="DbParameterCollection"/> before the command is executed.</param>
     /// <returns>A task representing the asynchronous operation with the mapped <typeparamref name="T"/>.</returns>
-    public static async Task<T?> QuerySingleAsync<T>(this DbConnection connection, string commandText, Action<DbParameterCollection> configureParameters)
+    public static Task<T?> QuerySingleAsync<T>(this DbConnection connection, string commandText, Action<DbParameterCollection> configureParameters)
         where T : IDataReaderMapper<T>
     {
         ArgumentNullException.ThrowIfNull(connection);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
-        await using var cmd = connection.CreateCommand(commandText, configureParameters);
-        await connection.OpenAsync();
+        var cmd = connection.CreateCommand(commandText, configureParameters);
 
-        await using var reader = await cmd.QuerySingleAsync();
-
-        return await reader.MapSingleAsync<T>();
+        return cmd.QuerySingleAsyncImpl<T>(connection, default);
     }
 
     /// <summary>
@@ -372,18 +355,15 @@ public static class DbConnectionExtensions
     /// <param name="configureParameters">A delegate to configured the <see cref="DbParameterCollection"/> before the command is executed.</param>
     /// <param name="cancellationToken">A token to cancel the asynchronous operation.</param>
     /// <returns>A task representing the asynchronous operation with the mapped <typeparamref name="T"/>.</returns>
-    public static async Task<T?> QuerySingleAsync<T>(this DbConnection connection, string commandText, Action<DbParameterCollection> configureParameters, CancellationToken cancellationToken)
+    public static Task<T?> QuerySingleAsync<T>(this DbConnection connection, string commandText, Action<DbParameterCollection> configureParameters, CancellationToken cancellationToken)
         where T : IDataReaderMapper<T>
     {
         ArgumentNullException.ThrowIfNull(connection);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
-        await using var cmd = connection.CreateCommand(commandText, configureParameters);
-        await connection.OpenAsync(cancellationToken);
+        var cmd = connection.CreateCommand(commandText, configureParameters);
 
-        await using var reader = await cmd.QuerySingleAsync(cancellationToken);
-
-        return await reader.MapSingleAsync<T>();
+        return cmd.QuerySingleAsyncImpl<T>(connection, cancellationToken);
     }
 
     /// <summary>
@@ -393,21 +373,15 @@ public static class DbConnectionExtensions
     /// <param name="connection">The <see cref="DbConnection"/>.</param>
     /// <param name="commandText">The SQL command text.</param>
     /// <returns>A task representing the asynchronous operation with the mapped <typeparamref name="T"/>s.</returns>
-    public static async IAsyncEnumerable<T> QueryAsync<T>(this DbConnection connection, string commandText)
+    public static IAsyncEnumerable<T> QueryAsync<T>(this DbConnection connection, string commandText)
         where T : IDataReaderMapper<T>
     {
         ArgumentNullException.ThrowIfNull(connection);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
-        await using var cmd = connection.CreateCommand(commandText);
-        await connection.OpenAsync();
+        var cmd = connection.CreateCommand(commandText);
 
-        await using var reader = await cmd.QueryAsync();
-
-        await foreach (var item in reader.MapAsync<T>())
-        {
-            yield return item;
-        }
+        return cmd.QueryAsyncImpl<T>(connection, default);
     }
 
     /// <summary>
@@ -418,21 +392,15 @@ public static class DbConnectionExtensions
     /// <param name="commandText">The SQL command text.</param>
     /// <param name="cancellationToken">A token to cancel the asynchronous operation.</param>
     /// <returns>A task representing the asynchronous operation with the mapped <typeparamref name="T"/>s.</returns>
-    public static async IAsyncEnumerable<T> QueryAsync<T>(this DbConnection connection, string commandText, [EnumeratorCancellation] CancellationToken cancellationToken)
+    public static IAsyncEnumerable<T> QueryAsync<T>(this DbConnection connection, string commandText, CancellationToken cancellationToken)
         where T : IDataReaderMapper<T>
     {
         ArgumentNullException.ThrowIfNull(connection);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
-        await using var cmd = connection.CreateCommand(commandText);
-        await connection.OpenAsync(cancellationToken);
+        var cmd = connection.CreateCommand(commandText);
 
-        await using var reader = await cmd.QueryAsync(cancellationToken);
-
-        await foreach (var item in reader.MapAsync<T>())
-        {
-            yield return item;
-        }
+        return cmd.QueryAsyncImpl<T>(connection, cancellationToken);
     }
 
     /// <summary>
@@ -446,21 +414,15 @@ public static class DbConnectionExtensions
     /// method to convert values into <see cref="DbPlaceholderParameter"/> instances, e.g. <c>myValue.AsDbParameter()</c>.
     /// </param>
     /// <returns>A task representing the asynchronous operation with the mapped <typeparamref name="T"/>s.</returns>
-    public static async IAsyncEnumerable<T> QueryAsync<T>(this DbConnection connection, string commandText, params DbPlaceholderParameter[] parameters)
+    public static IAsyncEnumerable<T> QueryAsync<T>(this DbConnection connection, string commandText, params DbPlaceholderParameter[] parameters)
         where T : IDataReaderMapper<T>
     {
         ArgumentNullException.ThrowIfNull(connection);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
-        await using var cmd = connection.CreateCommand(commandText, parameters);
-        await connection.OpenAsync();
+        var cmd = connection.CreateCommand(commandText, parameters);
 
-        await using var reader = await cmd.QueryAsync();
-
-        await foreach (var item in reader.MapAsync<T>())
-        {
-            yield return item;
-        }
+        return cmd.QueryAsyncImpl<T>(connection, default);
     }
 
     /// <summary>
@@ -475,21 +437,15 @@ public static class DbConnectionExtensions
     /// method to convert values into <see cref="DbPlaceholderParameter"/> instances, e.g. <c>myValue.AsDbParameter()</c>.
     /// </param>
     /// <returns>A task representing the asynchronous operation with the mapped <typeparamref name="T"/>s.</returns>
-    public static async IAsyncEnumerable<T> QueryAsync<T>(this DbConnection connection, string commandText, [EnumeratorCancellation] CancellationToken cancellationToken, params DbPlaceholderParameter[] parameters)
+    public static IAsyncEnumerable<T> QueryAsync<T>(this DbConnection connection, string commandText, CancellationToken cancellationToken, params DbPlaceholderParameter[] parameters)
         where T : IDataReaderMapper<T>
     {
         ArgumentNullException.ThrowIfNull(connection);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
-        await using var cmd = connection.CreateCommand(commandText, parameters);
-        await connection.OpenAsync(cancellationToken);
+        var cmd = connection.CreateCommand(commandText, parameters);
 
-        await using var reader = await cmd.QueryAsync(cancellationToken);
-
-        await foreach (var item in reader.MapAsync<T>())
-        {
-            yield return item;
-        }
+        return cmd.QueryAsyncImpl<T>(connection, cancellationToken);
     }
 
     /// <summary>
@@ -500,21 +456,15 @@ public static class DbConnectionExtensions
     /// <param name="commandText">The SQL command text.</param>
     /// <param name="configureParameters">A delegate to configured the <see cref="DbParameterCollection"/> before the command is executed.</param>
     /// <returns>A task representing the asynchronous operation with the mapped <typeparamref name="T"/>s.</returns>
-    public static async IAsyncEnumerable<T> QueryAsync<T>(this DbConnection connection, string commandText, Action<DbParameterCollection> configureParameters)
+    public static IAsyncEnumerable<T> QueryAsync<T>(this DbConnection connection, string commandText, Action<DbParameterCollection> configureParameters)
         where T : IDataReaderMapper<T>
     {
         ArgumentNullException.ThrowIfNull(connection);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
-        await using var cmd = connection.CreateCommand(commandText, configureParameters);
-        await connection.OpenAsync();
+        var cmd = connection.CreateCommand(commandText, configureParameters);
 
-        await using var reader = await cmd.QueryAsync();
-
-        await foreach (var item in reader.MapAsync<T>())
-        {
-            yield return item;
-        }
+        return cmd.QueryAsyncImpl<T>(connection, default);
     }
 
     /// <summary>
@@ -526,21 +476,15 @@ public static class DbConnectionExtensions
     /// <param name="configureParameters">A delegate to configured the <see cref="DbParameterCollection"/> before the command is executed.</param>
     /// <param name="cancellationToken">A token to cancel the asynchronous operation.</param>
     /// <returns>A task representing the asynchronous operation with the mapped <typeparamref name="T"/>s.</returns>
-    public static async IAsyncEnumerable<T> QueryAsync<T>(this DbConnection connection, string commandText, Action<DbParameterCollection> configureParameters, [EnumeratorCancellation] CancellationToken cancellationToken)
+    public static IAsyncEnumerable<T> QueryAsync<T>(this DbConnection connection, string commandText, Action<DbParameterCollection> configureParameters, CancellationToken cancellationToken)
         where T : IDataReaderMapper<T>
     {
         ArgumentNullException.ThrowIfNull(connection);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
-        await using var cmd = connection.CreateCommand(commandText, configureParameters);
-        await connection.OpenAsync(cancellationToken);
+        var cmd = connection.CreateCommand(commandText, configureParameters);
 
-        await using var reader = await cmd.QueryAsync(cancellationToken);
-
-        await foreach (var item in reader.MapAsync<T>())
-        {
-            yield return item;
-        }
+        return cmd.QueryAsyncImpl<T>(connection, cancellationToken);
     }
 #endif
 
@@ -628,9 +572,25 @@ public static class DbConnectionExtensions
         return await cmd.ExecuteReaderAsync(commandBehavior, cancellationToken);
     }
 
-    private static DbCommand CreateCommand(this DbConnection connection, string commandText, params DbPlaceholderParameter[] parameters) =>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    internal static DbCommand CreateCommand(this DbConnection connection, string commandText, params DbPlaceholderParameter[] parameters) =>
         connection.CreateCommand(commandText).AddParameters(parameters);
 
-    private static DbCommand CreateCommand(this DbConnection connection, string commandText, Action<DbParameterCollection>? configureParameters = null) =>
-        connection.CreateCommand(commandText).Configure(configureParameters);
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    internal static DbCommand CreateCommand(this DbConnection connection, string commandText, Action<DbParameterCollection> configureParameters)
+    {
+        var command = connection.CreateCommand(commandText);
+        command.Configure(configureParameters);
+        return command;
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    internal static DbCommand CreateCommand(this DbConnection connection, string commandText)
+    {
+        var command = connection.CreateCommand();
+#pragma warning disable CA2100 // Review SQL queries for security vulnerabilities
+        command.CommandText = commandText;
+#pragma warning restore CA2100 // Review SQL queries for security vulnerabilities
+        return command;
+    }
 }

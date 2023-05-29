@@ -1,4 +1,5 @@
-﻿using Nanorm;
+﻿using System.Runtime.CompilerServices;
+using Nanorm;
 
 namespace System.Data.Common;
 
@@ -17,7 +18,7 @@ public static class DbCommandExtensions
     {
         ArgumentNullException.ThrowIfNull(command);
 
-        return QueryAsync(command, CommandBehavior.SingleResult | CommandBehavior.SingleRow);
+        return command.ExecuteReaderAsync(CommandBehavior.SingleResult | CommandBehavior.SingleRow);
     }
 
     /// <summary>
@@ -30,7 +31,8 @@ public static class DbCommandExtensions
     public static Task<DbDataReader> QuerySingleAsync(this DbCommand command, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(command);
-        return QueryAsync(command, CommandBehavior.SingleResult | CommandBehavior.SingleRow, cancellationToken);
+
+        return command.ExecuteReaderAsync(CommandBehavior.SingleResult | CommandBehavior.SingleRow, cancellationToken);
     }
 
     /// <summary>
@@ -42,7 +44,7 @@ public static class DbCommandExtensions
     {
         ArgumentNullException.ThrowIfNull(command);
 
-        return QueryAsync(command, CommandBehavior.Default);
+        return command.ExecuteReaderAsync();
     }
 
     /// <summary>
@@ -55,7 +57,7 @@ public static class DbCommandExtensions
     {
         ArgumentNullException.ThrowIfNull(command);
 
-        return QueryAsync(command, CommandBehavior.Default, cancellationToken);
+        return command.ExecuteReaderAsync(cancellationToken);
     }
 
     /// <summary>
@@ -103,16 +105,15 @@ public static class DbCommandExtensions
             return command;
         }
 
-        return command.Configure(parameterCollection =>
+        for (var i = 0; i < parameters.Length; i++)
         {
-            for (var i = 0; i < parameters.Length; i++)
-            {
-                var dbParameter = command.CreateParameter();
-                dbParameter.ParameterName = parameters[i].Name;
-                dbParameter.Value = parameters[i].Value;
-                parameterCollection.Add(dbParameter);
-            }
-        });
+            var dbParameter = command.CreateParameter();
+            dbParameter.ParameterName = parameters[i].Name;
+            dbParameter.Value = parameters[i].Value;
+            command.Parameters.Add(dbParameter);
+        }
+
+        return command;
     }
 
     /// <summary>
@@ -132,4 +133,54 @@ public static class DbCommandExtensions
 
         return command;
     }
+
+#if NET7_0_OR_GREATER
+    internal static async Task<T?> QuerySingleAsyncImpl<T>(this DbCommand command, DbConnection connection, CancellationToken cancellationToken)
+        where T : IDataReaderMapper<T>
+    {
+        await connection.OpenAsync(cancellationToken);
+        return await command.QuerySingleAsyncImpl<T>(cancellationToken);
+    }
+
+    internal static async Task<T?> QuerySingleAsyncImpl<T>(this DbCommand command, CancellationToken cancellationToken)
+        where T : IDataReaderMapper<T>
+    {
+        await using (command)
+        {
+            await using var reader = await command.ExecuteReaderAsync(CommandBehavior.SingleResult | CommandBehavior.SingleRow, cancellationToken);
+
+            return await reader.MapSingleAsyncImpl<T>(cancellationToken);
+        }
+    }
+
+    internal static async IAsyncEnumerable<T> QueryAsyncImpl<T>(this DbCommand command, DbConnection connection, [EnumeratorCancellation] CancellationToken cancellationToken)
+        where T : IDataReaderMapper<T>
+    {
+        await connection.OpenAsync(cancellationToken);
+        await using (command)
+        {
+            await using var reader = await command.ExecuteReaderAsync(cancellationToken);
+
+            await foreach (var item in reader.MapAsyncImpl<T>(cancellationToken))
+            {
+                yield return item;
+            }
+        }
+    }
+
+    internal static async IAsyncEnumerable<T> QueryAsyncImpl<T>(this DbCommand command, [EnumeratorCancellation] CancellationToken cancellationToken)
+        where T : IDataReaderMapper<T>
+    {
+        await using (command)
+        {
+            await using var reader = await command.ExecuteReaderAsync(cancellationToken);
+
+            await foreach (var item in reader.MapAsyncImpl<T>(cancellationToken))
+            {
+                yield return item;
+            }
+        }
+    }
+#endif
+
 }
