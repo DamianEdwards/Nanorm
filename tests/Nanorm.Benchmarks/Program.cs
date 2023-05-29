@@ -3,13 +3,14 @@ using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Running;
 using Nanorm.Npgsql;
 using Npgsql;
+using Dapper;
 
-BenchmarkRunner.Run<DbParametersVsStringInterpolation>();
+BenchmarkRunner.Run<NanormBenchmarks>();
 
 [MemoryDiagnoser]
-public class DbParametersVsStringInterpolation
+public class NanormBenchmarks
 {
-    private readonly Todo _todo = new Todo { Title = "Wash the dishes" };
+    private readonly Todo _todo = new() { Title = "Wash the dishes" };
     private NpgsqlDataSource _dataSource = null!;
 
     [GlobalSetup]
@@ -37,7 +38,22 @@ public class DbParametersVsStringInterpolation
     }
 
     [Benchmark(Baseline = true)]
-    public async Task<Todo?> DbParameters()
+    public async Task<Todo> Dapper()
+    {
+        const string sql = """
+            INSERT INTO Todos(Title, IsComplete)
+            Values(@Title, @IsComplete)
+            RETURNING *
+            """;
+        await using var connection = _dataSource.CreateConnection();
+        IDbConnection dbConnection = connection;
+        var createdTodo = await dbConnection.QuerySingleAsync<Todo>(sql, _todo);
+
+        return createdTodo;
+    }
+
+    [Benchmark]
+    public async Task<Todo?> NanormDbParameters()
     {
         const string sql = """
             INSERT INTO Todos(Title, IsComplete)
@@ -53,7 +69,7 @@ public class DbParametersVsStringInterpolation
     }
 
     [Benchmark]
-    public async Task<Todo?> StringInterpolation()
+    public async Task<Todo?> NanormStringInterpolation()
     {
         var createdTodo = await _dataSource.QuerySingleAsync<Todo>($"""
             INSERT INTO Todos(Title, IsComplete)
