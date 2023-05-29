@@ -32,7 +32,7 @@ public class NanormBenchmarks
     [GlobalCleanup]
     public void GlobalCleanup()
     {
-        const string sql = "DELETE FROM Todos";
+        const string sql = "DROP TABLE IF EXISTS public.Todos;";
         _dataSource.ExecuteAsync(sql).GetAwaiter().GetResult();
         _dataSource.Dispose();
     }

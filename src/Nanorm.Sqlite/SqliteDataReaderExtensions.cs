@@ -19,7 +19,11 @@ public static class SqliteDataReaderExtensions
     /// <returns>An instance of <typeparamref name="T"/> if the reader contains rows, otherwise <c>default(<typeparamref name="T"/>)</c>.</returns>
     public static Task<T?> MapSingleAsync<T>(this SqliteDataReader reader)
         where T : IDataReaderMapper<T>
-        => MapSingleAsync(reader, T.Map);
+    {
+        ArgumentNullException.ThrowIfNull(reader);
+
+        return reader.MapSingleAsyncImpl<T>(default);
+    }
 
     /// <summary>
     /// Maps a single row from the reader to a new instance of <typeparamref name="T"/>.
@@ -30,7 +34,11 @@ public static class SqliteDataReaderExtensions
     /// <returns>An instance of <typeparamref name="T"/> if the reader contains rows, otherwise <c>default(<typeparamref name="T"/>)</c>.</returns>
     public static Task<T?> MapSingleAsync<T>(this SqliteDataReader reader, CancellationToken cancellationToken)
         where T : IDataReaderMapper<T>
-        => MapSingleAsync(reader, T.Map, cancellationToken);
+    {
+        ArgumentNullException.ThrowIfNull(reader);
+
+        return reader.MapSingleAsyncImpl<T>(cancellationToken);
+    }
 #endif
 
     /// <summary>
@@ -40,19 +48,12 @@ public static class SqliteDataReaderExtensions
     /// <param name="reader">The <see cref="SqliteDataReader"/>.</param>
     /// <param name="mapper">The mapping function.</param>
     /// <returns>An instance of <typeparamref name="T"/> if the reader contains rows, otherwise <c>default(<typeparamref name="T"/>)</c>.</returns>
-    public static async Task<T?> MapSingleAsync<T>(this SqliteDataReader reader, Func<SqliteDataReader, T> mapper)
+    public static Task<T?> MapSingleAsync<T>(this SqliteDataReader reader, Func<SqliteDataReader, T> mapper)
     {
         ArgumentNullException.ThrowIfNull(reader);
         ArgumentNullException.ThrowIfNull(mapper);
 
-        if (!reader.HasRows)
-        {
-            return default;
-        }
-
-        await reader.ReadAsync();
-
-        return mapper(reader);
+        return reader.MapSingleAsyncImpl(mapper, default);
     }
 
     /// <summary>
@@ -63,11 +64,31 @@ public static class SqliteDataReaderExtensions
     /// <param name="mapper">The mapping function.</param>
     /// <param name="cancellationToken">A token to cancel the asynchronous operation.</param>
     /// <returns>An instance of <typeparamref name="T"/> if the reader contains rows, otherwise <c>default(<typeparamref name="T"/>)</c>.</returns>
-    public static async Task<T?> MapSingleAsync<T>(this SqliteDataReader reader, Func<SqliteDataReader, T> mapper, CancellationToken cancellationToken)
+    public static Task<T?> MapSingleAsync<T>(this SqliteDataReader reader, Func<SqliteDataReader, T> mapper, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(reader);
         ArgumentNullException.ThrowIfNull(mapper);
 
+        return reader.MapSingleAsyncImpl(mapper, cancellationToken);
+    }
+
+#if NET7_0_OR_GREATER
+    internal static async Task<T?> MapSingleAsyncImpl<T>(this SqliteDataReader reader, CancellationToken cancellationToken)
+        where T : IDataReaderMapper<T>
+    {
+        if (!reader.HasRows)
+        {
+            return default;
+        }
+
+        await reader.ReadAsync(cancellationToken);
+
+        return T.Map(reader);
+    }
+#endif
+
+    internal static async Task<T?> MapSingleAsyncImpl<T>(this SqliteDataReader reader, Func<SqliteDataReader, T> mapper, CancellationToken cancellationToken)
+    {
         if (!reader.HasRows)
         {
             return default;
@@ -87,7 +108,11 @@ public static class SqliteDataReaderExtensions
     /// <returns>An <see cref="IAsyncEnumerable{T}"/>.</returns>
     public static IAsyncEnumerable<T> MapAsync<T>(this SqliteDataReader reader)
         where T : IDataReaderMapper<T>
-        => MapAsync(reader, T.Map);
+    {
+        ArgumentNullException.ThrowIfNull(reader);
+
+        return reader.MapAsyncImpl<T>(default);
+    }
 
     /// <summary>
     /// Maps all rows from the reader to new instances of <typeparamref name="T"/>.
@@ -98,7 +123,12 @@ public static class SqliteDataReaderExtensions
     /// <returns>An <see cref="IAsyncEnumerable{T}"/>.</returns>
     public static IAsyncEnumerable<T> MapAsync<T>(this SqliteDataReader reader, CancellationToken cancellationToken)
         where T : IDataReaderMapper<T>
-        => MapAsync(reader, T.Map, cancellationToken);
+
+    {
+        ArgumentNullException.ThrowIfNull(reader);
+
+        return reader.MapAsyncImpl<T>(cancellationToken);
+    }
 #endif
 
     /// <summary>
@@ -108,20 +138,12 @@ public static class SqliteDataReaderExtensions
     /// <param name="reader">The <see cref="SqliteDataReader"/>.</param>
     /// <param name="mapper">The mapping function.</param>
     /// <returns>An <see cref="IAsyncEnumerable{T}"/>.</returns>
-    public static async IAsyncEnumerable<T> MapAsync<T>(this SqliteDataReader reader, Func<SqliteDataReader, T> mapper)
+    public static IAsyncEnumerable<T> MapAsync<T>(this SqliteDataReader reader, Func<SqliteDataReader, T> mapper)
     {
         ArgumentNullException.ThrowIfNull(reader);
         ArgumentNullException.ThrowIfNull(mapper);
 
-        if (!reader.HasRows)
-        {
-            yield break;
-        }
-
-        while (await reader.ReadAsync())
-        {
-            yield return mapper(reader);
-        }
+        return reader.MapAsyncImpl(mapper, default);
     }
 
     /// <summary>
@@ -132,11 +154,32 @@ public static class SqliteDataReaderExtensions
     /// <param name="mapper">The mapping function.</param>
     /// <param name="cancellationToken">A token to cancel the asynchronous operation.</param>
     /// <returns>An <see cref="IAsyncEnumerable{T}"/>.</returns>
-    public static async IAsyncEnumerable<T> MapAsync<T>(this SqliteDataReader reader, Func<SqliteDataReader, T> mapper, [EnumeratorCancellation] CancellationToken cancellationToken)
+    public static IAsyncEnumerable<T> MapAsync<T>(this SqliteDataReader reader, Func<SqliteDataReader, T> mapper, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(reader);
         ArgumentNullException.ThrowIfNull(mapper);
 
+        return reader.MapAsyncImpl(mapper, cancellationToken);
+    }
+
+#if NET7_0_OR_GREATER
+    internal static async IAsyncEnumerable<T> MapAsyncImpl<T>(this SqliteDataReader reader, [EnumeratorCancellation] CancellationToken cancellationToken)
+        where T : IDataReaderMapper<T>
+    {
+        if (!reader.HasRows)
+        {
+            yield break;
+        }
+
+        while (await reader.ReadAsync(cancellationToken))
+        {
+            yield return T.Map(reader);
+        }
+    }
+#endif
+
+    internal static async IAsyncEnumerable<T> MapAsyncImpl<T>(this SqliteDataReader reader, Func<SqliteDataReader, T> mapper, [EnumeratorCancellation] CancellationToken cancellationToken)
+    {
         if (!reader.HasRows)
         {
             yield break;

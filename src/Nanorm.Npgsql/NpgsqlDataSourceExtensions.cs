@@ -23,7 +23,7 @@ public static partial class NpgsqlDataSourceExtensions
 
         var cmd = dataSource.CreateCommand(commandText);
 
-        return ExecuteNonQueryAsync(cmd, CancellationToken.None);
+        return ExecuteNonQueryAsync(cmd, default);
     }
 
     /// <summary>
@@ -38,7 +38,7 @@ public static partial class NpgsqlDataSourceExtensions
 
         var cmd = dataSource.CreateCommand(commandTextHandler);
 
-        return ExecuteNonQueryAsync(cmd, CancellationToken.None);
+        return ExecuteNonQueryAsync(cmd, default);
     }
 
     /// <summary>
@@ -91,7 +91,7 @@ public static partial class NpgsqlDataSourceExtensions
 
         var cmd = dataSource.CreateCommand(commandText, parameters);
 
-        return ExecuteNonQueryAsync(cmd, CancellationToken.None);
+        return ExecuteNonQueryAsync(cmd, default);
     }
 
     /// <summary>
@@ -129,7 +129,7 @@ public static partial class NpgsqlDataSourceExtensions
 
         var cmd = dataSource.CreateCommand(commandText, configureParameters);
 
-        return ExecuteNonQueryAsync(cmd, CancellationToken.None);
+        return ExecuteNonQueryAsync(cmd, default);
     }
 
     /// <summary>
@@ -172,7 +172,7 @@ public static partial class NpgsqlDataSourceExtensions
 
         var cmd = dataSource.CreateCommand(commandText);
 
-        return ExecuteScalarAsync(cmd, CancellationToken.None);
+        return ExecuteScalarAsync(cmd, default);
     }
 
     /// <summary>
@@ -188,7 +188,7 @@ public static partial class NpgsqlDataSourceExtensions
 
         var cmd = dataSource.CreateCommand(commandTextHandler);
 
-        return ExecuteScalarAsync(cmd, CancellationToken.None);
+        return ExecuteScalarAsync(cmd, default);
     }
 
     /// <summary>
@@ -330,7 +330,7 @@ public static partial class NpgsqlDataSourceExtensions
 
         var cmd = dataSource.CreateCommand(commandText);
 
-        return QuerySingleAsync<T>(cmd, CancellationToken.None);
+        return cmd.QuerySingleAsyncImpl<T>(default);
     }
 
     /// <summary>
@@ -347,7 +347,7 @@ public static partial class NpgsqlDataSourceExtensions
 
         var cmd = dataSource.CreateCommand(commandTextHandler);
 
-        return QuerySingleAsync<T>(cmd, CancellationToken.None);
+        return cmd.QuerySingleAsyncImpl<T>(default);
     }
 
     /// <summary>
@@ -366,7 +366,7 @@ public static partial class NpgsqlDataSourceExtensions
 
         var cmd = dataSource.CreateCommand(commandText);
 
-        return QuerySingleAsync<T>(cmd, cancellationToken);
+        return cmd.QuerySingleAsyncImpl<T>(cancellationToken);
     }
 
     /// <summary>
@@ -384,7 +384,7 @@ public static partial class NpgsqlDataSourceExtensions
 
         var cmd = dataSource.CreateCommand(commandTextHandler);
 
-        return QuerySingleAsync<T>(cmd, cancellationToken);
+        return cmd.QuerySingleAsyncImpl<T>(cancellationToken);
     }
 
     /// <summary>
@@ -406,7 +406,7 @@ public static partial class NpgsqlDataSourceExtensions
 
         var cmd = dataSource.CreateCommand(commandText, parameters);
 
-        return QuerySingleAsync<T>(cmd, CancellationToken.None);
+        return cmd.QuerySingleAsyncImpl<T>(default);
     }
 
     /// <summary>
@@ -429,7 +429,7 @@ public static partial class NpgsqlDataSourceExtensions
 
         var cmd = dataSource.CreateCommand(commandText, parameters);
 
-        return QuerySingleAsync<T>(cmd, cancellationToken);
+        return cmd.QuerySingleAsyncImpl<T>(cancellationToken);
     }
 
     /// <summary>
@@ -448,7 +448,7 @@ public static partial class NpgsqlDataSourceExtensions
 
         var cmd = dataSource.CreateCommand(commandText, configureParameters);
 
-        return QuerySingleAsync<T>(cmd, CancellationToken.None);
+        return cmd.QuerySingleAsyncImpl<T>(default);
     }
 
     /// <summary>
@@ -468,18 +468,7 @@ public static partial class NpgsqlDataSourceExtensions
 
         var cmd = dataSource.CreateCommand(commandText, configureParameters);
 
-        return QuerySingleAsync<T>(cmd, cancellationToken);
-    }
-
-    private static async Task<T?> QuerySingleAsync<T>(NpgsqlCommand command, CancellationToken cancellationToken)
-        where T : IDataReaderMapper<T>
-    {
-        await using (command)
-        {
-            await using var reader = await command.QuerySingleAsync(cancellationToken);
-
-            return await reader.MapSingleAsync<T>(cancellationToken);
-        }
+        return cmd.QuerySingleAsyncImpl<T>(cancellationToken);
     }
 
     /// <summary>
@@ -489,20 +478,15 @@ public static partial class NpgsqlDataSourceExtensions
     /// <param name="dataSource">The <see cref="NpgsqlDataSource"/>.</param>
     /// <param name="commandText">The SQL command text.</param>
     /// <returns>A task representing the asynchronous operation with the mapped <typeparamref name="T"/>s.</returns>
-    public static async IAsyncEnumerable<T> QueryAsync<T>(this NpgsqlDataSource dataSource, string commandText)
+    public static IAsyncEnumerable<T> QueryAsync<T>(this NpgsqlDataSource dataSource, string commandText)
         where T : IDataReaderMapper<T>
     {
         ArgumentNullException.ThrowIfNull(dataSource);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
-        await using var cmd = dataSource.CreateCommand(commandText);
+        var cmd = dataSource.CreateCommand(commandText);
 
-        await using var reader = await cmd.QueryAsync();
-
-        await foreach (var item in reader.MapAsync<T>())
-        {
-            yield return item;
-        }
+        return cmd.QueryAsyncImpl<T>(default);
     }
 
     /// <summary>
@@ -519,7 +503,7 @@ public static partial class NpgsqlDataSourceExtensions
 
         var cmd = dataSource.CreateCommand(commandTextHandler);
 
-        return QueryAsync<T>(cmd, CancellationToken.None);
+        return cmd.QueryAsyncImpl<T>(default);
     }
 
     /// <summary>
@@ -530,20 +514,15 @@ public static partial class NpgsqlDataSourceExtensions
     /// <param name="commandText">The SQL command text.</param>
     /// <param name="cancellationToken">A token to cancel the asynchronous operation.</param>
     /// <returns>A task representing the asynchronous operation with the mapped <typeparamref name="T"/>s.</returns>
-    public static async IAsyncEnumerable<T> QueryAsync<T>(this NpgsqlDataSource dataSource, string commandText, [EnumeratorCancellation] CancellationToken cancellationToken)
+    public static IAsyncEnumerable<T> QueryAsync<T>(this NpgsqlDataSource dataSource, string commandText, CancellationToken cancellationToken)
         where T : IDataReaderMapper<T>
     {
         ArgumentNullException.ThrowIfNull(dataSource);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
-        await using var cmd = dataSource.CreateCommand(commandText);
+        var cmd = dataSource.CreateCommand(commandText);
 
-        await using var reader = await cmd.QueryAsync(cancellationToken);
-
-        await foreach (var item in reader.MapAsync<T>())
-        {
-            yield return item;
-        }
+        return cmd.QueryAsyncImpl<T>(cancellationToken);
     }
 
     /// <summary>
@@ -561,21 +540,7 @@ public static partial class NpgsqlDataSourceExtensions
 
         var cmd = dataSource.CreateCommand(commandTextHandler);
 
-        return QueryAsync<T>(cmd, cancellationToken);
-    }
-
-    private static async IAsyncEnumerable<T> QueryAsync<T>(NpgsqlCommand command, [EnumeratorCancellation] CancellationToken cancellationToken)
-        where T : IDataReaderMapper<T>
-    {
-        await using (command)
-        {
-            await using var reader = await command.QueryAsync(cancellationToken);
-
-            await foreach (var item in reader.MapAsync<T>())
-            {
-                yield return item;
-            }
-        }
+        return cmd.QueryAsyncImpl<T>(cancellationToken);
     }
 
     /// <summary>
