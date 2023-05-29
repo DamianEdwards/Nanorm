@@ -3,7 +3,11 @@ using Nanorm.Npgsql;
 using Npgsql;
 
 var connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING") ?? "Server=localhost;Port=5432;Username=postgres;Database=postgres";
+#if NET8_0_OR_GREATER
+await using var db = new NpgsqlSlimDataSourceBuilder(connectionString).Build();
+#else
 await using var db = NpgsqlDataSource.Create(connectionString);
+#endif
 
 await EnsureDb(db);
 
