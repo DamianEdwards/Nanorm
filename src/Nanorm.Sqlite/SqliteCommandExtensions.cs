@@ -1,4 +1,8 @@
 ﻿using System.Data;
+using System.Runtime.CompilerServices;
+#if NET7_0_OR_GREATER
+using Nanorm.Sqlite;
+#endif
 
 namespace Microsoft.Data.Sqlite;
 
@@ -129,4 +133,33 @@ public static class SqliteCommandExtensions
 
         return command;
     }
+
+#if NET7_0_OR_GREATER
+    internal static async Task<T?> QuerySingleAsyncImpl<T>(this SqliteCommand command, SqliteConnection connection, CancellationToken cancellationToken)
+        where T : IDataReaderMapper<T>
+    {
+        await connection.OpenAsync(cancellationToken);
+        await using (command)
+        {
+            await using var reader = await command.ExecuteReaderAsync(CommandBehavior.SingleResult | CommandBehavior.SingleRow, cancellationToken);
+
+            return await reader.MapSingleAsyncImpl<T>(cancellationToken);
+        }
+    }
+
+    internal static async IAsyncEnumerable<T> QueryAsyncImpl<T>(this SqliteCommand command, SqliteConnection connection, [EnumeratorCancellation] CancellationToken cancellationToken)
+        where T : IDataReaderMapper<T>
+    {
+        await connection.OpenAsync(cancellationToken);
+        await using (command)
+        {
+            await using var reader = await command.ExecuteReaderAsync(cancellationToken);
+
+            await foreach (var item in reader.MapAsyncImpl<T>(cancellationToken))
+            {
+                yield return item;
+            }
+        }
+    }
+#endif
 }

@@ -231,17 +231,15 @@ public static class DbDataSourceExtensions
     /// <param name="dataSource">The <see cref="DbDataSource"/>.</param>
     /// <param name="commandText">The SQL command text.</param>
     /// <returns>A task representing the asynchronous operation with the mapped <typeparamref name="T"/>.</returns>
-    public static async Task<T?> QuerySingleAsync<T>(this DbDataSource dataSource, string commandText)
+    public static Task<T?> QuerySingleAsync<T>(this DbDataSource dataSource, string commandText)
         where T : IDataReaderMapper<T>
     {
         ArgumentNullException.ThrowIfNull(dataSource);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
-        await using var cmd = dataSource.CreateCommand(commandText);
+        var cmd = dataSource.CreateCommand(commandText);
 
-        await using var reader = await cmd.QuerySingleAsync();
-
-        return await reader.MapSingleAsync<T>();
+        return cmd.QuerySingleAsyncImpl<T>(default);
     }
 
     /// <summary>
@@ -252,17 +250,15 @@ public static class DbDataSourceExtensions
     /// <param name="commandText">The SQL command text.</param>
     /// <param name="cancellationToken">A token to cancel the asynchronous operation.</param>
     /// <returns>A task representing the asynchronous operation with the mapped <typeparamref name="T"/>.</returns>
-    public static async Task<T?> QuerySingleAsync<T>(this DbDataSource dataSource, string commandText, CancellationToken cancellationToken)
+    public static Task<T?> QuerySingleAsync<T>(this DbDataSource dataSource, string commandText, CancellationToken cancellationToken)
         where T : IDataReaderMapper<T>
     {
         ArgumentNullException.ThrowIfNull(dataSource);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
-        await using var cmd = dataSource.CreateCommand(commandText);
+        var cmd = dataSource.CreateCommand(commandText);
 
-        await using var reader = await cmd.QuerySingleAsync(cancellationToken);
-
-        return await reader.MapSingleAsync<T>();
+        return cmd.QuerySingleAsyncImpl<T>(cancellationToken);
     }
 
     /// <summary>
@@ -273,17 +269,15 @@ public static class DbDataSourceExtensions
     /// <param name="commandText">The SQL command text.</param>
     /// <param name="parameters">Parameters to use when executing the command text.</param>
     /// <returns>A task representing the asynchronous operation with the mapped <typeparamref name="T"/>.</returns>
-    public static async Task<T?> QuerySingleAsync<T>(this DbDataSource dataSource, string commandText, params DbPlaceholderParameter[] parameters)
+    public static Task<T?> QuerySingleAsync<T>(this DbDataSource dataSource, string commandText, params DbPlaceholderParameter[] parameters)
         where T : IDataReaderMapper<T>
     {
         ArgumentNullException.ThrowIfNull(dataSource);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
-        await using var cmd = dataSource.CreateCommand(commandText, parameters);
+        var cmd = dataSource.CreateCommand(commandText, parameters);
 
-        await using var reader = await cmd.QuerySingleAsync();
-
-        return await reader.MapSingleAsync<T>();
+        return cmd.QuerySingleAsyncImpl<T>(default);
     }
 
     /// <summary>
@@ -295,17 +289,15 @@ public static class DbDataSourceExtensions
     /// <param name="cancellationToken">A token to cancel the asynchronous operation.</param>
     /// <param name="parameters">Parameters to use when executing the command text.</param>
     /// <returns>A task representing the asynchronous operation with the mapped <typeparamref name="T"/>.</returns>
-    public static async Task<T?> QuerySingleAsync<T>(this DbDataSource dataSource, string commandText, CancellationToken cancellationToken, params DbPlaceholderParameter[] parameters)
+    public static Task<T?> QuerySingleAsync<T>(this DbDataSource dataSource, string commandText, CancellationToken cancellationToken, params DbPlaceholderParameter[] parameters)
         where T : IDataReaderMapper<T>
     {
         ArgumentNullException.ThrowIfNull(dataSource);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
-        await using var cmd = dataSource.CreateCommand(commandText, parameters);
+        var cmd = dataSource.CreateCommand(commandText, parameters);
 
-        await using var reader = await cmd.QuerySingleAsync(cancellationToken);
-
-        return await reader.MapSingleAsync<T>();
+        return cmd.QuerySingleAsyncImpl<T>(cancellationToken);
     }
 
     /// <summary>
@@ -316,17 +308,15 @@ public static class DbDataSourceExtensions
     /// <param name="commandText">The SQL command text.</param>
     /// <param name="configureParameters">A delegate to configured the <see cref="DbParameterCollection"/> before the command is executed.</param>
     /// <returns>A task representing the asynchronous operation with the mapped <typeparamref name="T"/>.</returns>
-    public static async Task<T?> QuerySingleAsync<T>(this DbDataSource dataSource, string commandText, Action<DbParameterCollection> configureParameters)
+    public static Task<T?> QuerySingleAsync<T>(this DbDataSource dataSource, string commandText, Action<DbParameterCollection> configureParameters)
         where T : IDataReaderMapper<T>
     {
         ArgumentNullException.ThrowIfNull(dataSource);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
-        await using var cmd = dataSource.CreateCommand(commandText, configureParameters);
+        var cmd = dataSource.CreateCommand(commandText, configureParameters);
 
-        await using var reader = await cmd.QuerySingleAsync();
-
-        return await reader.MapSingleAsync<T>();
+        return cmd.QuerySingleAsyncImpl<T>(default);
     }
 
     /// <summary>
@@ -338,17 +328,15 @@ public static class DbDataSourceExtensions
     /// <param name="configureParameters">A delegate to configured the <see cref="DbParameterCollection"/> before the command is executed.</param>
     /// <param name="cancellationToken">A token to cancel the asynchronous operation.</param>
     /// <returns>A task representing the asynchronous operation with the mapped <typeparamref name="T"/>.</returns>
-    public static async Task<T?> QuerySingleAsync<T>(this DbDataSource dataSource, string commandText, Action<DbParameterCollection> configureParameters, CancellationToken cancellationToken)
+    public static Task<T?> QuerySingleAsync<T>(this DbDataSource dataSource, string commandText, Action<DbParameterCollection> configureParameters, CancellationToken cancellationToken)
         where T : IDataReaderMapper<T>
     {
         ArgumentNullException.ThrowIfNull(dataSource);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
-        await using var cmd = dataSource.CreateCommand(commandText, configureParameters);
+        var cmd = dataSource.CreateCommand(commandText, configureParameters);
 
-        await using var reader = await cmd.QuerySingleAsync(cancellationToken);
-
-        return await reader.MapSingleAsync<T>();
+        return cmd.QuerySingleAsyncImpl<T>(cancellationToken);
     }
 
     /// <summary>
@@ -358,20 +346,15 @@ public static class DbDataSourceExtensions
     /// <param name="dataSource">The <see cref="DbDataSource"/>.</param>
     /// <param name="commandText">The SQL command text.</param>
     /// <returns>A task representing the asynchronous operation with the mapped <typeparamref name="T"/>s.</returns>
-    public static async IAsyncEnumerable<T> QueryAsync<T>(this DbDataSource dataSource, string commandText)
+    public static IAsyncEnumerable<T> QueryAsync<T>(this DbDataSource dataSource, string commandText)
         where T : IDataReaderMapper<T>
     {
         ArgumentNullException.ThrowIfNull(dataSource);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
-        await using var cmd = dataSource.CreateCommand(commandText);
+        var cmd = dataSource.CreateCommand(commandText);
 
-        await using var reader = await cmd.QueryAsync();
-
-        await foreach (var item in reader.MapAsync<T>())
-        {
-            yield return item;
-        }
+        return cmd.QueryAsyncImpl<T>(default);
     }
 
     /// <summary>
@@ -382,20 +365,15 @@ public static class DbDataSourceExtensions
     /// <param name="commandText">The SQL command text.</param>
     /// <param name="cancellationToken">A token to cancel the asynchronous operation.</param>
     /// <returns>A task representing the asynchronous operation with the mapped <typeparamref name="T"/>s.</returns>
-    public static async IAsyncEnumerable<T> QueryAsync<T>(this DbDataSource dataSource, string commandText, [EnumeratorCancellation] CancellationToken cancellationToken)
+    public static IAsyncEnumerable<T> QueryAsync<T>(this DbDataSource dataSource, string commandText, CancellationToken cancellationToken)
         where T : IDataReaderMapper<T>
     {
         ArgumentNullException.ThrowIfNull(dataSource);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
-        await using var cmd = dataSource.CreateCommand(commandText);
+        var cmd = dataSource.CreateCommand(commandText);
 
-        await using var reader = await cmd.QueryAsync(cancellationToken);
-
-        await foreach (var item in reader.MapAsync<T>())
-        {
-            yield return item;
-        }
+        return cmd.QueryAsyncImpl<T>(cancellationToken);
     }
 
     /// <summary>
@@ -406,20 +384,15 @@ public static class DbDataSourceExtensions
     /// <param name="commandText">The SQL command text.</param>
     /// <param name="parameters">Parameters to use when executing the command text.</param>
     /// <returns>A task representing the asynchronous operation with the mapped <typeparamref name="T"/>s.</returns>
-    public static async IAsyncEnumerable<T> QueryAsync<T>(this DbDataSource dataSource, string commandText, params DbPlaceholderParameter[] parameters)
+    public static IAsyncEnumerable<T> QueryAsync<T>(this DbDataSource dataSource, string commandText, params DbPlaceholderParameter[] parameters)
         where T : IDataReaderMapper<T>
     {
         ArgumentNullException.ThrowIfNull(dataSource);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
-        await using var cmd = dataSource.CreateCommand(commandText, parameters);
+        var cmd = dataSource.CreateCommand(commandText, parameters);
 
-        await using var reader = await cmd.QueryAsync();
-
-        await foreach (var item in reader.MapAsync<T>())
-        {
-            yield return item;
-        }
+        return cmd.QueryAsyncImpl<T>(default);
     }
 
     /// <summary>
@@ -431,20 +404,15 @@ public static class DbDataSourceExtensions
     /// <param name="cancellationToken">A token to cancel the asynchronous operation.</param>
     /// <param name="parameters">Parameters to use when executing the command text.</param>
     /// <returns>A task representing the asynchronous operation with the mapped <typeparamref name="T"/>s.</returns>
-    public static async IAsyncEnumerable<T> QueryAsync<T>(this DbDataSource dataSource, string commandText, [EnumeratorCancellation] CancellationToken cancellationToken, params DbPlaceholderParameter[] parameters)
+    public static IAsyncEnumerable<T> QueryAsync<T>(this DbDataSource dataSource, string commandText, CancellationToken cancellationToken, params DbPlaceholderParameter[] parameters)
         where T : IDataReaderMapper<T>
     {
         ArgumentNullException.ThrowIfNull(dataSource);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
-        await using var cmd = dataSource.CreateCommand(commandText, parameters);
+        var cmd = dataSource.CreateCommand(commandText, parameters);
 
-        await using var reader = await cmd.QueryAsync(cancellationToken);
-
-        await foreach (var item in reader.MapAsync<T>())
-        {
-            yield return item;
-        }
+        return cmd.QueryAsyncImpl<T>(cancellationToken);
     }
 
     /// <summary>
@@ -455,20 +423,15 @@ public static class DbDataSourceExtensions
     /// <param name="commandText">The SQL command text.</param>
     /// <param name="configureParameters">A delegate to configured the <see cref="DbParameterCollection"/> before the command is executed.</param>
     /// <returns>A task representing the asynchronous operation with the mapped <typeparamref name="T"/>s.</returns>
-    public static async IAsyncEnumerable<T> QueryAsync<T>(this DbDataSource dataSource, string commandText, Action<DbParameterCollection> configureParameters)
+    public static IAsyncEnumerable<T> QueryAsync<T>(this DbDataSource dataSource, string commandText, Action<DbParameterCollection> configureParameters)
         where T : IDataReaderMapper<T>
     {
         ArgumentNullException.ThrowIfNull(dataSource);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
-        await using var cmd = dataSource.CreateCommand(commandText, configureParameters);
+        var cmd = dataSource.CreateCommand(commandText, configureParameters);
 
-        await using var reader = await cmd.QueryAsync();
-
-        await foreach (var item in reader.MapAsync<T>())
-        {
-            yield return item;
-        }
+        return cmd.QueryAsyncImpl<T>(default);
     }
 
     /// <summary>
@@ -480,20 +443,15 @@ public static class DbDataSourceExtensions
     /// <param name="configureParameters">A delegate to configured the <see cref="DbParameterCollection"/> before the command is executed.</param>
     /// <param name="cancellationToken">A token to cancel the asynchronous operation.</param>
     /// <returns>A task representing the asynchronous operation with the mapped <typeparamref name="T"/>s.</returns>
-    public static async IAsyncEnumerable<T> QueryAsync<T>(this DbDataSource dataSource, string commandText, Action<DbParameterCollection> configureParameters, [EnumeratorCancellation] CancellationToken cancellationToken)
+    public static IAsyncEnumerable<T> QueryAsync<T>(this DbDataSource dataSource, string commandText, Action<DbParameterCollection> configureParameters, CancellationToken cancellationToken)
         where T : IDataReaderMapper<T>
     {
         ArgumentNullException.ThrowIfNull(dataSource);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
-        await using var cmd = dataSource.CreateCommand(commandText, configureParameters);
+        var cmd = dataSource.CreateCommand(commandText, configureParameters);
 
-        await using var reader = await cmd.QueryAsync(cancellationToken);
-
-        await foreach (var item in reader.MapAsync<T>())
-        {
-            yield return item;
-        }
+        return cmd.QueryAsyncImpl<T>(cancellationToken);
     }
 #endif
 
@@ -571,9 +529,11 @@ public static class DbDataSourceExtensions
         return await cmd.ExecuteReaderAsync(commandBehavior, cancellationToken);
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static DbCommand CreateCommand(this DbDataSource dataSource, string commandText, params DbPlaceholderParameter[] parameters) =>
         dataSource.CreateCommand(commandText).AddParameters(parameters);
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static DbCommand CreateCommand(this DbDataSource dataSource, string commandText, Action<DbParameterCollection>? configureParameters = null) =>
         dataSource.CreateCommand(commandText).Configure(configureParameters);
 }

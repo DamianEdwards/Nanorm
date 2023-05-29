@@ -335,18 +335,15 @@ public static class SqliteConnectionExtensions
     /// <param name="connection">The <see cref="SqliteConnection"/>.</param>
     /// <param name="commandText">The SQL command text.</param>
     /// <returns>A task representing the asynchronous operation with the mapped <typeparamref name="T"/>.</returns>
-    public static async Task<T?> QuerySingleAsync<T>(this SqliteConnection connection, string commandText)
+    public static Task<T?> QuerySingleAsync<T>(this SqliteConnection connection, string commandText)
         where T : IDataReaderMapper<T>
     {
         ArgumentNullException.ThrowIfNull(connection);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
-        await using var cmd = connection.CreateCommand(commandText);
-        await connection.OpenAsync();
+        var cmd = connection.CreateCommand(commandText);
 
-        await using var reader = await cmd.QuerySingleAsync();
-
-        return await reader.MapSingleAsync<T>();
+        return cmd.QuerySingleAsyncImpl<T>(connection, default);
     }
 
     /// <summary>
@@ -363,7 +360,7 @@ public static class SqliteConnectionExtensions
 
         var cmd = connection.CreateCommand(commandTextHandler);
 
-        return QuerySingleAsync<T>(connection, cmd, CancellationToken.None);
+        return cmd.QuerySingleAsyncImpl<T>(connection, CancellationToken.None);
     }
 
     /// <summary>
@@ -374,18 +371,15 @@ public static class SqliteConnectionExtensions
     /// <param name="commandText">The SQL command text.</param>
     /// <param name="cancellationToken">A token to cancel the asynchronous operation.</param>
     /// <returns>A task representing the asynchronous operation with the mapped <typeparamref name="T"/>.</returns>
-    public static async Task<T?> QuerySingleAsync<T>(this SqliteConnection connection, string commandText, CancellationToken cancellationToken)
+    public static Task<T?> QuerySingleAsync<T>(this SqliteConnection connection, string commandText, CancellationToken cancellationToken)
         where T : IDataReaderMapper<T>
     {
         ArgumentNullException.ThrowIfNull(connection);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
-        await using var cmd = connection.CreateCommand(commandText);
-        await connection.OpenAsync(cancellationToken);
+        var cmd = connection.CreateCommand(commandText);
 
-        await using var reader = await cmd.QuerySingleAsync(cancellationToken);
-
-        return await reader.MapSingleAsync<T>();
+        return cmd.QuerySingleAsyncImpl<T>(connection, cancellationToken);
     }
 
     /// <summary>
@@ -403,7 +397,7 @@ public static class SqliteConnectionExtensions
 
         var cmd = connection.CreateCommand(commandTextHandler);
 
-        return QuerySingleAsync<T>(connection, cmd, cancellationToken);
+        return cmd.QuerySingleAsyncImpl<T>(connection, cancellationToken);
     }
 
     /// <summary>
@@ -417,18 +411,15 @@ public static class SqliteConnectionExtensions
     /// method to convert values into <see cref="SqliteParameter"/> instances, e.g. <c>myValue.AsDbParameter()</c>.
     /// </param>
     /// <returns>A task representing the asynchronous operation with the mapped <typeparamref name="T"/>.</returns>
-    public static async Task<T?> QuerySingleAsync<T>(this SqliteConnection connection, string commandText, params SqliteParameter[] parameters)
+    public static Task<T?> QuerySingleAsync<T>(this SqliteConnection connection, string commandText, params SqliteParameter[] parameters)
         where T : IDataReaderMapper<T>
     {
         ArgumentNullException.ThrowIfNull(connection);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
-        await using var cmd = connection.CreateCommand(commandText, parameters);
-        await connection.OpenAsync();
+        var cmd = connection.CreateCommand(commandText, parameters);
 
-        await using var reader = await cmd.QuerySingleAsync();
-
-        return await reader.MapSingleAsync<T>();
+        return cmd.QuerySingleAsyncImpl<T>(connection, default);
     }
 
     /// <summary>
@@ -443,18 +434,15 @@ public static class SqliteConnectionExtensions
     /// method to convert values into <see cref="SqliteParameter"/> instances, e.g. <c>myValue.AsDbParameter()</c>.
     /// </param>
     /// <returns>A task representing the asynchronous operation with the mapped <typeparamref name="T"/>.</returns>
-    public static async Task<T?> QuerySingleAsync<T>(this SqliteConnection connection, string commandText, CancellationToken cancellationToken, params SqliteParameter[] parameters)
+    public static Task<T?> QuerySingleAsync<T>(this SqliteConnection connection, string commandText, CancellationToken cancellationToken, params SqliteParameter[] parameters)
         where T : IDataReaderMapper<T>
     {
         ArgumentNullException.ThrowIfNull(connection);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
-        await using var cmd = connection.CreateCommand(commandText, parameters);
-        await connection.OpenAsync(cancellationToken);
+        var cmd = connection.CreateCommand(commandText, parameters);
 
-        await using var reader = await cmd.QuerySingleAsync(cancellationToken);
-
-        return await reader.MapSingleAsync<T>();
+        return cmd.QuerySingleAsyncImpl<T>(connection, cancellationToken);
     }
 
     /// <summary>
@@ -465,18 +453,15 @@ public static class SqliteConnectionExtensions
     /// <param name="commandText">The SQL command text.</param>
     /// <param name="configureParameters">A delegate to configured the <see cref="SqliteParameterCollection"/> before the command is executed.</param>
     /// <returns>A task representing the asynchronous operation with the mapped <typeparamref name="T"/>.</returns>
-    public static async Task<T?> QuerySingleAsync<T>(this SqliteConnection connection, string commandText, Action<SqliteParameterCollection> configureParameters)
+    public static Task<T?> QuerySingleAsync<T>(this SqliteConnection connection, string commandText, Action<SqliteParameterCollection> configureParameters)
         where T : IDataReaderMapper<T>
     {
         ArgumentNullException.ThrowIfNull(connection);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
-        await using var cmd = connection.CreateCommand(commandText, configureParameters);
-        await connection.OpenAsync();
+        var cmd = connection.CreateCommand(commandText, configureParameters);
 
-        await using var reader = await cmd.QuerySingleAsync();
-
-        return await reader.MapSingleAsync<T>();
+        return cmd.QuerySingleAsyncImpl<T>(connection, default);
     }
 
     /// <summary>
@@ -488,30 +473,15 @@ public static class SqliteConnectionExtensions
     /// <param name="configureParameters">A delegate to configured the <see cref="SqliteParameterCollection"/> before the command is executed.</param>
     /// <param name="cancellationToken">A token to cancel the asynchronous operation.</param>
     /// <returns>A task representing the asynchronous operation with the mapped <typeparamref name="T"/>.</returns>
-    public static async Task<T?> QuerySingleAsync<T>(this SqliteConnection connection, string commandText, Action<SqliteParameterCollection> configureParameters, CancellationToken cancellationToken)
+    public static Task<T?> QuerySingleAsync<T>(this SqliteConnection connection, string commandText, Action<SqliteParameterCollection> configureParameters, CancellationToken cancellationToken)
         where T : IDataReaderMapper<T>
     {
         ArgumentNullException.ThrowIfNull(connection);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
-        await using var cmd = connection.CreateCommand(commandText, configureParameters);
-        await connection.OpenAsync(cancellationToken);
+        var cmd = connection.CreateCommand(commandText, configureParameters);
 
-        await using var reader = await cmd.QuerySingleAsync(cancellationToken);
-
-        return await reader.MapSingleAsync<T>();
-    }
-
-    private static async Task<T?> QuerySingleAsync<T>(SqliteConnection connection, SqliteCommand command, CancellationToken cancellationToken)
-        where T : IDataReaderMapper<T>
-    {
-        await connection.OpenAsync(cancellationToken);
-        await using (command)
-        {
-            await using var reader = await command.QuerySingleAsync(cancellationToken);
-
-            return await reader.MapSingleAsync<T>(cancellationToken);
-        }
+        return cmd.QuerySingleAsyncImpl<T>(connection, cancellationToken);
     }
 
     /// <summary>
@@ -552,7 +522,7 @@ public static class SqliteConnectionExtensions
 
         var cmd = connection.CreateCommand(commandTextHandler);
 
-        return QueryAsync<T>(connection, cmd, CancellationToken.None);
+        return QueryAsyncImpl<T>(connection, cmd, CancellationToken.None);
     }
 
     /// <summary>
@@ -595,10 +565,10 @@ public static class SqliteConnectionExtensions
 
         var cmd = connection.CreateCommand(commandTextHandler);
 
-        return QueryAsync<T>(connection, cmd, cancellationToken);
+        return QueryAsyncImpl<T>(connection, cmd, cancellationToken);
     }
 
-    private static async IAsyncEnumerable<T> QueryAsync<T>(SqliteConnection connection, SqliteCommand command, [EnumeratorCancellation] CancellationToken cancellationToken)
+    private static async IAsyncEnumerable<T> QueryAsyncImpl<T>(SqliteConnection connection, SqliteCommand command, [EnumeratorCancellation] CancellationToken cancellationToken)
         where T : IDataReaderMapper<T>
     {
         await connection.OpenAsync(cancellationToken);
@@ -624,21 +594,15 @@ public static class SqliteConnectionExtensions
     /// method to convert values into <see cref="SqliteParameter"/> instances, e.g. <c>myValue.AsDbParameter()</c>.
     /// </param>
     /// <returns>A task representing the asynchronous operation with the mapped <typeparamref name="T"/>s.</returns>
-    public static async IAsyncEnumerable<T> QueryAsync<T>(this SqliteConnection connection, string commandText, params SqliteParameter[] parameters)
+    public static IAsyncEnumerable<T> QueryAsync<T>(this SqliteConnection connection, string commandText, params SqliteParameter[] parameters)
         where T : IDataReaderMapper<T>
     {
         ArgumentNullException.ThrowIfNull(connection);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
-        await using var cmd = connection.CreateCommand(commandText, parameters);
-        await connection.OpenAsync();
+        var cmd = connection.CreateCommand(commandText, parameters);
 
-        await using var reader = await cmd.QueryAsync();
-
-        await foreach (var item in reader.MapAsync<T>())
-        {
-            yield return item;
-        }
+        return cmd.QueryAsyncImpl<T>(connection, default);
     }
 
     /// <summary>
@@ -653,21 +617,15 @@ public static class SqliteConnectionExtensions
     /// method to convert values into <see cref="SqliteParameter"/> instances, e.g. <c>myValue.AsDbParameter()</c>.
     /// </param>
     /// <returns>A task representing the asynchronous operation with the mapped <typeparamref name="T"/>s.</returns>
-    public static async IAsyncEnumerable<T> QueryAsync<T>(this SqliteConnection connection, string commandText, [EnumeratorCancellation] CancellationToken cancellationToken, params SqliteParameter[] parameters)
+    public static IAsyncEnumerable<T> QueryAsync<T>(this SqliteConnection connection, string commandText, CancellationToken cancellationToken, params SqliteParameter[] parameters)
         where T : IDataReaderMapper<T>
     {
         ArgumentNullException.ThrowIfNull(connection);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
-        await using var cmd = connection.CreateCommand(commandText, parameters);
-        await connection.OpenAsync(cancellationToken);
+        var cmd = connection.CreateCommand(commandText, parameters);
 
-        await using var reader = await cmd.QueryAsync(cancellationToken);
-
-        await foreach (var item in reader.MapAsync<T>())
-        {
-            yield return item;
-        }
+        return cmd.QueryAsyncImpl<T>(connection, cancellationToken);
     }
 
     /// <summary>
@@ -678,21 +636,15 @@ public static class SqliteConnectionExtensions
     /// <param name="commandText">The SQL command text.</param>
     /// <param name="configureParameters">A delegate to configured the <see cref="SqliteParameterCollection"/> before the command is executed.</param>
     /// <returns>A task representing the asynchronous operation with the mapped <typeparamref name="T"/>s.</returns>
-    public static async IAsyncEnumerable<T> QueryAsync<T>(this SqliteConnection connection, string commandText, Action<SqliteParameterCollection> configureParameters)
+    public static IAsyncEnumerable<T> QueryAsync<T>(this SqliteConnection connection, string commandText, Action<SqliteParameterCollection> configureParameters)
         where T : IDataReaderMapper<T>
     {
         ArgumentNullException.ThrowIfNull(connection);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
-        await using var cmd = connection.CreateCommand(commandText, configureParameters);
-        await connection.OpenAsync();
+        var cmd = connection.CreateCommand(commandText, configureParameters);
 
-        await using var reader = await cmd.QueryAsync();
-
-        await foreach (var item in reader.MapAsync<T>())
-        {
-            yield return item;
-        }
+        return cmd.QueryAsyncImpl<T>(connection, default);
     }
 
     /// <summary>
@@ -704,21 +656,15 @@ public static class SqliteConnectionExtensions
     /// <param name="configureParameters">A delegate to configured the <see cref="SqliteParameterCollection"/> before the command is executed.</param>
     /// <param name="cancellationToken">A token to cancel the asynchronous operation.</param>
     /// <returns>A task representing the asynchronous operation with the mapped <typeparamref name="T"/>s.</returns>
-    public static async IAsyncEnumerable<T> QueryAsync<T>(this SqliteConnection connection, string commandText, Action<SqliteParameterCollection> configureParameters, [EnumeratorCancellation] CancellationToken cancellationToken)
+    public static IAsyncEnumerable<T> QueryAsync<T>(this SqliteConnection connection, string commandText, Action<SqliteParameterCollection> configureParameters, CancellationToken cancellationToken)
         where T : IDataReaderMapper<T>
     {
         ArgumentNullException.ThrowIfNull(connection);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
-        await using var cmd = connection.CreateCommand(commandText, configureParameters);
-        await connection.OpenAsync(cancellationToken);
+        var cmd = connection.CreateCommand(commandText, configureParameters);
 
-        await using var reader = await cmd.QueryAsync(cancellationToken);
-
-        await foreach (var item in reader.MapAsync<T>())
-        {
-            yield return item;
-        }
+        return cmd.QueryAsyncImpl<T>(connection, cancellationToken);
     }
 #endif
 

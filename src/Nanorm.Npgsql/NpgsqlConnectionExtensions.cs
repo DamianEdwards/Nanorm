@@ -76,6 +76,7 @@ public static class NpgsqlConnectionExtensions
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
         await using var cmd = connection.CreateCommand(commandText, parameters);
+        await connection.OpenAsync(cancellationToken);
 
         return await cmd.ExecuteNonQueryAsync(cancellationToken);
     }
@@ -93,6 +94,7 @@ public static class NpgsqlConnectionExtensions
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
         await using var cmd = connection.CreateCommand(commandText, configureParameters);
+        await connection.OpenAsync();
 
         return await cmd.ExecuteNonQueryAsync();
     }
@@ -111,6 +113,7 @@ public static class NpgsqlConnectionExtensions
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
         await using var cmd = connection.CreateCommand(commandText, configureParameters);
+        await connection.OpenAsync(cancellationToken);
 
         return await cmd.ExecuteNonQueryAsync(cancellationToken);
     }
@@ -128,6 +131,7 @@ public static class NpgsqlConnectionExtensions
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
         await using var cmd = connection.CreateCommand(commandText);
+        await connection.OpenAsync();
 
         return await cmd.ExecuteScalarAsync();
     }
@@ -146,6 +150,7 @@ public static class NpgsqlConnectionExtensions
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
         await using var cmd = connection.CreateCommand(commandText);
+        await connection.OpenAsync(cancellationToken);
 
         return await cmd.ExecuteScalarAsync(cancellationToken);
     }
@@ -164,6 +169,7 @@ public static class NpgsqlConnectionExtensions
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
         await using var cmd = connection.CreateCommand(commandText, parameters);
+        await connection.OpenAsync();
 
         return await cmd.ExecuteScalarAsync();
     }
@@ -183,6 +189,7 @@ public static class NpgsqlConnectionExtensions
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
         await using var cmd = connection.CreateCommand(commandText, parameters);
+        await connection.OpenAsync(cancellationToken);
 
         return await cmd.ExecuteScalarAsync(cancellationToken);
     }
@@ -201,6 +208,7 @@ public static class NpgsqlConnectionExtensions
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
         await using var cmd = connection.CreateCommand(commandText, configureParameters);
+        await connection.OpenAsync();
 
         return await cmd.ExecuteScalarAsync();
     }
@@ -220,6 +228,7 @@ public static class NpgsqlConnectionExtensions
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
         await using var cmd = connection.CreateCommand(commandText, configureParameters);
+        await connection.OpenAsync(cancellationToken);
 
         return await cmd.ExecuteScalarAsync(cancellationToken);
     }
@@ -232,17 +241,15 @@ public static class NpgsqlConnectionExtensions
     /// <param name="connection">The <see cref="NpgsqlConnection"/>.</param>
     /// <param name="commandText">The SQL command text.</param>
     /// <returns>A task representing the asynchronous operation with the mapped <typeparamref name="T"/>.</returns>
-    public static async Task<T?> QuerySingleAsync<T>(this NpgsqlConnection connection, string commandText)
+    public static Task<T?> QuerySingleAsync<T>(this NpgsqlConnection connection, string commandText)
         where T : IDataReaderMapper<T>
     {
         ArgumentNullException.ThrowIfNull(connection);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
-        await using var cmd = connection.CreateCommand(commandText);
+        var cmd = connection.CreateCommand(commandText);
 
-        await using var reader = await cmd.QuerySingleAsync();
-
-        return await reader.MapSingleAsync<T>();
+        return cmd.QuerySingleAsyncImpl<T>(connection, default);
     }
 
     /// <summary>
@@ -253,17 +260,15 @@ public static class NpgsqlConnectionExtensions
     /// <param name="commandText">The SQL command text.</param>
     /// <param name="cancellationToken">A token to cancel the asynchronous operation.</param>
     /// <returns>A task representing the asynchronous operation with the mapped <typeparamref name="T"/>.</returns>
-    public static async Task<T?> QuerySingleAsync<T>(this NpgsqlConnection connection, string commandText, CancellationToken cancellationToken)
+    public static Task<T?> QuerySingleAsync<T>(this NpgsqlConnection connection, string commandText, CancellationToken cancellationToken)
         where T : IDataReaderMapper<T>
     {
         ArgumentNullException.ThrowIfNull(connection);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
-        await using var cmd = connection.CreateCommand(commandText);
+        var cmd = connection.CreateCommand(commandText);
 
-        await using var reader = await cmd.QuerySingleAsync(cancellationToken);
-
-        return await reader.MapSingleAsync<T>();
+        return cmd.QuerySingleAsyncImpl<T>(connection, cancellationToken);
     }
 
     /// <summary>
@@ -274,17 +279,15 @@ public static class NpgsqlConnectionExtensions
     /// <param name="commandText">The SQL command text.</param>
     /// <param name="parameters">Parameters to use when executing the command text.</param>
     /// <returns>A task representing the asynchronous operation with the mapped <typeparamref name="T"/>.</returns>
-    public static async Task<T?> QuerySingleAsync<T>(this NpgsqlConnection connection, string commandText, params NpgsqlParameter[] parameters)
+    public static Task<T?> QuerySingleAsync<T>(this NpgsqlConnection connection, string commandText, params NpgsqlParameter[] parameters)
         where T : IDataReaderMapper<T>
     {
         ArgumentNullException.ThrowIfNull(connection);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
-        await using var cmd = connection.CreateCommand(commandText, parameters);
+        var cmd = connection.CreateCommand(commandText, parameters);
 
-        await using var reader = await cmd.QuerySingleAsync();
-
-        return await reader.MapSingleAsync<T>();
+        return cmd.QuerySingleAsyncImpl<T>(connection, default);
     }
 
     /// <summary>
@@ -296,17 +299,15 @@ public static class NpgsqlConnectionExtensions
     /// <param name="cancellationToken">A token to cancel the asynchronous operation.</param>
     /// <param name="parameters">Parameters to use when executing the command text.</param>
     /// <returns>A task representing the asynchronous operation with the mapped <typeparamref name="T"/>.</returns>
-    public static async Task<T?> QuerySingleAsync<T>(this NpgsqlConnection connection, string commandText, CancellationToken cancellationToken, params NpgsqlParameter[] parameters)
+    public static Task<T?> QuerySingleAsync<T>(this NpgsqlConnection connection, string commandText, CancellationToken cancellationToken, params NpgsqlParameter[] parameters)
         where T : IDataReaderMapper<T>
     {
         ArgumentNullException.ThrowIfNull(connection);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
-        await using var cmd = connection.CreateCommand(commandText, parameters);
+        var cmd = connection.CreateCommand(commandText, parameters);
 
-        await using var reader = await cmd.QuerySingleAsync(cancellationToken);
-
-        return await reader.MapSingleAsync<T>();
+        return cmd.QuerySingleAsyncImpl<T>(connection, cancellationToken);
     }
 
     /// <summary>
@@ -317,17 +318,15 @@ public static class NpgsqlConnectionExtensions
     /// <param name="commandText">The SQL command text.</param>
     /// <param name="configureParameters">A delegate to configured the <see cref="NpgsqlParameterCollection"/> before the command is executed.</param>
     /// <returns>A task representing the asynchronous operation with the mapped <typeparamref name="T"/>.</returns>
-    public static async Task<T?> QuerySingleAsync<T>(this NpgsqlConnection connection, string commandText, Action<NpgsqlParameterCollection> configureParameters)
+    public static Task<T?> QuerySingleAsync<T>(this NpgsqlConnection connection, string commandText, Action<NpgsqlParameterCollection> configureParameters)
         where T : IDataReaderMapper<T>
     {
         ArgumentNullException.ThrowIfNull(connection);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
-        await using var cmd = connection.CreateCommand(commandText, configureParameters);
+        var cmd = connection.CreateCommand(commandText, configureParameters);
 
-        await using var reader = await cmd.QuerySingleAsync();
-
-        return await reader.MapSingleAsync<T>();
+        return cmd.QuerySingleAsyncImpl<T>(connection, default);
     }
 
     /// <summary>
@@ -339,17 +338,15 @@ public static class NpgsqlConnectionExtensions
     /// <param name="configureParameters">A delegate to configured the <see cref="NpgsqlParameterCollection"/> before the command is executed.</param>
     /// <param name="cancellationToken">A token to cancel the asynchronous operation.</param>
     /// <returns>A task representing the asynchronous operation with the mapped <typeparamref name="T"/>.</returns>
-    public static async Task<T?> QuerySingleAsync<T>(this NpgsqlConnection connection, string commandText, Action<NpgsqlParameterCollection> configureParameters, CancellationToken cancellationToken)
+    public static Task<T?> QuerySingleAsync<T>(this NpgsqlConnection connection, string commandText, Action<NpgsqlParameterCollection> configureParameters, CancellationToken cancellationToken)
         where T : IDataReaderMapper<T>
     {
         ArgumentNullException.ThrowIfNull(connection);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
-        await using var cmd = connection.CreateCommand(commandText, configureParameters);
+        var cmd = connection.CreateCommand(commandText, configureParameters);
 
-        await using var reader = await cmd.QuerySingleAsync(cancellationToken);
-
-        return await reader.MapSingleAsync<T>();
+        return cmd.QuerySingleAsyncImpl<T>(connection, cancellationToken);
     }
 
     /// <summary>
@@ -359,20 +356,15 @@ public static class NpgsqlConnectionExtensions
     /// <param name="connection">The <see cref="NpgsqlConnection"/>.</param>
     /// <param name="commandText">The SQL command text.</param>
     /// <returns>A task representing the asynchronous operation with the mapped <typeparamref name="T"/>s.</returns>
-    public static async IAsyncEnumerable<T> QueryAsync<T>(this NpgsqlConnection connection, string commandText)
+    public static IAsyncEnumerable<T> QueryAsync<T>(this NpgsqlConnection connection, string commandText)
         where T : IDataReaderMapper<T>
     {
         ArgumentNullException.ThrowIfNull(connection);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
-        await using var cmd = connection.CreateCommand(commandText);
+        var cmd = connection.CreateCommand(commandText);
 
-        await using var reader = await cmd.QueryAsync();
-
-        await foreach (var item in reader.MapAsync<T>())
-        {
-            yield return item;
-        }
+        return cmd.QueryAsyncImpl<T>(connection, default);
     }
 
     /// <summary>
@@ -383,20 +375,15 @@ public static class NpgsqlConnectionExtensions
     /// <param name="commandText">The SQL command text.</param>
     /// <param name="cancellationToken">A token to cancel the asynchronous operation.</param>
     /// <returns>A task representing the asynchronous operation with the mapped <typeparamref name="T"/>s.</returns>
-    public static async IAsyncEnumerable<T> QueryAsync<T>(this NpgsqlConnection connection, string commandText, [EnumeratorCancellation] CancellationToken cancellationToken)
+    public static IAsyncEnumerable<T> QueryAsync<T>(this NpgsqlConnection connection, string commandText, CancellationToken cancellationToken)
         where T : IDataReaderMapper<T>
     {
         ArgumentNullException.ThrowIfNull(connection);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
-        await using var cmd = connection.CreateCommand(commandText);
+        var cmd = connection.CreateCommand(commandText);
 
-        await using var reader = await cmd.QueryAsync(cancellationToken);
-
-        await foreach (var item in reader.MapAsync<T>())
-        {
-            yield return item;
-        }
+        return cmd.QueryAsyncImpl<T>(connection, cancellationToken);
     }
 
     /// <summary>
@@ -407,20 +394,15 @@ public static class NpgsqlConnectionExtensions
     /// <param name="commandText">The SQL command text.</param>
     /// <param name="parameters">Parameters to use when executing the command text.</param>
     /// <returns>A task representing the asynchronous operation with the mapped <typeparamref name="T"/>s.</returns>
-    public static async IAsyncEnumerable<T> QueryAsync<T>(this NpgsqlConnection connection, string commandText, params NpgsqlParameter[] parameters)
+    public static IAsyncEnumerable<T> QueryAsync<T>(this NpgsqlConnection connection, string commandText, params NpgsqlParameter[] parameters)
         where T : IDataReaderMapper<T>
     {
         ArgumentNullException.ThrowIfNull(connection);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
-        await using var cmd = connection.CreateCommand(commandText, parameters);
+        var cmd = connection.CreateCommand(commandText, parameters);
 
-        await using var reader = await cmd.QueryAsync();
-
-        await foreach (var item in reader.MapAsync<T>())
-        {
-            yield return item;
-        }
+        return cmd.QueryAsyncImpl<T>(connection, default);
     }
 
     /// <summary>
@@ -432,20 +414,15 @@ public static class NpgsqlConnectionExtensions
     /// <param name="cancellationToken">A token to cancel the asynchronous operation.</param>
     /// <param name="parameters">Parameters to use when executing the command text.</param>
     /// <returns>A task representing the asynchronous operation with the mapped <typeparamref name="T"/>s.</returns>
-    public static async IAsyncEnumerable<T> QueryAsync<T>(this NpgsqlConnection connection, string commandText, [EnumeratorCancellation] CancellationToken cancellationToken, params NpgsqlParameter[] parameters)
+    public static IAsyncEnumerable<T> QueryAsync<T>(this NpgsqlConnection connection, string commandText, CancellationToken cancellationToken, params NpgsqlParameter[] parameters)
         where T : IDataReaderMapper<T>
     {
         ArgumentNullException.ThrowIfNull(connection);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
-        await using var cmd = connection.CreateCommand(commandText, parameters);
+        var cmd = connection.CreateCommand(commandText, parameters);
 
-        await using var reader = await cmd.QueryAsync(cancellationToken);
-
-        await foreach (var item in reader.MapAsync<T>())
-        {
-            yield return item;
-        }
+        return cmd.QueryAsyncImpl<T>(connection, cancellationToken);
     }
 
     /// <summary>
@@ -456,20 +433,15 @@ public static class NpgsqlConnectionExtensions
     /// <param name="commandText">The SQL command text.</param>
     /// <param name="configureParameters">A delegate to configured the <see cref="NpgsqlParameterCollection"/> before the command is executed.</param>
     /// <returns>A task representing the asynchronous operation with the mapped <typeparamref name="T"/>s.</returns>
-    public static async IAsyncEnumerable<T> QueryAsync<T>(this NpgsqlConnection connection, string commandText, Action<NpgsqlParameterCollection> configureParameters)
+    public static IAsyncEnumerable<T> QueryAsync<T>(this NpgsqlConnection connection, string commandText, Action<NpgsqlParameterCollection> configureParameters)
         where T : IDataReaderMapper<T>
     {
         ArgumentNullException.ThrowIfNull(connection);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
-        await using var cmd = connection.CreateCommand(commandText, configureParameters);
+        var cmd = connection.CreateCommand(commandText, configureParameters);
 
-        await using var reader = await cmd.QueryAsync();
-
-        await foreach (var item in reader.MapAsync<T>())
-        {
-            yield return item;
-        }
+        return cmd.QueryAsyncImpl<T>(connection, default);
     }
 
     /// <summary>
@@ -481,20 +453,15 @@ public static class NpgsqlConnectionExtensions
     /// <param name="configureParameters">A delegate to configured the <see cref="NpgsqlParameterCollection"/> before the command is executed.</param>
     /// <param name="cancellationToken">A token to cancel the asynchronous operation.</param>
     /// <returns>A task representing the asynchronous operation with the mapped <typeparamref name="T"/>s.</returns>
-    public static async IAsyncEnumerable<T> QueryAsync<T>(this NpgsqlConnection connection, string commandText, Action<NpgsqlParameterCollection> configureParameters, [EnumeratorCancellation] CancellationToken cancellationToken)
+    public static IAsyncEnumerable<T> QueryAsync<T>(this NpgsqlConnection connection, string commandText, Action<NpgsqlParameterCollection> configureParameters, CancellationToken cancellationToken)
         where T : IDataReaderMapper<T>
     {
         ArgumentNullException.ThrowIfNull(connection);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
-        await using var cmd = connection.CreateCommand(commandText, configureParameters);
+        var cmd = connection.CreateCommand(commandText, configureParameters);
 
-        await using var reader = await cmd.QueryAsync(cancellationToken);
-
-        await foreach (var item in reader.MapAsync<T>())
-        {
-            yield return item;
-        }
+        return cmd.QueryAsyncImpl<T>(connection, cancellationToken);
     }
 #endif
 
@@ -512,6 +479,7 @@ public static class NpgsqlConnectionExtensions
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
         await using var cmd = connection.CreateCommand(commandText, parameters);
+        await connection.OpenAsync();
 
         return await cmd.ExecuteReaderAsync(commandBehavior);
     }
@@ -531,6 +499,7 @@ public static class NpgsqlConnectionExtensions
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
         await using var cmd = connection.CreateCommand(commandText, parameters);
+        await connection.OpenAsync();
 
         return await cmd.ExecuteReaderAsync(commandBehavior, cancellationToken);
     }
@@ -549,6 +518,7 @@ public static class NpgsqlConnectionExtensions
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
 
         await using var cmd = connection.CreateCommand(commandText, configureParameters);
+        await connection.OpenAsync();
 
         return await cmd.ExecuteReaderAsync(commandBehavior);
     }
