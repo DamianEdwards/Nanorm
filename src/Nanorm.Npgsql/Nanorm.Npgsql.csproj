@@ -18,6 +18,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="NpgsqlConnectionExtensions.Query.tt">
+      <LastGenOutput>NpgsqlConnectionExtensions.Query.cs</LastGenOutput>
+      <Generator>TextTemplatingFileGenerator</Generator>
+    </None>
     <None Update="NpgsqlDataSourceExtensions.Query.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>NpgsqlDataSourceExtensions.Query.cs</LastGenOutput>
@@ -29,6 +33,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="NpgsqlConnectionExtensions.Query.cs">
+      <DependentUpon>NpgsqlConnectionExtensions.Query.tt</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
     <Compile Update="NpgsqlDataSourceExtensions.Query.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>

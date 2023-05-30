@@ -98,17 +98,7 @@ public static class NpgsqlCommandExtensions
     {
         ArgumentNullException.ThrowIfNull(command);
 
-        if (parameters is null || parameters.Length == 0)
-        {
-            return command;
-        }
-
-        for (int i = 0; i < parameters.Length; i++)
-        {
-            command.Parameters.Add(parameters[i]);
-        }
-
-        return command;
+        return command.AddParametersImpl(parameters);
     }
 
     /// <summary>
@@ -128,6 +118,63 @@ public static class NpgsqlCommandExtensions
         }
 
         return command;
+    }
+
+    internal static NpgsqlCommand AddParametersImpl(this NpgsqlCommand command, NpgsqlParameter[] parameters)
+    {
+        if (parameters is null || parameters.Length == 0)
+        {
+            return command;
+        }
+
+        for (int i = 0; i < parameters.Length; i++)
+        {
+            command.Parameters.Add(parameters[i]);
+        }
+
+        return command;
+    }
+
+    internal static async Task<int> ExecuteNonQueryAsyncImpl(this NpgsqlCommand command, NpgsqlConnection connection, CancellationToken cancellationToken)
+    {
+        await connection.OpenAsync(cancellationToken);
+        return await command.ExecuteNonQueryAsyncImpl(cancellationToken);
+    }
+
+    internal static async Task<int> ExecuteNonQueryAsyncImpl(this NpgsqlCommand command, CancellationToken cancellationToken)
+    {
+        await using (command)
+        {
+            return await command.ExecuteNonQueryAsync(cancellationToken);
+        }
+    }
+
+    internal static async Task<object?> ExecuteScalarAsyncImpl(this NpgsqlCommand command, NpgsqlConnection connection, CancellationToken cancellationToken)
+    {
+        await connection.OpenAsync(cancellationToken);
+        return await command.ExecuteScalarAsyncImpl(cancellationToken);
+    }
+
+    internal static async Task<object?> ExecuteScalarAsyncImpl(this NpgsqlCommand command, CancellationToken cancellationToken)
+    {
+        await using (command)
+        {
+            return await command.ExecuteScalarAsync(cancellationToken);
+        }
+    }
+
+    internal static async Task<NpgsqlDataReader> ExecuteReaderAsyncImpl(this NpgsqlCommand command, NpgsqlConnection connection, CommandBehavior commandBehavior, CancellationToken cancellationToken)
+    {
+        await connection.OpenAsync(cancellationToken);
+        return await command.ExecuteReaderAsyncImpl(commandBehavior, cancellationToken);
+    }
+
+    internal static async Task<NpgsqlDataReader> ExecuteReaderAsyncImpl(this NpgsqlCommand command, CommandBehavior commandBehavior, CancellationToken cancellationToken)
+    {
+        await using (command)
+        {
+            return await command.ExecuteReaderAsync(commandBehavior, cancellationToken);
+        }
     }
 
 #if NET7_0_OR_GREATER

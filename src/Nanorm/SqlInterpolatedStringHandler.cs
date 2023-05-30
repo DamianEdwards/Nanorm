@@ -1,25 +1,25 @@
 ﻿using System.Buffers;
 using System.Collections.Concurrent;
+using System.Data.Common;
 using System.Globalization;
 using System.Runtime.CompilerServices;
-using Microsoft.Data.Sqlite;
 
-namespace Nanorm.Sqlite;
+namespace Nanorm;
 
 /// <summary>
 /// Custom interpolated string handler for Sqlite queries.
 /// </summary>
 [InterpolatedStringHandler]
-public ref struct SqliteInterpolatedStringHandler
+public ref struct SqlInterpolatedStringHandler
 {
-    private const string _parameterMarker = "$";
+    private const string _parameterMarker = "@";
     // !! This must be kept in sync with length of const string above !!
     private const int _parameterMarkerLength = 1;
 
     private static readonly string[] _parameterNamesCache = Enumerable.Range(1, 9).Select(i => FormattableString.Invariant($"{_parameterMarker}{i}")).ToArray();
     private static readonly ConcurrentDictionary<int, string> _generatedQueryCache = new(Environment.ProcessorCount, 10);
 
-    private readonly SqliteParameter[] _parameters;
+    private readonly DbPlaceholderParameter[] _parameters;
     private readonly int _parameterCount;
     private readonly string[] _builder;
     private int _parameterIndex;
@@ -28,16 +28,16 @@ public ref struct SqliteInterpolatedStringHandler
     private int _hashCode;
 
     /// <summary>
-    /// Creates a new <see cref="SqliteInterpolatedStringHandler"/> instance.
+    /// Creates a new <see cref="SqlInterpolatedStringHandler"/> instance.
     /// </summary>
     /// <param name="literalLength">The length of the interpolated string literal.</param>
     /// <param name="formattedCount">The count of formatted placeholders.</param>
-    public SqliteInterpolatedStringHandler(int literalLength, int formattedCount)
+    public SqlInterpolatedStringHandler(int literalLength, int formattedCount)
     {
         // Total number of string fragments
         _builder = ArrayPool<string>.Shared.Rent(literalLength + formattedCount);
         _parameterCount = formattedCount;
-        _parameters = formattedCount > 0 ? ArrayPool<SqliteParameter>.Shared.Rent(_parameterCount) : Array.Empty<SqliteParameter>();
+        _parameters = formattedCount > 0 ? ArrayPool<DbPlaceholderParameter>.Shared.Rent(_parameterCount) : Array.Empty<DbPlaceholderParameter>();
         _hashCode = HashCode.Combine(_parameterCount);
     }
 
@@ -61,7 +61,7 @@ public ref struct SqliteInterpolatedStringHandler
     {
         var parameterName = GetParameterName(_parameterIndex);
 
-        _parameters[_parameterIndex] = new SqliteParameter(parameterName, value);
+        _parameters[_parameterIndex] = new DbPlaceholderParameter(parameterName, value);
         _builder[_builderIndex] = _parameterMarker;
 
         _parameterIndex++;
@@ -71,7 +71,7 @@ public ref struct SqliteInterpolatedStringHandler
         _totalLength += _parameterMarkerLength + (int)Math.Floor(Math.Log10(_parameterIndex) + 1);
     }
 
-    internal readonly SqliteCommand GetCommand(SqliteConnection connection)
+    internal readonly DbCommand GetCommand(DbConnection connection)
     {
         var command = connection.CreateCommand(GetCommandText());
 
@@ -79,16 +79,29 @@ public ref struct SqliteInterpolatedStringHandler
         return command;
     }
 
+#if NET7_0_OR_GREATER
+    internal readonly DbCommand GetCommand(DbDataSource dataSource)
+    {
+        var command = dataSource.CreateCommand(GetCommandText());
+
+        ApplyParameters(command);
+        return command;
+    }
+#endif
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private readonly void ApplyParameters(SqliteCommand command)
+    private readonly void ApplyParameters(DbCommand command)
     {
         if (_parameterCount > 0)
         {
-            for (var i = 0; i < _parameterCount; i++)
+            for (int i = 0; i < _parameterCount; i++)
             {
-                command.Parameters.Add(_parameters[i]);
+                var parameter = command.CreateParameter();
+                parameter.ParameterName = _parameters[i].Name;
+                parameter.Value = _parameters[i].Value;
+                command.Parameters.Add(parameter);
             }
-            ArrayPool<SqliteParameter>.Shared.Return(_parameters);
+            ArrayPool<DbPlaceholderParameter>.Shared.Return(_parameters);
         }
     }
 
@@ -138,7 +151,7 @@ public ref struct SqliteInterpolatedStringHandler
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static string GetParameterName(int _parameterIndex)
     {
-        // Microsoft.Data.Sqlite doesn't support unnamed parameters so we have to generate a name: https://github.com/dotnet/efcore/issues/24480
+        // Not all database providers support unnamed parameters so we have to generate a name
         var parameterName = _parameterIndex < _parameterNamesCache.Length
             ? _parameterNamesCache[_parameterIndex]
             // TODO: Optimize parameter name generation for names beyond initial cache

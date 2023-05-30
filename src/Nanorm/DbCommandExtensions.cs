@@ -100,20 +100,7 @@ public static class DbCommandExtensions
     {
         ArgumentNullException.ThrowIfNull(command);
 
-        if (parameters is null || parameters.Length == 0)
-        {
-            return command;
-        }
-
-        for (var i = 0; i < parameters.Length; i++)
-        {
-            var dbParameter = command.CreateParameter();
-            dbParameter.ParameterName = parameters[i].Name;
-            dbParameter.Value = parameters[i].Value;
-            command.Parameters.Add(dbParameter);
-        }
-
-        return command;
+        return command.AddParametersImpl(parameters);
     }
 
     /// <summary>
@@ -132,6 +119,72 @@ public static class DbCommandExtensions
         }
 
         return command;
+    }
+
+    internal static DbCommand AddParametersImpl(this DbCommand command, DbPlaceholderParameter[] parameters)
+    {
+        if (parameters is null || parameters.Length == 0)
+        {
+            return command;
+        }
+
+        for (var i = 0; i < parameters.Length; i++)
+        {
+            var dbParameter = command.CreateParameter();
+            if (!string.IsNullOrEmpty(parameters[i].Name))
+            {
+                dbParameter.ParameterName = parameters[i].Name;
+            }
+            dbParameter.Value = parameters[i].Value;
+            command.Parameters.Add(dbParameter);
+        }
+
+        return command;
+    }
+
+    internal static async Task<int> ExecuteNonQueryAsyncImpl(this DbCommand command, CancellationToken cancellationToken)
+    {
+        await using (command)
+        {
+            return await command.ExecuteNonQueryAsync(cancellationToken);
+        }
+    }
+
+    internal static async Task<int> ExecuteNonQueryAsyncImpl(this DbCommand command, DbConnection connection, CancellationToken cancellationToken)
+    {
+        await connection.OpenAsync(cancellationToken);
+        await using (command)
+        {
+            return await command.ExecuteNonQueryAsync(cancellationToken);
+        }
+    }
+
+    internal static async Task<object?> ExecuteScalarAsyncImpl(this DbCommand command, DbConnection connection, CancellationToken cancellationToken)
+    {
+        await connection.OpenAsync(cancellationToken);
+        return await command.ExecuteScalarAsyncImpl(cancellationToken);
+    }
+
+    internal static async Task<object?> ExecuteScalarAsyncImpl(this DbCommand command, CancellationToken cancellationToken)
+    {
+        await using (command)
+        {
+            return await command.ExecuteScalarAsync(cancellationToken);
+        }
+    }
+
+    internal static async Task<DbDataReader> ExecuteReaderAsyncImpl(this DbCommand command, DbConnection connection, CommandBehavior commandBehavior, CancellationToken cancellationToken)
+    {
+        await connection.OpenAsync(cancellationToken);
+        return await command.ExecuteReaderAsyncImpl(commandBehavior, cancellationToken);
+    }
+
+    internal static async Task<DbDataReader> ExecuteReaderAsyncImpl(this DbCommand command, CommandBehavior commandBehavior, CancellationToken cancellationToken)
+    {
+        await using (command)
+        {
+            return await command.ExecuteReaderAsync(commandBehavior, cancellationToken);
+        }
     }
 
 #if NET7_0_OR_GREATER
