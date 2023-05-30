@@ -7,7 +7,7 @@ namespace System.Data.Common;
 /// <summary>
 /// Extension methods for <see cref="DbDataSource"/> from the <c>Nanorm</c> package.
 /// </summary>
-public static class DbDataSourceExtensions
+public static partial class DbDataSourceExtensions
 {
     /// <summary>
     /// Executes a command that does not return any results.
