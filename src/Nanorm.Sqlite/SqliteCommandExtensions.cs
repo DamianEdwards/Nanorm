@@ -1,4 +1,5 @@
 ﻿using System.Data;
+using System.Data.Common;
 using System.Runtime.CompilerServices;
 #if NET7_0_OR_GREATER
 using Nanorm.Sqlite;
@@ -102,18 +103,7 @@ public static class SqliteCommandExtensions
     {
         ArgumentNullException.ThrowIfNull(command);
 
-        if (parameters is null || parameters.Length == 0)
-        {
-            return command;
-        }
-
-        return command.Configure(parameterCollection =>
-        {
-            for (var i = 0; i < parameters.Length; i++)
-            {
-                parameterCollection.Add(parameters[i]);
-            }
-        });
+        return command.AddParametersImpl(parameters);
     }
 
     /// <summary>
@@ -132,6 +122,48 @@ public static class SqliteCommandExtensions
         }
 
         return command;
+    }
+
+    internal static SqliteCommand AddParametersImpl(this SqliteCommand command, SqliteParameter[] parameters)
+    {
+        if (parameters is null || parameters.Length == 0)
+        {
+            return command;
+        }
+
+        for (var i = 0; i < parameters.Length; i++)
+        {
+            command.Parameters.Add(parameters[i]);
+        }
+
+        return command;
+    }
+
+    internal static async Task<int> ExecuteNonQueryAsyncImpl(this SqliteCommand command, SqliteConnection connection, CancellationToken cancellationToken)
+    {
+        await connection.OpenAsync(cancellationToken);
+        await using (command)
+        {
+            return await command.ExecuteNonQueryAsync(cancellationToken);
+        }
+    }
+
+    internal static async Task<object?> ExecuteScalarAsync(this SqliteCommand command, SqliteConnection connection, CancellationToken cancellationToken)
+    {
+        await connection.OpenAsync(cancellationToken);
+        await using (command)
+        {
+            return await command.ExecuteScalarAsync(cancellationToken);
+        }
+    }
+
+    internal static async Task<SqliteDataReader> ExecuteReaderAsyncImpl(this SqliteCommand command, SqliteConnection connection, CommandBehavior commandBehavior, CancellationToken cancellationToken)
+    {
+        await connection.OpenAsync(cancellationToken);
+        await using (command)
+        {
+            return await command.ExecuteReaderAsync(commandBehavior, cancellationToken);
+        }
     }
 
 #if NET7_0_OR_GREATER
