@@ -13,6 +13,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="DbConnectionExtensions.Query.cs">
+      <DependentUpon>DbConnectionExtensions.Query.tt</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
     <Compile Update="DbDataSourceExtensions.Query.cs">
       <DependentUpon>DbDataSourceExtensions.Query.tt</DependentUpon>
       <DesignTime>True</DesignTime>
@@ -21,6 +26,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="DbConnectionExtensions.Query.tt">
+      <LastGenOutput>DbConnectionExtensions.Query.cs</LastGenOutput>
+      <Generator>TextTemplatingFileGenerator</Generator>
+    </None>
     <None Update="DbDataSourceExtensions.Query.tt">
       <LastGenOutput>DbDataSourceExtensions.Query.cs</LastGenOutput>
       <Generator>TextTemplatingFileGenerator</Generator>

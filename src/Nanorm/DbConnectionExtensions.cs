@@ -6,7 +6,7 @@ namespace System.Data.Common;
 /// <summary>
 /// Extension methods for <see cref="DbConnection"/> from the <c>Nanorm</c> package.
 /// </summary>
-public static class DbConnectionExtensions
+public static partial class DbConnectionExtensions
 {
     /// <summary>
     /// Executes a command that does not return any results.

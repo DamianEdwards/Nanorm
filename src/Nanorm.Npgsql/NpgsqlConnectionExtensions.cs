@@ -7,7 +7,7 @@ namespace Npgsql;
 /// <summary>
 /// Extension methods for <see cref="NpgsqlConnection"/> from the <c>Nanorm.Npgsql</c> package.
 /// </summary>
-public static class NpgsqlConnectionExtensions
+public static partial class NpgsqlConnectionExtensions
 {
     /// <summary>
     /// Executes a command that does not return any results.

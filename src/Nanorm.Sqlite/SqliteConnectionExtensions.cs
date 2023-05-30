@@ -7,7 +7,7 @@ namespace Microsoft.Data.Sqlite;
 /// <summary>
 /// Extension methods for <see cref="SqliteConnection"/> from the <c>Nanorm.Sqlite</c> package.
 /// </summary>
-public static class SqliteConnectionExtensions
+public static partial class SqliteConnectionExtensions
 {
     /// <summary>
     /// Executes a command that does not return any results.
