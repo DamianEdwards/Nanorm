@@ -21,13 +21,13 @@ public static partial class DbDataSourceExtensions
     /// <param name="commandText">The SQL command text.</param>
     /// <param name="param1">
     /// A parameter to use when executing the command text. Use the <see cref="DbParameterExtensions.AsDbParameter"/>
-    /// method to convert values to <see cref="DbParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
+    /// method to convert values to <see cref="DbPlaceholderParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
     /// </param>
     /// <returns>A task representing the asynchronous operation with the mapped <typeparamref name="T"/>.</returns>
     public static Task<T?> QuerySingleAsync<T>(
         this DbDataSource dataSource,
         string commandText,
-        DbParameter param1
+        DbPlaceholderParameter param1
         )
         where T : IDataReaderMapper<T>
     {
@@ -36,7 +36,15 @@ public static partial class DbDataSourceExtensions
         ArgumentNullException.ThrowIfNull(param1);
 
         var cmd = dataSource.CreateCommand(commandText);
-        cmd.Parameters.Add(param1);
+
+        var dbParam1 = cmd.CreateParameter();
+        if (!string.IsNullOrEmpty(param1.Name))
+        {
+            dbParam1.ParameterName = param1.Name;
+        }
+        dbParam1.Value = param1.Value;
+        cmd.Parameters.Add(dbParam1);
+
 
         return cmd.QuerySingleAsyncImpl<T>(default);
     }
@@ -49,14 +57,14 @@ public static partial class DbDataSourceExtensions
     /// <param name="commandText">The SQL command text.</param>
     /// <param name="param1">
     /// A parameter to use when executing the command text. Use the <see cref="DbParameterExtensions.AsDbParameter"/>
-    /// method to convert values to <see cref="DbParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
+    /// method to convert values to <see cref="DbPlaceholderParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
     /// </param>
     /// <param name="cancellationToken">A token to cancel the asynchronous operation.</param>
     /// <returns>A task representing the asynchronous operation with the mapped <typeparamref name="T"/>.</returns>
     public static Task<T?> QuerySingleAsync<T>(
         this DbDataSource dataSource,
         string commandText,
-        DbParameter param1,
+        DbPlaceholderParameter param1,
         CancellationToken cancellationToken
         )
         where T : IDataReaderMapper<T>
@@ -66,7 +74,14 @@ public static partial class DbDataSourceExtensions
         ArgumentNullException.ThrowIfNull(param1);
 
         var cmd = dataSource.CreateCommand(commandText);
-        cmd.Parameters.Add(param1);
+
+        var dbParam1 = cmd.CreateParameter();
+        if (!string.IsNullOrEmpty(param1.Name))
+        {
+            dbParam1.ParameterName = param1.Name;
+        }
+        dbParam1.Value = param1.Value;
+        cmd.Parameters.Add(dbParam1);
 
         return cmd.QuerySingleAsyncImpl<T>(cancellationToken);
     }
@@ -79,18 +94,18 @@ public static partial class DbDataSourceExtensions
     /// <param name="commandText">The SQL command text.</param>
     /// <param name="param1">
     /// A parameter to use when executing the command text. Use the <see cref="DbParameterExtensions.AsDbParameter"/>
-    /// method to convert values to <see cref="DbParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
+    /// method to convert values to <see cref="DbPlaceholderParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
     /// </param>
     /// <param name="param2">
     /// A parameter to use when executing the command text. Use the <see cref="DbParameterExtensions.AsDbParameter"/>
-    /// method to convert values to <see cref="DbParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
+    /// method to convert values to <see cref="DbPlaceholderParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
     /// </param>
     /// <returns>A task representing the asynchronous operation with the mapped <typeparamref name="T"/>.</returns>
     public static Task<T?> QuerySingleAsync<T>(
         this DbDataSource dataSource,
         string commandText,
-        DbParameter param1, 
-        DbParameter param2
+        DbPlaceholderParameter param1, 
+        DbPlaceholderParameter param2
         )
         where T : IDataReaderMapper<T>
     {
@@ -100,8 +115,23 @@ public static partial class DbDataSourceExtensions
         ArgumentNullException.ThrowIfNull(param2);
 
         var cmd = dataSource.CreateCommand(commandText);
-        cmd.Parameters.Add(param1);
-        cmd.Parameters.Add(param2);
+
+        var dbParam1 = cmd.CreateParameter();
+        if (!string.IsNullOrEmpty(param1.Name))
+        {
+            dbParam1.ParameterName = param1.Name;
+        }
+        dbParam1.Value = param1.Value;
+        cmd.Parameters.Add(dbParam1);
+
+        var dbParam2 = cmd.CreateParameter();
+        if (!string.IsNullOrEmpty(param2.Name))
+        {
+            dbParam2.ParameterName = param2.Name;
+        }
+        dbParam2.Value = param2.Value;
+        cmd.Parameters.Add(dbParam2);
+
 
         return cmd.QuerySingleAsyncImpl<T>(default);
     }
@@ -114,19 +144,19 @@ public static partial class DbDataSourceExtensions
     /// <param name="commandText">The SQL command text.</param>
     /// <param name="param1">
     /// A parameter to use when executing the command text. Use the <see cref="DbParameterExtensions.AsDbParameter"/>
-    /// method to convert values to <see cref="DbParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
+    /// method to convert values to <see cref="DbPlaceholderParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
     /// </param>
     /// <param name="param2">
     /// A parameter to use when executing the command text. Use the <see cref="DbParameterExtensions.AsDbParameter"/>
-    /// method to convert values to <see cref="DbParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
+    /// method to convert values to <see cref="DbPlaceholderParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
     /// </param>
     /// <param name="cancellationToken">A token to cancel the asynchronous operation.</param>
     /// <returns>A task representing the asynchronous operation with the mapped <typeparamref name="T"/>.</returns>
     public static Task<T?> QuerySingleAsync<T>(
         this DbDataSource dataSource,
         string commandText,
-        DbParameter param1,
-        DbParameter param2,
+        DbPlaceholderParameter param1,
+        DbPlaceholderParameter param2,
         CancellationToken cancellationToken
         )
         where T : IDataReaderMapper<T>
@@ -137,8 +167,22 @@ public static partial class DbDataSourceExtensions
         ArgumentNullException.ThrowIfNull(param2);
 
         var cmd = dataSource.CreateCommand(commandText);
-        cmd.Parameters.Add(param1);
-        cmd.Parameters.Add(param2);
+
+        var dbParam1 = cmd.CreateParameter();
+        if (!string.IsNullOrEmpty(param1.Name))
+        {
+            dbParam1.ParameterName = param1.Name;
+        }
+        dbParam1.Value = param1.Value;
+        cmd.Parameters.Add(dbParam1);
+
+        var dbParam2 = cmd.CreateParameter();
+        if (!string.IsNullOrEmpty(param2.Name))
+        {
+            dbParam2.ParameterName = param2.Name;
+        }
+        dbParam2.Value = param2.Value;
+        cmd.Parameters.Add(dbParam2);
 
         return cmd.QuerySingleAsyncImpl<T>(cancellationToken);
     }
@@ -151,23 +195,23 @@ public static partial class DbDataSourceExtensions
     /// <param name="commandText">The SQL command text.</param>
     /// <param name="param1">
     /// A parameter to use when executing the command text. Use the <see cref="DbParameterExtensions.AsDbParameter"/>
-    /// method to convert values to <see cref="DbParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
+    /// method to convert values to <see cref="DbPlaceholderParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
     /// </param>
     /// <param name="param2">
     /// A parameter to use when executing the command text. Use the <see cref="DbParameterExtensions.AsDbParameter"/>
-    /// method to convert values to <see cref="DbParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
+    /// method to convert values to <see cref="DbPlaceholderParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
     /// </param>
     /// <param name="param3">
     /// A parameter to use when executing the command text. Use the <see cref="DbParameterExtensions.AsDbParameter"/>
-    /// method to convert values to <see cref="DbParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
+    /// method to convert values to <see cref="DbPlaceholderParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
     /// </param>
     /// <returns>A task representing the asynchronous operation with the mapped <typeparamref name="T"/>.</returns>
     public static Task<T?> QuerySingleAsync<T>(
         this DbDataSource dataSource,
         string commandText,
-        DbParameter param1, 
-        DbParameter param2, 
-        DbParameter param3
+        DbPlaceholderParameter param1, 
+        DbPlaceholderParameter param2, 
+        DbPlaceholderParameter param3
         )
         where T : IDataReaderMapper<T>
     {
@@ -178,9 +222,31 @@ public static partial class DbDataSourceExtensions
         ArgumentNullException.ThrowIfNull(param3);
 
         var cmd = dataSource.CreateCommand(commandText);
-        cmd.Parameters.Add(param1);
-        cmd.Parameters.Add(param2);
-        cmd.Parameters.Add(param3);
+
+        var dbParam1 = cmd.CreateParameter();
+        if (!string.IsNullOrEmpty(param1.Name))
+        {
+            dbParam1.ParameterName = param1.Name;
+        }
+        dbParam1.Value = param1.Value;
+        cmd.Parameters.Add(dbParam1);
+
+        var dbParam2 = cmd.CreateParameter();
+        if (!string.IsNullOrEmpty(param2.Name))
+        {
+            dbParam2.ParameterName = param2.Name;
+        }
+        dbParam2.Value = param2.Value;
+        cmd.Parameters.Add(dbParam2);
+
+        var dbParam3 = cmd.CreateParameter();
+        if (!string.IsNullOrEmpty(param3.Name))
+        {
+            dbParam3.ParameterName = param3.Name;
+        }
+        dbParam3.Value = param3.Value;
+        cmd.Parameters.Add(dbParam3);
+
 
         return cmd.QuerySingleAsyncImpl<T>(default);
     }
@@ -193,24 +259,24 @@ public static partial class DbDataSourceExtensions
     /// <param name="commandText">The SQL command text.</param>
     /// <param name="param1">
     /// A parameter to use when executing the command text. Use the <see cref="DbParameterExtensions.AsDbParameter"/>
-    /// method to convert values to <see cref="DbParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
+    /// method to convert values to <see cref="DbPlaceholderParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
     /// </param>
     /// <param name="param2">
     /// A parameter to use when executing the command text. Use the <see cref="DbParameterExtensions.AsDbParameter"/>
-    /// method to convert values to <see cref="DbParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
+    /// method to convert values to <see cref="DbPlaceholderParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
     /// </param>
     /// <param name="param3">
     /// A parameter to use when executing the command text. Use the <see cref="DbParameterExtensions.AsDbParameter"/>
-    /// method to convert values to <see cref="DbParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
+    /// method to convert values to <see cref="DbPlaceholderParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
     /// </param>
     /// <param name="cancellationToken">A token to cancel the asynchronous operation.</param>
     /// <returns>A task representing the asynchronous operation with the mapped <typeparamref name="T"/>.</returns>
     public static Task<T?> QuerySingleAsync<T>(
         this DbDataSource dataSource,
         string commandText,
-        DbParameter param1,
-        DbParameter param2,
-        DbParameter param3,
+        DbPlaceholderParameter param1,
+        DbPlaceholderParameter param2,
+        DbPlaceholderParameter param3,
         CancellationToken cancellationToken
         )
         where T : IDataReaderMapper<T>
@@ -222,9 +288,30 @@ public static partial class DbDataSourceExtensions
         ArgumentNullException.ThrowIfNull(param3);
 
         var cmd = dataSource.CreateCommand(commandText);
-        cmd.Parameters.Add(param1);
-        cmd.Parameters.Add(param2);
-        cmd.Parameters.Add(param3);
+
+        var dbParam1 = cmd.CreateParameter();
+        if (!string.IsNullOrEmpty(param1.Name))
+        {
+            dbParam1.ParameterName = param1.Name;
+        }
+        dbParam1.Value = param1.Value;
+        cmd.Parameters.Add(dbParam1);
+
+        var dbParam2 = cmd.CreateParameter();
+        if (!string.IsNullOrEmpty(param2.Name))
+        {
+            dbParam2.ParameterName = param2.Name;
+        }
+        dbParam2.Value = param2.Value;
+        cmd.Parameters.Add(dbParam2);
+
+        var dbParam3 = cmd.CreateParameter();
+        if (!string.IsNullOrEmpty(param3.Name))
+        {
+            dbParam3.ParameterName = param3.Name;
+        }
+        dbParam3.Value = param3.Value;
+        cmd.Parameters.Add(dbParam3);
 
         return cmd.QuerySingleAsyncImpl<T>(cancellationToken);
     }
@@ -237,28 +324,28 @@ public static partial class DbDataSourceExtensions
     /// <param name="commandText">The SQL command text.</param>
     /// <param name="param1">
     /// A parameter to use when executing the command text. Use the <see cref="DbParameterExtensions.AsDbParameter"/>
-    /// method to convert values to <see cref="DbParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
+    /// method to convert values to <see cref="DbPlaceholderParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
     /// </param>
     /// <param name="param2">
     /// A parameter to use when executing the command text. Use the <see cref="DbParameterExtensions.AsDbParameter"/>
-    /// method to convert values to <see cref="DbParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
+    /// method to convert values to <see cref="DbPlaceholderParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
     /// </param>
     /// <param name="param3">
     /// A parameter to use when executing the command text. Use the <see cref="DbParameterExtensions.AsDbParameter"/>
-    /// method to convert values to <see cref="DbParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
+    /// method to convert values to <see cref="DbPlaceholderParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
     /// </param>
     /// <param name="param4">
     /// A parameter to use when executing the command text. Use the <see cref="DbParameterExtensions.AsDbParameter"/>
-    /// method to convert values to <see cref="DbParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
+    /// method to convert values to <see cref="DbPlaceholderParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
     /// </param>
     /// <returns>A task representing the asynchronous operation with the mapped <typeparamref name="T"/>.</returns>
     public static Task<T?> QuerySingleAsync<T>(
         this DbDataSource dataSource,
         string commandText,
-        DbParameter param1, 
-        DbParameter param2, 
-        DbParameter param3, 
-        DbParameter param4
+        DbPlaceholderParameter param1, 
+        DbPlaceholderParameter param2, 
+        DbPlaceholderParameter param3, 
+        DbPlaceholderParameter param4
         )
         where T : IDataReaderMapper<T>
     {
@@ -270,10 +357,39 @@ public static partial class DbDataSourceExtensions
         ArgumentNullException.ThrowIfNull(param4);
 
         var cmd = dataSource.CreateCommand(commandText);
-        cmd.Parameters.Add(param1);
-        cmd.Parameters.Add(param2);
-        cmd.Parameters.Add(param3);
-        cmd.Parameters.Add(param4);
+
+        var dbParam1 = cmd.CreateParameter();
+        if (!string.IsNullOrEmpty(param1.Name))
+        {
+            dbParam1.ParameterName = param1.Name;
+        }
+        dbParam1.Value = param1.Value;
+        cmd.Parameters.Add(dbParam1);
+
+        var dbParam2 = cmd.CreateParameter();
+        if (!string.IsNullOrEmpty(param2.Name))
+        {
+            dbParam2.ParameterName = param2.Name;
+        }
+        dbParam2.Value = param2.Value;
+        cmd.Parameters.Add(dbParam2);
+
+        var dbParam3 = cmd.CreateParameter();
+        if (!string.IsNullOrEmpty(param3.Name))
+        {
+            dbParam3.ParameterName = param3.Name;
+        }
+        dbParam3.Value = param3.Value;
+        cmd.Parameters.Add(dbParam3);
+
+        var dbParam4 = cmd.CreateParameter();
+        if (!string.IsNullOrEmpty(param4.Name))
+        {
+            dbParam4.ParameterName = param4.Name;
+        }
+        dbParam4.Value = param4.Value;
+        cmd.Parameters.Add(dbParam4);
+
 
         return cmd.QuerySingleAsyncImpl<T>(default);
     }
@@ -286,29 +402,29 @@ public static partial class DbDataSourceExtensions
     /// <param name="commandText">The SQL command text.</param>
     /// <param name="param1">
     /// A parameter to use when executing the command text. Use the <see cref="DbParameterExtensions.AsDbParameter"/>
-    /// method to convert values to <see cref="DbParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
+    /// method to convert values to <see cref="DbPlaceholderParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
     /// </param>
     /// <param name="param2">
     /// A parameter to use when executing the command text. Use the <see cref="DbParameterExtensions.AsDbParameter"/>
-    /// method to convert values to <see cref="DbParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
+    /// method to convert values to <see cref="DbPlaceholderParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
     /// </param>
     /// <param name="param3">
     /// A parameter to use when executing the command text. Use the <see cref="DbParameterExtensions.AsDbParameter"/>
-    /// method to convert values to <see cref="DbParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
+    /// method to convert values to <see cref="DbPlaceholderParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
     /// </param>
     /// <param name="param4">
     /// A parameter to use when executing the command text. Use the <see cref="DbParameterExtensions.AsDbParameter"/>
-    /// method to convert values to <see cref="DbParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
+    /// method to convert values to <see cref="DbPlaceholderParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
     /// </param>
     /// <param name="cancellationToken">A token to cancel the asynchronous operation.</param>
     /// <returns>A task representing the asynchronous operation with the mapped <typeparamref name="T"/>.</returns>
     public static Task<T?> QuerySingleAsync<T>(
         this DbDataSource dataSource,
         string commandText,
-        DbParameter param1,
-        DbParameter param2,
-        DbParameter param3,
-        DbParameter param4,
+        DbPlaceholderParameter param1,
+        DbPlaceholderParameter param2,
+        DbPlaceholderParameter param3,
+        DbPlaceholderParameter param4,
         CancellationToken cancellationToken
         )
         where T : IDataReaderMapper<T>
@@ -321,10 +437,38 @@ public static partial class DbDataSourceExtensions
         ArgumentNullException.ThrowIfNull(param4);
 
         var cmd = dataSource.CreateCommand(commandText);
-        cmd.Parameters.Add(param1);
-        cmd.Parameters.Add(param2);
-        cmd.Parameters.Add(param3);
-        cmd.Parameters.Add(param4);
+
+        var dbParam1 = cmd.CreateParameter();
+        if (!string.IsNullOrEmpty(param1.Name))
+        {
+            dbParam1.ParameterName = param1.Name;
+        }
+        dbParam1.Value = param1.Value;
+        cmd.Parameters.Add(dbParam1);
+
+        var dbParam2 = cmd.CreateParameter();
+        if (!string.IsNullOrEmpty(param2.Name))
+        {
+            dbParam2.ParameterName = param2.Name;
+        }
+        dbParam2.Value = param2.Value;
+        cmd.Parameters.Add(dbParam2);
+
+        var dbParam3 = cmd.CreateParameter();
+        if (!string.IsNullOrEmpty(param3.Name))
+        {
+            dbParam3.ParameterName = param3.Name;
+        }
+        dbParam3.Value = param3.Value;
+        cmd.Parameters.Add(dbParam3);
+
+        var dbParam4 = cmd.CreateParameter();
+        if (!string.IsNullOrEmpty(param4.Name))
+        {
+            dbParam4.ParameterName = param4.Name;
+        }
+        dbParam4.Value = param4.Value;
+        cmd.Parameters.Add(dbParam4);
 
         return cmd.QuerySingleAsyncImpl<T>(cancellationToken);
     }
@@ -337,33 +481,33 @@ public static partial class DbDataSourceExtensions
     /// <param name="commandText">The SQL command text.</param>
     /// <param name="param1">
     /// A parameter to use when executing the command text. Use the <see cref="DbParameterExtensions.AsDbParameter"/>
-    /// method to convert values to <see cref="DbParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
+    /// method to convert values to <see cref="DbPlaceholderParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
     /// </param>
     /// <param name="param2">
     /// A parameter to use when executing the command text. Use the <see cref="DbParameterExtensions.AsDbParameter"/>
-    /// method to convert values to <see cref="DbParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
+    /// method to convert values to <see cref="DbPlaceholderParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
     /// </param>
     /// <param name="param3">
     /// A parameter to use when executing the command text. Use the <see cref="DbParameterExtensions.AsDbParameter"/>
-    /// method to convert values to <see cref="DbParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
+    /// method to convert values to <see cref="DbPlaceholderParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
     /// </param>
     /// <param name="param4">
     /// A parameter to use when executing the command text. Use the <see cref="DbParameterExtensions.AsDbParameter"/>
-    /// method to convert values to <see cref="DbParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
+    /// method to convert values to <see cref="DbPlaceholderParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
     /// </param>
     /// <param name="param5">
     /// A parameter to use when executing the command text. Use the <see cref="DbParameterExtensions.AsDbParameter"/>
-    /// method to convert values to <see cref="DbParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
+    /// method to convert values to <see cref="DbPlaceholderParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
     /// </param>
     /// <returns>A task representing the asynchronous operation with the mapped <typeparamref name="T"/>.</returns>
     public static Task<T?> QuerySingleAsync<T>(
         this DbDataSource dataSource,
         string commandText,
-        DbParameter param1, 
-        DbParameter param2, 
-        DbParameter param3, 
-        DbParameter param4, 
-        DbParameter param5
+        DbPlaceholderParameter param1, 
+        DbPlaceholderParameter param2, 
+        DbPlaceholderParameter param3, 
+        DbPlaceholderParameter param4, 
+        DbPlaceholderParameter param5
         )
         where T : IDataReaderMapper<T>
     {
@@ -376,11 +520,47 @@ public static partial class DbDataSourceExtensions
         ArgumentNullException.ThrowIfNull(param5);
 
         var cmd = dataSource.CreateCommand(commandText);
-        cmd.Parameters.Add(param1);
-        cmd.Parameters.Add(param2);
-        cmd.Parameters.Add(param3);
-        cmd.Parameters.Add(param4);
-        cmd.Parameters.Add(param5);
+
+        var dbParam1 = cmd.CreateParameter();
+        if (!string.IsNullOrEmpty(param1.Name))
+        {
+            dbParam1.ParameterName = param1.Name;
+        }
+        dbParam1.Value = param1.Value;
+        cmd.Parameters.Add(dbParam1);
+
+        var dbParam2 = cmd.CreateParameter();
+        if (!string.IsNullOrEmpty(param2.Name))
+        {
+            dbParam2.ParameterName = param2.Name;
+        }
+        dbParam2.Value = param2.Value;
+        cmd.Parameters.Add(dbParam2);
+
+        var dbParam3 = cmd.CreateParameter();
+        if (!string.IsNullOrEmpty(param3.Name))
+        {
+            dbParam3.ParameterName = param3.Name;
+        }
+        dbParam3.Value = param3.Value;
+        cmd.Parameters.Add(dbParam3);
+
+        var dbParam4 = cmd.CreateParameter();
+        if (!string.IsNullOrEmpty(param4.Name))
+        {
+            dbParam4.ParameterName = param4.Name;
+        }
+        dbParam4.Value = param4.Value;
+        cmd.Parameters.Add(dbParam4);
+
+        var dbParam5 = cmd.CreateParameter();
+        if (!string.IsNullOrEmpty(param5.Name))
+        {
+            dbParam5.ParameterName = param5.Name;
+        }
+        dbParam5.Value = param5.Value;
+        cmd.Parameters.Add(dbParam5);
+
 
         return cmd.QuerySingleAsyncImpl<T>(default);
     }
@@ -393,34 +573,34 @@ public static partial class DbDataSourceExtensions
     /// <param name="commandText">The SQL command text.</param>
     /// <param name="param1">
     /// A parameter to use when executing the command text. Use the <see cref="DbParameterExtensions.AsDbParameter"/>
-    /// method to convert values to <see cref="DbParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
+    /// method to convert values to <see cref="DbPlaceholderParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
     /// </param>
     /// <param name="param2">
     /// A parameter to use when executing the command text. Use the <see cref="DbParameterExtensions.AsDbParameter"/>
-    /// method to convert values to <see cref="DbParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
+    /// method to convert values to <see cref="DbPlaceholderParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
     /// </param>
     /// <param name="param3">
     /// A parameter to use when executing the command text. Use the <see cref="DbParameterExtensions.AsDbParameter"/>
-    /// method to convert values to <see cref="DbParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
+    /// method to convert values to <see cref="DbPlaceholderParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
     /// </param>
     /// <param name="param4">
     /// A parameter to use when executing the command text. Use the <see cref="DbParameterExtensions.AsDbParameter"/>
-    /// method to convert values to <see cref="DbParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
+    /// method to convert values to <see cref="DbPlaceholderParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
     /// </param>
     /// <param name="param5">
     /// A parameter to use when executing the command text. Use the <see cref="DbParameterExtensions.AsDbParameter"/>
-    /// method to convert values to <see cref="DbParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
+    /// method to convert values to <see cref="DbPlaceholderParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
     /// </param>
     /// <param name="cancellationToken">A token to cancel the asynchronous operation.</param>
     /// <returns>A task representing the asynchronous operation with the mapped <typeparamref name="T"/>.</returns>
     public static Task<T?> QuerySingleAsync<T>(
         this DbDataSource dataSource,
         string commandText,
-        DbParameter param1,
-        DbParameter param2,
-        DbParameter param3,
-        DbParameter param4,
-        DbParameter param5,
+        DbPlaceholderParameter param1,
+        DbPlaceholderParameter param2,
+        DbPlaceholderParameter param3,
+        DbPlaceholderParameter param4,
+        DbPlaceholderParameter param5,
         CancellationToken cancellationToken
         )
         where T : IDataReaderMapper<T>
@@ -434,11 +614,46 @@ public static partial class DbDataSourceExtensions
         ArgumentNullException.ThrowIfNull(param5);
 
         var cmd = dataSource.CreateCommand(commandText);
-        cmd.Parameters.Add(param1);
-        cmd.Parameters.Add(param2);
-        cmd.Parameters.Add(param3);
-        cmd.Parameters.Add(param4);
-        cmd.Parameters.Add(param5);
+
+        var dbParam1 = cmd.CreateParameter();
+        if (!string.IsNullOrEmpty(param1.Name))
+        {
+            dbParam1.ParameterName = param1.Name;
+        }
+        dbParam1.Value = param1.Value;
+        cmd.Parameters.Add(dbParam1);
+
+        var dbParam2 = cmd.CreateParameter();
+        if (!string.IsNullOrEmpty(param2.Name))
+        {
+            dbParam2.ParameterName = param2.Name;
+        }
+        dbParam2.Value = param2.Value;
+        cmd.Parameters.Add(dbParam2);
+
+        var dbParam3 = cmd.CreateParameter();
+        if (!string.IsNullOrEmpty(param3.Name))
+        {
+            dbParam3.ParameterName = param3.Name;
+        }
+        dbParam3.Value = param3.Value;
+        cmd.Parameters.Add(dbParam3);
+
+        var dbParam4 = cmd.CreateParameter();
+        if (!string.IsNullOrEmpty(param4.Name))
+        {
+            dbParam4.ParameterName = param4.Name;
+        }
+        dbParam4.Value = param4.Value;
+        cmd.Parameters.Add(dbParam4);
+
+        var dbParam5 = cmd.CreateParameter();
+        if (!string.IsNullOrEmpty(param5.Name))
+        {
+            dbParam5.ParameterName = param5.Name;
+        }
+        dbParam5.Value = param5.Value;
+        cmd.Parameters.Add(dbParam5);
 
         return cmd.QuerySingleAsyncImpl<T>(cancellationToken);
     }
@@ -451,38 +666,38 @@ public static partial class DbDataSourceExtensions
     /// <param name="commandText">The SQL command text.</param>
     /// <param name="param1">
     /// A parameter to use when executing the command text. Use the <see cref="DbParameterExtensions.AsDbParameter"/>
-    /// method to convert values to <see cref="DbParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
+    /// method to convert values to <see cref="DbPlaceholderParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
     /// </param>
     /// <param name="param2">
     /// A parameter to use when executing the command text. Use the <see cref="DbParameterExtensions.AsDbParameter"/>
-    /// method to convert values to <see cref="DbParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
+    /// method to convert values to <see cref="DbPlaceholderParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
     /// </param>
     /// <param name="param3">
     /// A parameter to use when executing the command text. Use the <see cref="DbParameterExtensions.AsDbParameter"/>
-    /// method to convert values to <see cref="DbParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
+    /// method to convert values to <see cref="DbPlaceholderParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
     /// </param>
     /// <param name="param4">
     /// A parameter to use when executing the command text. Use the <see cref="DbParameterExtensions.AsDbParameter"/>
-    /// method to convert values to <see cref="DbParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
+    /// method to convert values to <see cref="DbPlaceholderParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
     /// </param>
     /// <param name="param5">
     /// A parameter to use when executing the command text. Use the <see cref="DbParameterExtensions.AsDbParameter"/>
-    /// method to convert values to <see cref="DbParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
+    /// method to convert values to <see cref="DbPlaceholderParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
     /// </param>
     /// <param name="param6">
     /// A parameter to use when executing the command text. Use the <see cref="DbParameterExtensions.AsDbParameter"/>
-    /// method to convert values to <see cref="DbParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
+    /// method to convert values to <see cref="DbPlaceholderParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
     /// </param>
     /// <returns>A task representing the asynchronous operation with the mapped <typeparamref name="T"/>.</returns>
     public static Task<T?> QuerySingleAsync<T>(
         this DbDataSource dataSource,
         string commandText,
-        DbParameter param1, 
-        DbParameter param2, 
-        DbParameter param3, 
-        DbParameter param4, 
-        DbParameter param5, 
-        DbParameter param6
+        DbPlaceholderParameter param1, 
+        DbPlaceholderParameter param2, 
+        DbPlaceholderParameter param3, 
+        DbPlaceholderParameter param4, 
+        DbPlaceholderParameter param5, 
+        DbPlaceholderParameter param6
         )
         where T : IDataReaderMapper<T>
     {
@@ -496,12 +711,55 @@ public static partial class DbDataSourceExtensions
         ArgumentNullException.ThrowIfNull(param6);
 
         var cmd = dataSource.CreateCommand(commandText);
-        cmd.Parameters.Add(param1);
-        cmd.Parameters.Add(param2);
-        cmd.Parameters.Add(param3);
-        cmd.Parameters.Add(param4);
-        cmd.Parameters.Add(param5);
-        cmd.Parameters.Add(param6);
+
+        var dbParam1 = cmd.CreateParameter();
+        if (!string.IsNullOrEmpty(param1.Name))
+        {
+            dbParam1.ParameterName = param1.Name;
+        }
+        dbParam1.Value = param1.Value;
+        cmd.Parameters.Add(dbParam1);
+
+        var dbParam2 = cmd.CreateParameter();
+        if (!string.IsNullOrEmpty(param2.Name))
+        {
+            dbParam2.ParameterName = param2.Name;
+        }
+        dbParam2.Value = param2.Value;
+        cmd.Parameters.Add(dbParam2);
+
+        var dbParam3 = cmd.CreateParameter();
+        if (!string.IsNullOrEmpty(param3.Name))
+        {
+            dbParam3.ParameterName = param3.Name;
+        }
+        dbParam3.Value = param3.Value;
+        cmd.Parameters.Add(dbParam3);
+
+        var dbParam4 = cmd.CreateParameter();
+        if (!string.IsNullOrEmpty(param4.Name))
+        {
+            dbParam4.ParameterName = param4.Name;
+        }
+        dbParam4.Value = param4.Value;
+        cmd.Parameters.Add(dbParam4);
+
+        var dbParam5 = cmd.CreateParameter();
+        if (!string.IsNullOrEmpty(param5.Name))
+        {
+            dbParam5.ParameterName = param5.Name;
+        }
+        dbParam5.Value = param5.Value;
+        cmd.Parameters.Add(dbParam5);
+
+        var dbParam6 = cmd.CreateParameter();
+        if (!string.IsNullOrEmpty(param6.Name))
+        {
+            dbParam6.ParameterName = param6.Name;
+        }
+        dbParam6.Value = param6.Value;
+        cmd.Parameters.Add(dbParam6);
+
 
         return cmd.QuerySingleAsyncImpl<T>(default);
     }
@@ -514,39 +772,39 @@ public static partial class DbDataSourceExtensions
     /// <param name="commandText">The SQL command text.</param>
     /// <param name="param1">
     /// A parameter to use when executing the command text. Use the <see cref="DbParameterExtensions.AsDbParameter"/>
-    /// method to convert values to <see cref="DbParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
+    /// method to convert values to <see cref="DbPlaceholderParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
     /// </param>
     /// <param name="param2">
     /// A parameter to use when executing the command text. Use the <see cref="DbParameterExtensions.AsDbParameter"/>
-    /// method to convert values to <see cref="DbParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
+    /// method to convert values to <see cref="DbPlaceholderParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
     /// </param>
     /// <param name="param3">
     /// A parameter to use when executing the command text. Use the <see cref="DbParameterExtensions.AsDbParameter"/>
-    /// method to convert values to <see cref="DbParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
+    /// method to convert values to <see cref="DbPlaceholderParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
     /// </param>
     /// <param name="param4">
     /// A parameter to use when executing the command text. Use the <see cref="DbParameterExtensions.AsDbParameter"/>
-    /// method to convert values to <see cref="DbParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
+    /// method to convert values to <see cref="DbPlaceholderParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
     /// </param>
     /// <param name="param5">
     /// A parameter to use when executing the command text. Use the <see cref="DbParameterExtensions.AsDbParameter"/>
-    /// method to convert values to <see cref="DbParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
+    /// method to convert values to <see cref="DbPlaceholderParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
     /// </param>
     /// <param name="param6">
     /// A parameter to use when executing the command text. Use the <see cref="DbParameterExtensions.AsDbParameter"/>
-    /// method to convert values to <see cref="DbParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
+    /// method to convert values to <see cref="DbPlaceholderParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
     /// </param>
     /// <param name="cancellationToken">A token to cancel the asynchronous operation.</param>
     /// <returns>A task representing the asynchronous operation with the mapped <typeparamref name="T"/>.</returns>
     public static Task<T?> QuerySingleAsync<T>(
         this DbDataSource dataSource,
         string commandText,
-        DbParameter param1,
-        DbParameter param2,
-        DbParameter param3,
-        DbParameter param4,
-        DbParameter param5,
-        DbParameter param6,
+        DbPlaceholderParameter param1,
+        DbPlaceholderParameter param2,
+        DbPlaceholderParameter param3,
+        DbPlaceholderParameter param4,
+        DbPlaceholderParameter param5,
+        DbPlaceholderParameter param6,
         CancellationToken cancellationToken
         )
         where T : IDataReaderMapper<T>
@@ -561,12 +819,54 @@ public static partial class DbDataSourceExtensions
         ArgumentNullException.ThrowIfNull(param6);
 
         var cmd = dataSource.CreateCommand(commandText);
-        cmd.Parameters.Add(param1);
-        cmd.Parameters.Add(param2);
-        cmd.Parameters.Add(param3);
-        cmd.Parameters.Add(param4);
-        cmd.Parameters.Add(param5);
-        cmd.Parameters.Add(param6);
+
+        var dbParam1 = cmd.CreateParameter();
+        if (!string.IsNullOrEmpty(param1.Name))
+        {
+            dbParam1.ParameterName = param1.Name;
+        }
+        dbParam1.Value = param1.Value;
+        cmd.Parameters.Add(dbParam1);
+
+        var dbParam2 = cmd.CreateParameter();
+        if (!string.IsNullOrEmpty(param2.Name))
+        {
+            dbParam2.ParameterName = param2.Name;
+        }
+        dbParam2.Value = param2.Value;
+        cmd.Parameters.Add(dbParam2);
+
+        var dbParam3 = cmd.CreateParameter();
+        if (!string.IsNullOrEmpty(param3.Name))
+        {
+            dbParam3.ParameterName = param3.Name;
+        }
+        dbParam3.Value = param3.Value;
+        cmd.Parameters.Add(dbParam3);
+
+        var dbParam4 = cmd.CreateParameter();
+        if (!string.IsNullOrEmpty(param4.Name))
+        {
+            dbParam4.ParameterName = param4.Name;
+        }
+        dbParam4.Value = param4.Value;
+        cmd.Parameters.Add(dbParam4);
+
+        var dbParam5 = cmd.CreateParameter();
+        if (!string.IsNullOrEmpty(param5.Name))
+        {
+            dbParam5.ParameterName = param5.Name;
+        }
+        dbParam5.Value = param5.Value;
+        cmd.Parameters.Add(dbParam5);
+
+        var dbParam6 = cmd.CreateParameter();
+        if (!string.IsNullOrEmpty(param6.Name))
+        {
+            dbParam6.ParameterName = param6.Name;
+        }
+        dbParam6.Value = param6.Value;
+        cmd.Parameters.Add(dbParam6);
 
         return cmd.QuerySingleAsyncImpl<T>(cancellationToken);
     }
@@ -579,43 +879,43 @@ public static partial class DbDataSourceExtensions
     /// <param name="commandText">The SQL command text.</param>
     /// <param name="param1">
     /// A parameter to use when executing the command text. Use the <see cref="DbParameterExtensions.AsDbParameter"/>
-    /// method to convert values to <see cref="DbParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
+    /// method to convert values to <see cref="DbPlaceholderParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
     /// </param>
     /// <param name="param2">
     /// A parameter to use when executing the command text. Use the <see cref="DbParameterExtensions.AsDbParameter"/>
-    /// method to convert values to <see cref="DbParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
+    /// method to convert values to <see cref="DbPlaceholderParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
     /// </param>
     /// <param name="param3">
     /// A parameter to use when executing the command text. Use the <see cref="DbParameterExtensions.AsDbParameter"/>
-    /// method to convert values to <see cref="DbParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
+    /// method to convert values to <see cref="DbPlaceholderParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
     /// </param>
     /// <param name="param4">
     /// A parameter to use when executing the command text. Use the <see cref="DbParameterExtensions.AsDbParameter"/>
-    /// method to convert values to <see cref="DbParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
+    /// method to convert values to <see cref="DbPlaceholderParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
     /// </param>
     /// <param name="param5">
     /// A parameter to use when executing the command text. Use the <see cref="DbParameterExtensions.AsDbParameter"/>
-    /// method to convert values to <see cref="DbParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
+    /// method to convert values to <see cref="DbPlaceholderParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
     /// </param>
     /// <param name="param6">
     /// A parameter to use when executing the command text. Use the <see cref="DbParameterExtensions.AsDbParameter"/>
-    /// method to convert values to <see cref="DbParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
+    /// method to convert values to <see cref="DbPlaceholderParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
     /// </param>
     /// <param name="param7">
     /// A parameter to use when executing the command text. Use the <see cref="DbParameterExtensions.AsDbParameter"/>
-    /// method to convert values to <see cref="DbParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
+    /// method to convert values to <see cref="DbPlaceholderParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
     /// </param>
     /// <returns>A task representing the asynchronous operation with the mapped <typeparamref name="T"/>.</returns>
     public static Task<T?> QuerySingleAsync<T>(
         this DbDataSource dataSource,
         string commandText,
-        DbParameter param1, 
-        DbParameter param2, 
-        DbParameter param3, 
-        DbParameter param4, 
-        DbParameter param5, 
-        DbParameter param6, 
-        DbParameter param7
+        DbPlaceholderParameter param1, 
+        DbPlaceholderParameter param2, 
+        DbPlaceholderParameter param3, 
+        DbPlaceholderParameter param4, 
+        DbPlaceholderParameter param5, 
+        DbPlaceholderParameter param6, 
+        DbPlaceholderParameter param7
         )
         where T : IDataReaderMapper<T>
     {
@@ -630,13 +930,63 @@ public static partial class DbDataSourceExtensions
         ArgumentNullException.ThrowIfNull(param7);
 
         var cmd = dataSource.CreateCommand(commandText);
-        cmd.Parameters.Add(param1);
-        cmd.Parameters.Add(param2);
-        cmd.Parameters.Add(param3);
-        cmd.Parameters.Add(param4);
-        cmd.Parameters.Add(param5);
-        cmd.Parameters.Add(param6);
-        cmd.Parameters.Add(param7);
+
+        var dbParam1 = cmd.CreateParameter();
+        if (!string.IsNullOrEmpty(param1.Name))
+        {
+            dbParam1.ParameterName = param1.Name;
+        }
+        dbParam1.Value = param1.Value;
+        cmd.Parameters.Add(dbParam1);
+
+        var dbParam2 = cmd.CreateParameter();
+        if (!string.IsNullOrEmpty(param2.Name))
+        {
+            dbParam2.ParameterName = param2.Name;
+        }
+        dbParam2.Value = param2.Value;
+        cmd.Parameters.Add(dbParam2);
+
+        var dbParam3 = cmd.CreateParameter();
+        if (!string.IsNullOrEmpty(param3.Name))
+        {
+            dbParam3.ParameterName = param3.Name;
+        }
+        dbParam3.Value = param3.Value;
+        cmd.Parameters.Add(dbParam3);
+
+        var dbParam4 = cmd.CreateParameter();
+        if (!string.IsNullOrEmpty(param4.Name))
+        {
+            dbParam4.ParameterName = param4.Name;
+        }
+        dbParam4.Value = param4.Value;
+        cmd.Parameters.Add(dbParam4);
+
+        var dbParam5 = cmd.CreateParameter();
+        if (!string.IsNullOrEmpty(param5.Name))
+        {
+            dbParam5.ParameterName = param5.Name;
+        }
+        dbParam5.Value = param5.Value;
+        cmd.Parameters.Add(dbParam5);
+
+        var dbParam6 = cmd.CreateParameter();
+        if (!string.IsNullOrEmpty(param6.Name))
+        {
+            dbParam6.ParameterName = param6.Name;
+        }
+        dbParam6.Value = param6.Value;
+        cmd.Parameters.Add(dbParam6);
+
+        var dbParam7 = cmd.CreateParameter();
+        if (!string.IsNullOrEmpty(param7.Name))
+        {
+            dbParam7.ParameterName = param7.Name;
+        }
+        dbParam7.Value = param7.Value;
+        cmd.Parameters.Add(dbParam7);
+
 
         return cmd.QuerySingleAsyncImpl<T>(default);
     }
@@ -649,44 +999,44 @@ public static partial class DbDataSourceExtensions
     /// <param name="commandText">The SQL command text.</param>
     /// <param name="param1">
     /// A parameter to use when executing the command text. Use the <see cref="DbParameterExtensions.AsDbParameter"/>
-    /// method to convert values to <see cref="DbParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
+    /// method to convert values to <see cref="DbPlaceholderParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
     /// </param>
     /// <param name="param2">
     /// A parameter to use when executing the command text. Use the <see cref="DbParameterExtensions.AsDbParameter"/>
-    /// method to convert values to <see cref="DbParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
+    /// method to convert values to <see cref="DbPlaceholderParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
     /// </param>
     /// <param name="param3">
     /// A parameter to use when executing the command text. Use the <see cref="DbParameterExtensions.AsDbParameter"/>
-    /// method to convert values to <see cref="DbParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
+    /// method to convert values to <see cref="DbPlaceholderParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
     /// </param>
     /// <param name="param4">
     /// A parameter to use when executing the command text. Use the <see cref="DbParameterExtensions.AsDbParameter"/>
-    /// method to convert values to <see cref="DbParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
+    /// method to convert values to <see cref="DbPlaceholderParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
     /// </param>
     /// <param name="param5">
     /// A parameter to use when executing the command text. Use the <see cref="DbParameterExtensions.AsDbParameter"/>
-    /// method to convert values to <see cref="DbParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
+    /// method to convert values to <see cref="DbPlaceholderParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
     /// </param>
     /// <param name="param6">
     /// A parameter to use when executing the command text. Use the <see cref="DbParameterExtensions.AsDbParameter"/>
-    /// method to convert values to <see cref="DbParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
+    /// method to convert values to <see cref="DbPlaceholderParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
     /// </param>
     /// <param name="param7">
     /// A parameter to use when executing the command text. Use the <see cref="DbParameterExtensions.AsDbParameter"/>
-    /// method to convert values to <see cref="DbParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
+    /// method to convert values to <see cref="DbPlaceholderParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
     /// </param>
     /// <param name="cancellationToken">A token to cancel the asynchronous operation.</param>
     /// <returns>A task representing the asynchronous operation with the mapped <typeparamref name="T"/>.</returns>
     public static Task<T?> QuerySingleAsync<T>(
         this DbDataSource dataSource,
         string commandText,
-        DbParameter param1,
-        DbParameter param2,
-        DbParameter param3,
-        DbParameter param4,
-        DbParameter param5,
-        DbParameter param6,
-        DbParameter param7,
+        DbPlaceholderParameter param1,
+        DbPlaceholderParameter param2,
+        DbPlaceholderParameter param3,
+        DbPlaceholderParameter param4,
+        DbPlaceholderParameter param5,
+        DbPlaceholderParameter param6,
+        DbPlaceholderParameter param7,
         CancellationToken cancellationToken
         )
         where T : IDataReaderMapper<T>
@@ -702,13 +1052,62 @@ public static partial class DbDataSourceExtensions
         ArgumentNullException.ThrowIfNull(param7);
 
         var cmd = dataSource.CreateCommand(commandText);
-        cmd.Parameters.Add(param1);
-        cmd.Parameters.Add(param2);
-        cmd.Parameters.Add(param3);
-        cmd.Parameters.Add(param4);
-        cmd.Parameters.Add(param5);
-        cmd.Parameters.Add(param6);
-        cmd.Parameters.Add(param7);
+
+        var dbParam1 = cmd.CreateParameter();
+        if (!string.IsNullOrEmpty(param1.Name))
+        {
+            dbParam1.ParameterName = param1.Name;
+        }
+        dbParam1.Value = param1.Value;
+        cmd.Parameters.Add(dbParam1);
+
+        var dbParam2 = cmd.CreateParameter();
+        if (!string.IsNullOrEmpty(param2.Name))
+        {
+            dbParam2.ParameterName = param2.Name;
+        }
+        dbParam2.Value = param2.Value;
+        cmd.Parameters.Add(dbParam2);
+
+        var dbParam3 = cmd.CreateParameter();
+        if (!string.IsNullOrEmpty(param3.Name))
+        {
+            dbParam3.ParameterName = param3.Name;
+        }
+        dbParam3.Value = param3.Value;
+        cmd.Parameters.Add(dbParam3);
+
+        var dbParam4 = cmd.CreateParameter();
+        if (!string.IsNullOrEmpty(param4.Name))
+        {
+            dbParam4.ParameterName = param4.Name;
+        }
+        dbParam4.Value = param4.Value;
+        cmd.Parameters.Add(dbParam4);
+
+        var dbParam5 = cmd.CreateParameter();
+        if (!string.IsNullOrEmpty(param5.Name))
+        {
+            dbParam5.ParameterName = param5.Name;
+        }
+        dbParam5.Value = param5.Value;
+        cmd.Parameters.Add(dbParam5);
+
+        var dbParam6 = cmd.CreateParameter();
+        if (!string.IsNullOrEmpty(param6.Name))
+        {
+            dbParam6.ParameterName = param6.Name;
+        }
+        dbParam6.Value = param6.Value;
+        cmd.Parameters.Add(dbParam6);
+
+        var dbParam7 = cmd.CreateParameter();
+        if (!string.IsNullOrEmpty(param7.Name))
+        {
+            dbParam7.ParameterName = param7.Name;
+        }
+        dbParam7.Value = param7.Value;
+        cmd.Parameters.Add(dbParam7);
 
         return cmd.QuerySingleAsyncImpl<T>(cancellationToken);
     }
@@ -721,48 +1120,48 @@ public static partial class DbDataSourceExtensions
     /// <param name="commandText">The SQL command text.</param>
     /// <param name="param1">
     /// A parameter to use when executing the command text. Use the <see cref="DbParameterExtensions.AsDbParameter"/>
-    /// method to convert values to <see cref="DbParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
+    /// method to convert values to <see cref="DbPlaceholderParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
     /// </param>
     /// <param name="param2">
     /// A parameter to use when executing the command text. Use the <see cref="DbParameterExtensions.AsDbParameter"/>
-    /// method to convert values to <see cref="DbParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
+    /// method to convert values to <see cref="DbPlaceholderParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
     /// </param>
     /// <param name="param3">
     /// A parameter to use when executing the command text. Use the <see cref="DbParameterExtensions.AsDbParameter"/>
-    /// method to convert values to <see cref="DbParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
+    /// method to convert values to <see cref="DbPlaceholderParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
     /// </param>
     /// <param name="param4">
     /// A parameter to use when executing the command text. Use the <see cref="DbParameterExtensions.AsDbParameter"/>
-    /// method to convert values to <see cref="DbParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
+    /// method to convert values to <see cref="DbPlaceholderParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
     /// </param>
     /// <param name="param5">
     /// A parameter to use when executing the command text. Use the <see cref="DbParameterExtensions.AsDbParameter"/>
-    /// method to convert values to <see cref="DbParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
+    /// method to convert values to <see cref="DbPlaceholderParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
     /// </param>
     /// <param name="param6">
     /// A parameter to use when executing the command text. Use the <see cref="DbParameterExtensions.AsDbParameter"/>
-    /// method to convert values to <see cref="DbParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
+    /// method to convert values to <see cref="DbPlaceholderParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
     /// </param>
     /// <param name="param7">
     /// A parameter to use when executing the command text. Use the <see cref="DbParameterExtensions.AsDbParameter"/>
-    /// method to convert values to <see cref="DbParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
+    /// method to convert values to <see cref="DbPlaceholderParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
     /// </param>
     /// <param name="param8">
     /// A parameter to use when executing the command text. Use the <see cref="DbParameterExtensions.AsDbParameter"/>
-    /// method to convert values to <see cref="DbParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
+    /// method to convert values to <see cref="DbPlaceholderParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
     /// </param>
     /// <returns>A task representing the asynchronous operation with the mapped <typeparamref name="T"/>.</returns>
     public static Task<T?> QuerySingleAsync<T>(
         this DbDataSource dataSource,
         string commandText,
-        DbParameter param1, 
-        DbParameter param2, 
-        DbParameter param3, 
-        DbParameter param4, 
-        DbParameter param5, 
-        DbParameter param6, 
-        DbParameter param7, 
-        DbParameter param8
+        DbPlaceholderParameter param1, 
+        DbPlaceholderParameter param2, 
+        DbPlaceholderParameter param3, 
+        DbPlaceholderParameter param4, 
+        DbPlaceholderParameter param5, 
+        DbPlaceholderParameter param6, 
+        DbPlaceholderParameter param7, 
+        DbPlaceholderParameter param8
         )
         where T : IDataReaderMapper<T>
     {
@@ -778,14 +1177,71 @@ public static partial class DbDataSourceExtensions
         ArgumentNullException.ThrowIfNull(param8);
 
         var cmd = dataSource.CreateCommand(commandText);
-        cmd.Parameters.Add(param1);
-        cmd.Parameters.Add(param2);
-        cmd.Parameters.Add(param3);
-        cmd.Parameters.Add(param4);
-        cmd.Parameters.Add(param5);
-        cmd.Parameters.Add(param6);
-        cmd.Parameters.Add(param7);
-        cmd.Parameters.Add(param8);
+
+        var dbParam1 = cmd.CreateParameter();
+        if (!string.IsNullOrEmpty(param1.Name))
+        {
+            dbParam1.ParameterName = param1.Name;
+        }
+        dbParam1.Value = param1.Value;
+        cmd.Parameters.Add(dbParam1);
+
+        var dbParam2 = cmd.CreateParameter();
+        if (!string.IsNullOrEmpty(param2.Name))
+        {
+            dbParam2.ParameterName = param2.Name;
+        }
+        dbParam2.Value = param2.Value;
+        cmd.Parameters.Add(dbParam2);
+
+        var dbParam3 = cmd.CreateParameter();
+        if (!string.IsNullOrEmpty(param3.Name))
+        {
+            dbParam3.ParameterName = param3.Name;
+        }
+        dbParam3.Value = param3.Value;
+        cmd.Parameters.Add(dbParam3);
+
+        var dbParam4 = cmd.CreateParameter();
+        if (!string.IsNullOrEmpty(param4.Name))
+        {
+            dbParam4.ParameterName = param4.Name;
+        }
+        dbParam4.Value = param4.Value;
+        cmd.Parameters.Add(dbParam4);
+
+        var dbParam5 = cmd.CreateParameter();
+        if (!string.IsNullOrEmpty(param5.Name))
+        {
+            dbParam5.ParameterName = param5.Name;
+        }
+        dbParam5.Value = param5.Value;
+        cmd.Parameters.Add(dbParam5);
+
+        var dbParam6 = cmd.CreateParameter();
+        if (!string.IsNullOrEmpty(param6.Name))
+        {
+            dbParam6.ParameterName = param6.Name;
+        }
+        dbParam6.Value = param6.Value;
+        cmd.Parameters.Add(dbParam6);
+
+        var dbParam7 = cmd.CreateParameter();
+        if (!string.IsNullOrEmpty(param7.Name))
+        {
+            dbParam7.ParameterName = param7.Name;
+        }
+        dbParam7.Value = param7.Value;
+        cmd.Parameters.Add(dbParam7);
+
+        var dbParam8 = cmd.CreateParameter();
+        if (!string.IsNullOrEmpty(param8.Name))
+        {
+            dbParam8.ParameterName = param8.Name;
+        }
+        dbParam8.Value = param8.Value;
+        cmd.Parameters.Add(dbParam8);
+
 
         return cmd.QuerySingleAsyncImpl<T>(default);
     }
@@ -798,49 +1254,49 @@ public static partial class DbDataSourceExtensions
     /// <param name="commandText">The SQL command text.</param>
     /// <param name="param1">
     /// A parameter to use when executing the command text. Use the <see cref="DbParameterExtensions.AsDbParameter"/>
-    /// method to convert values to <see cref="DbParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
+    /// method to convert values to <see cref="DbPlaceholderParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
     /// </param>
     /// <param name="param2">
     /// A parameter to use when executing the command text. Use the <see cref="DbParameterExtensions.AsDbParameter"/>
-    /// method to convert values to <see cref="DbParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
+    /// method to convert values to <see cref="DbPlaceholderParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
     /// </param>
     /// <param name="param3">
     /// A parameter to use when executing the command text. Use the <see cref="DbParameterExtensions.AsDbParameter"/>
-    /// method to convert values to <see cref="DbParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
+    /// method to convert values to <see cref="DbPlaceholderParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
     /// </param>
     /// <param name="param4">
     /// A parameter to use when executing the command text. Use the <see cref="DbParameterExtensions.AsDbParameter"/>
-    /// method to convert values to <see cref="DbParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
+    /// method to convert values to <see cref="DbPlaceholderParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
     /// </param>
     /// <param name="param5">
     /// A parameter to use when executing the command text. Use the <see cref="DbParameterExtensions.AsDbParameter"/>
-    /// method to convert values to <see cref="DbParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
+    /// method to convert values to <see cref="DbPlaceholderParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
     /// </param>
     /// <param name="param6">
     /// A parameter to use when executing the command text. Use the <see cref="DbParameterExtensions.AsDbParameter"/>
-    /// method to convert values to <see cref="DbParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
+    /// method to convert values to <see cref="DbPlaceholderParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
     /// </param>
     /// <param name="param7">
     /// A parameter to use when executing the command text. Use the <see cref="DbParameterExtensions.AsDbParameter"/>
-    /// method to convert values to <see cref="DbParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
+    /// method to convert values to <see cref="DbPlaceholderParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
     /// </param>
     /// <param name="param8">
     /// A parameter to use when executing the command text. Use the <see cref="DbParameterExtensions.AsDbParameter"/>
-    /// method to convert values to <see cref="DbParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
+    /// method to convert values to <see cref="DbPlaceholderParameter"/>, e.g. <c>myValue.AsDbParameter()</c>.
     /// </param>
     /// <param name="cancellationToken">A token to cancel the asynchronous operation.</param>
     /// <returns>A task representing the asynchronous operation with the mapped <typeparamref name="T"/>.</returns>
     public static Task<T?> QuerySingleAsync<T>(
         this DbDataSource dataSource,
         string commandText,
-        DbParameter param1,
-        DbParameter param2,
-        DbParameter param3,
-        DbParameter param4,
-        DbParameter param5,
-        DbParameter param6,
-        DbParameter param7,
-        DbParameter param8,
+        DbPlaceholderParameter param1,
+        DbPlaceholderParameter param2,
+        DbPlaceholderParameter param3,
+        DbPlaceholderParameter param4,
+        DbPlaceholderParameter param5,
+        DbPlaceholderParameter param6,
+        DbPlaceholderParameter param7,
+        DbPlaceholderParameter param8,
         CancellationToken cancellationToken
         )
         where T : IDataReaderMapper<T>
@@ -857,14 +1313,70 @@ public static partial class DbDataSourceExtensions
         ArgumentNullException.ThrowIfNull(param8);
 
         var cmd = dataSource.CreateCommand(commandText);
-        cmd.Parameters.Add(param1);
-        cmd.Parameters.Add(param2);
-        cmd.Parameters.Add(param3);
-        cmd.Parameters.Add(param4);
-        cmd.Parameters.Add(param5);
-        cmd.Parameters.Add(param6);
-        cmd.Parameters.Add(param7);
-        cmd.Parameters.Add(param8);
+
+        var dbParam1 = cmd.CreateParameter();
+        if (!string.IsNullOrEmpty(param1.Name))
+        {
+            dbParam1.ParameterName = param1.Name;
+        }
+        dbParam1.Value = param1.Value;
+        cmd.Parameters.Add(dbParam1);
+
+        var dbParam2 = cmd.CreateParameter();
+        if (!string.IsNullOrEmpty(param2.Name))
+        {
+            dbParam2.ParameterName = param2.Name;
+        }
+        dbParam2.Value = param2.Value;
+        cmd.Parameters.Add(dbParam2);
+
+        var dbParam3 = cmd.CreateParameter();
+        if (!string.IsNullOrEmpty(param3.Name))
+        {
+            dbParam3.ParameterName = param3.Name;
+        }
+        dbParam3.Value = param3.Value;
+        cmd.Parameters.Add(dbParam3);
+
+        var dbParam4 = cmd.CreateParameter();
+        if (!string.IsNullOrEmpty(param4.Name))
+        {
+            dbParam4.ParameterName = param4.Name;
+        }
+        dbParam4.Value = param4.Value;
+        cmd.Parameters.Add(dbParam4);
+
+        var dbParam5 = cmd.CreateParameter();
+        if (!string.IsNullOrEmpty(param5.Name))
+        {
+            dbParam5.ParameterName = param5.Name;
+        }
+        dbParam5.Value = param5.Value;
+        cmd.Parameters.Add(dbParam5);
+
+        var dbParam6 = cmd.CreateParameter();
+        if (!string.IsNullOrEmpty(param6.Name))
+        {
+            dbParam6.ParameterName = param6.Name;
+        }
+        dbParam6.Value = param6.Value;
+        cmd.Parameters.Add(dbParam6);
+
+        var dbParam7 = cmd.CreateParameter();
+        if (!string.IsNullOrEmpty(param7.Name))
+        {
+            dbParam7.ParameterName = param7.Name;
+        }
+        dbParam7.Value = param7.Value;
+        cmd.Parameters.Add(dbParam7);
+
+        var dbParam8 = cmd.CreateParameter();
+        if (!string.IsNullOrEmpty(param8.Name))
+        {
+            dbParam8.ParameterName = param8.Name;
+        }
+        dbParam8.Value = param8.Value;
+        cmd.Parameters.Add(dbParam8);
 
         return cmd.QuerySingleAsyncImpl<T>(cancellationToken);
     }
