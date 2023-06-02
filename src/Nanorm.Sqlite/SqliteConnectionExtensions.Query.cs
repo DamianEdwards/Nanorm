@@ -3,9 +3,9 @@
 
 #if NET7_0_OR_GREATER
 using System.CodeDom.Compiler;
-using Nanorm.Sqlite;
+using Microsoft.Data.Sqlite;
 
-namespace Microsoft.Data.Sqlite;
+namespace Nanorm;
 
 /// <summary>
 /// Extension methods for <see cref="SqliteConnection"/> from the <c>Nanorm</c> package.
@@ -29,7 +29,7 @@ public static partial class SqliteConnectionExtensions
         string commandText,
         SqliteParameter param1
         )
-        where T : IDataReaderMapper<T>
+        where T : IDataRecordMapper<T>
     {
         ArgumentNullException.ThrowIfNull(connection);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
@@ -59,7 +59,7 @@ public static partial class SqliteConnectionExtensions
         SqliteParameter param1,
         CancellationToken cancellationToken
         )
-        where T : IDataReaderMapper<T>
+        where T : IDataRecordMapper<T>
     {
         ArgumentNullException.ThrowIfNull(connection);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
@@ -92,7 +92,7 @@ public static partial class SqliteConnectionExtensions
         SqliteParameter param1, 
         SqliteParameter param2
         )
-        where T : IDataReaderMapper<T>
+        where T : IDataRecordMapper<T>
     {
         ArgumentNullException.ThrowIfNull(connection);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
@@ -129,7 +129,7 @@ public static partial class SqliteConnectionExtensions
         SqliteParameter param2,
         CancellationToken cancellationToken
         )
-        where T : IDataReaderMapper<T>
+        where T : IDataRecordMapper<T>
     {
         ArgumentNullException.ThrowIfNull(connection);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
@@ -169,7 +169,7 @@ public static partial class SqliteConnectionExtensions
         SqliteParameter param2, 
         SqliteParameter param3
         )
-        where T : IDataReaderMapper<T>
+        where T : IDataRecordMapper<T>
     {
         ArgumentNullException.ThrowIfNull(connection);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
@@ -213,7 +213,7 @@ public static partial class SqliteConnectionExtensions
         SqliteParameter param3,
         CancellationToken cancellationToken
         )
-        where T : IDataReaderMapper<T>
+        where T : IDataRecordMapper<T>
     {
         ArgumentNullException.ThrowIfNull(connection);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
@@ -260,7 +260,7 @@ public static partial class SqliteConnectionExtensions
         SqliteParameter param3, 
         SqliteParameter param4
         )
-        where T : IDataReaderMapper<T>
+        where T : IDataRecordMapper<T>
     {
         ArgumentNullException.ThrowIfNull(connection);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
@@ -311,7 +311,7 @@ public static partial class SqliteConnectionExtensions
         SqliteParameter param4,
         CancellationToken cancellationToken
         )
-        where T : IDataReaderMapper<T>
+        where T : IDataRecordMapper<T>
     {
         ArgumentNullException.ThrowIfNull(connection);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
@@ -365,7 +365,7 @@ public static partial class SqliteConnectionExtensions
         SqliteParameter param4, 
         SqliteParameter param5
         )
-        where T : IDataReaderMapper<T>
+        where T : IDataRecordMapper<T>
     {
         ArgumentNullException.ThrowIfNull(connection);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
@@ -423,7 +423,7 @@ public static partial class SqliteConnectionExtensions
         SqliteParameter param5,
         CancellationToken cancellationToken
         )
-        where T : IDataReaderMapper<T>
+        where T : IDataRecordMapper<T>
     {
         ArgumentNullException.ThrowIfNull(connection);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
@@ -484,7 +484,7 @@ public static partial class SqliteConnectionExtensions
         SqliteParameter param5, 
         SqliteParameter param6
         )
-        where T : IDataReaderMapper<T>
+        where T : IDataRecordMapper<T>
     {
         ArgumentNullException.ThrowIfNull(connection);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
@@ -549,7 +549,7 @@ public static partial class SqliteConnectionExtensions
         SqliteParameter param6,
         CancellationToken cancellationToken
         )
-        where T : IDataReaderMapper<T>
+        where T : IDataRecordMapper<T>
     {
         ArgumentNullException.ThrowIfNull(connection);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
@@ -617,7 +617,7 @@ public static partial class SqliteConnectionExtensions
         SqliteParameter param6, 
         SqliteParameter param7
         )
-        where T : IDataReaderMapper<T>
+        where T : IDataRecordMapper<T>
     {
         ArgumentNullException.ThrowIfNull(connection);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
@@ -689,7 +689,7 @@ public static partial class SqliteConnectionExtensions
         SqliteParameter param7,
         CancellationToken cancellationToken
         )
-        where T : IDataReaderMapper<T>
+        where T : IDataRecordMapper<T>
     {
         ArgumentNullException.ThrowIfNull(connection);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
@@ -764,7 +764,7 @@ public static partial class SqliteConnectionExtensions
         SqliteParameter param7, 
         SqliteParameter param8
         )
-        where T : IDataReaderMapper<T>
+        where T : IDataRecordMapper<T>
     {
         ArgumentNullException.ThrowIfNull(connection);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
@@ -843,7 +843,7 @@ public static partial class SqliteConnectionExtensions
         SqliteParameter param8,
         CancellationToken cancellationToken
         )
-        where T : IDataReaderMapper<T>
+        where T : IDataRecordMapper<T>
     {
         ArgumentNullException.ThrowIfNull(connection);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);

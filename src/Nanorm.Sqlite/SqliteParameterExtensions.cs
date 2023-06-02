@@ -1,6 +1,7 @@
 ﻿using System.Runtime.CompilerServices;
+using Microsoft.Data.Sqlite;
 
-namespace Microsoft.Data.Sqlite;
+namespace Nanorm;
 
 /// <summary>
 /// Extension methods related to working with <see cref="SqliteParameter"/> from the <c>Nanorm.Sqlite</c> package.

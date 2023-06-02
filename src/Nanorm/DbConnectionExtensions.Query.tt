@@ -9,9 +9,9 @@
 
 #if NET7_0_OR_GREATER
 using System.CodeDom.Compiler;
-using Nanorm;
+using System.Data.Common;
 
-namespace System.Data.Common;
+namespace Nanorm;
 
 /// <summary>
 /// Extension methods for <see cref="DbConnection"/> from the <c>Nanorm</c> package.
@@ -42,7 +42,7 @@ public static partial class DbConnectionExtensions
         DbPlaceholderParameter param<#= paramNum #>
 <#          } #>
         )
-        where T : IDataReaderMapper<T>
+        where T : IDataRecordMapper<T>
     {
         ArgumentNullException.ThrowIfNull(connection);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
@@ -87,7 +87,7 @@ public static partial class DbConnectionExtensions
 <#          } #>
         CancellationToken cancellationToken
         )
-        where T : IDataReaderMapper<T>
+        where T : IDataRecordMapper<T>
     {
         ArgumentNullException.ThrowIfNull(connection);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);

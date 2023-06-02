@@ -187,7 +187,7 @@ public class NanormBenchmarks
     }
 }
 
-public sealed class Todo : IDataReaderMapper<Todo>, Nanorm.Npgsql.IDataReaderMapper<Todo>
+public sealed class Todo : IDataRecordMapper<Todo>
 {
     public int Id { get; set; }
 
@@ -195,19 +195,11 @@ public sealed class Todo : IDataReaderMapper<Todo>, Nanorm.Npgsql.IDataReaderMap
 
     public bool IsComplete { get; set; }
 
-    public static Todo Map(DbDataReader dataReader) =>
+    public static Todo Map(IDataRecord dataRecord) =>
        new()
        {
-           Id = dataReader.GetInt32(nameof(Id)),
-           Title = dataReader.GetString(nameof(Title)),
-           IsComplete = dataReader.GetBoolean(nameof(IsComplete))
+           Id = dataRecord.GetInt32(nameof(Id)),
+           Title = dataRecord.GetString(nameof(Title)),
+           IsComplete = dataRecord.GetBoolean(nameof(IsComplete))
        };
-
-    public static Todo Map(NpgsqlDataReader dataReader) =>
-        new()
-        {
-            Id = dataReader.GetInt32(nameof(Id)),
-            Title = dataReader.GetString(nameof(Title)),
-            IsComplete = dataReader.GetBoolean(nameof(IsComplete))
-        };
 }

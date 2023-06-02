@@ -9,9 +9,9 @@
 
 #if NET7_0_OR_GREATER
 using System.CodeDom.Compiler;
-using Nanorm.Sqlite;
+using Microsoft.Data.Sqlite;
 
-namespace Microsoft.Data.Sqlite;
+namespace Nanorm;
 
 /// <summary>
 /// Extension methods for <see cref="SqliteConnection"/> from the <c>Nanorm</c> package.
@@ -42,7 +42,7 @@ public static partial class SqliteConnectionExtensions
         SqliteParameter param<#= paramNum #>
 <#          } #>
         )
-        where T : IDataReaderMapper<T>
+        where T : IDataRecordMapper<T>
     {
         ArgumentNullException.ThrowIfNull(connection);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
@@ -80,7 +80,7 @@ public static partial class SqliteConnectionExtensions
 <#          } #>
         CancellationToken cancellationToken
         )
-        where T : IDataReaderMapper<T>
+        where T : IDataRecordMapper<T>
     {
         ArgumentNullException.ThrowIfNull(connection);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);

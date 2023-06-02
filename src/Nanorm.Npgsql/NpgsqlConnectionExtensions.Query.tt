@@ -9,9 +9,9 @@
 
 #if NET7_0_OR_GREATER
 using System.CodeDom.Compiler;
-using Nanorm.Npgsql;
+using Npgsql;
 
-namespace Npgsql;
+namespace Nanorm;
 
 /// <summary>
 /// Extension methods for <see cref="NpgsqlConnection"/> from the <c>Nanorm.Npgsql</c> package.
@@ -42,7 +42,7 @@ public static partial class NpgsqlConnectionExtensions
         NpgsqlParameter param<#= paramNum #>
 <#          } #>
         )
-        where T : IDataReaderMapper<T>
+        where T : IDataRecordMapper<T>
     {
         ArgumentNullException.ThrowIfNull(connection);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
@@ -80,7 +80,7 @@ public static partial class NpgsqlConnectionExtensions
 <#          } #>
         CancellationToken cancellationToken
         )
-        where T : IDataReaderMapper<T>
+        where T : IDataRecordMapper<T>
     {
         ArgumentNullException.ThrowIfNull(connection);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);

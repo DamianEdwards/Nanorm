@@ -20,6 +20,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Nanorm\Nanorm.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Update="SqliteConnectionExtensions.Query.cs">
       <DependentUpon>SqliteConnectionExtensions.Query.tt</DependentUpon>
       <DesignTime>True</DesignTime>

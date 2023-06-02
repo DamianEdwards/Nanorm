@@ -18,6 +18,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Nanorm\Nanorm.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Update="NpgsqlConnectionExtensions.Query.tt">
       <LastGenOutput>NpgsqlConnectionExtensions.Query.cs</LastGenOutput>
       <Generator>TextTemplatingFileGenerator</Generator>

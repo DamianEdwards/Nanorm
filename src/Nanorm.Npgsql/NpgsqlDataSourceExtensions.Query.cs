@@ -3,9 +3,9 @@
 
 #if NET7_0_OR_GREATER
 using System.CodeDom.Compiler;
-using Nanorm.Npgsql;
+using Npgsql;
 
-namespace Npgsql;
+namespace Nanorm;
 
 /// <summary>
 /// Extension methods for <see cref="NpgsqlDataSource"/> from the <c>Nanorm.Npgsql</c> package.
@@ -29,7 +29,7 @@ public static partial class NpgsqlDataSourceExtensions
         string commandText,
         NpgsqlParameter param1
         )
-        where T : IDataReaderMapper<T>
+        where T : IDataRecordMapper<T>
     {
         ArgumentNullException.ThrowIfNull(dataSource);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
@@ -59,7 +59,7 @@ public static partial class NpgsqlDataSourceExtensions
         NpgsqlParameter param1,
         CancellationToken cancellationToken
         )
-        where T : IDataReaderMapper<T>
+        where T : IDataRecordMapper<T>
     {
         ArgumentNullException.ThrowIfNull(dataSource);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
@@ -92,7 +92,7 @@ public static partial class NpgsqlDataSourceExtensions
         NpgsqlParameter param1, 
         NpgsqlParameter param2
         )
-        where T : IDataReaderMapper<T>
+        where T : IDataRecordMapper<T>
     {
         ArgumentNullException.ThrowIfNull(dataSource);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
@@ -129,7 +129,7 @@ public static partial class NpgsqlDataSourceExtensions
         NpgsqlParameter param2,
         CancellationToken cancellationToken
         )
-        where T : IDataReaderMapper<T>
+        where T : IDataRecordMapper<T>
     {
         ArgumentNullException.ThrowIfNull(dataSource);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
@@ -169,7 +169,7 @@ public static partial class NpgsqlDataSourceExtensions
         NpgsqlParameter param2, 
         NpgsqlParameter param3
         )
-        where T : IDataReaderMapper<T>
+        where T : IDataRecordMapper<T>
     {
         ArgumentNullException.ThrowIfNull(dataSource);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
@@ -213,7 +213,7 @@ public static partial class NpgsqlDataSourceExtensions
         NpgsqlParameter param3,
         CancellationToken cancellationToken
         )
-        where T : IDataReaderMapper<T>
+        where T : IDataRecordMapper<T>
     {
         ArgumentNullException.ThrowIfNull(dataSource);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
@@ -260,7 +260,7 @@ public static partial class NpgsqlDataSourceExtensions
         NpgsqlParameter param3, 
         NpgsqlParameter param4
         )
-        where T : IDataReaderMapper<T>
+        where T : IDataRecordMapper<T>
     {
         ArgumentNullException.ThrowIfNull(dataSource);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
@@ -311,7 +311,7 @@ public static partial class NpgsqlDataSourceExtensions
         NpgsqlParameter param4,
         CancellationToken cancellationToken
         )
-        where T : IDataReaderMapper<T>
+        where T : IDataRecordMapper<T>
     {
         ArgumentNullException.ThrowIfNull(dataSource);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
@@ -365,7 +365,7 @@ public static partial class NpgsqlDataSourceExtensions
         NpgsqlParameter param4, 
         NpgsqlParameter param5
         )
-        where T : IDataReaderMapper<T>
+        where T : IDataRecordMapper<T>
     {
         ArgumentNullException.ThrowIfNull(dataSource);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
@@ -423,7 +423,7 @@ public static partial class NpgsqlDataSourceExtensions
         NpgsqlParameter param5,
         CancellationToken cancellationToken
         )
-        where T : IDataReaderMapper<T>
+        where T : IDataRecordMapper<T>
     {
         ArgumentNullException.ThrowIfNull(dataSource);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
@@ -484,7 +484,7 @@ public static partial class NpgsqlDataSourceExtensions
         NpgsqlParameter param5, 
         NpgsqlParameter param6
         )
-        where T : IDataReaderMapper<T>
+        where T : IDataRecordMapper<T>
     {
         ArgumentNullException.ThrowIfNull(dataSource);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
@@ -549,7 +549,7 @@ public static partial class NpgsqlDataSourceExtensions
         NpgsqlParameter param6,
         CancellationToken cancellationToken
         )
-        where T : IDataReaderMapper<T>
+        where T : IDataRecordMapper<T>
     {
         ArgumentNullException.ThrowIfNull(dataSource);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
@@ -617,7 +617,7 @@ public static partial class NpgsqlDataSourceExtensions
         NpgsqlParameter param6, 
         NpgsqlParameter param7
         )
-        where T : IDataReaderMapper<T>
+        where T : IDataRecordMapper<T>
     {
         ArgumentNullException.ThrowIfNull(dataSource);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
@@ -689,7 +689,7 @@ public static partial class NpgsqlDataSourceExtensions
         NpgsqlParameter param7,
         CancellationToken cancellationToken
         )
-        where T : IDataReaderMapper<T>
+        where T : IDataRecordMapper<T>
     {
         ArgumentNullException.ThrowIfNull(dataSource);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
@@ -764,7 +764,7 @@ public static partial class NpgsqlDataSourceExtensions
         NpgsqlParameter param7, 
         NpgsqlParameter param8
         )
-        where T : IDataReaderMapper<T>
+        where T : IDataRecordMapper<T>
     {
         ArgumentNullException.ThrowIfNull(dataSource);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
@@ -843,7 +843,7 @@ public static partial class NpgsqlDataSourceExtensions
         NpgsqlParameter param8,
         CancellationToken cancellationToken
         )
-        where T : IDataReaderMapper<T>
+        where T : IDataRecordMapper<T>
     {
         ArgumentNullException.ThrowIfNull(dataSource);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);

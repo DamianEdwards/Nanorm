@@ -305,7 +305,7 @@ public static partial class DbConnectionExtensions
     /// <param name="commandText">The SQL command text.</param>
     /// <returns>A task representing the asynchronous operation with the mapped <typeparamref name="T"/>.</returns>
     public static Task<T?> QuerySingleAsync<T>(this DbConnection connection, string commandText)
-        where T : IDataReaderMapper<T>
+        where T : IDataRecordMapper<T>
     {
         ArgumentNullException.ThrowIfNull(connection);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
@@ -323,7 +323,7 @@ public static partial class DbConnectionExtensions
     /// <param name="commandTextHandler">The SQL command text.</param>
     /// <returns>A task representing the asynchronous operation with the mapped <typeparamref name="T"/>.</returns>
     public static Task<T?> QuerySingleAsync<T>(this DbConnection connection, SqlInterpolatedStringHandler commandTextHandler)
-        where T : IDataReaderMapper<T>
+        where T : IDataRecordMapper<T>
     {
         ArgumentNullException.ThrowIfNull(connection);
 
@@ -341,7 +341,7 @@ public static partial class DbConnectionExtensions
     /// <param name="cancellationToken">A token to cancel the asynchronous operation.</param>
     /// <returns>A task representing the asynchronous operation with the mapped <typeparamref name="T"/>.</returns>
     public static Task<T?> QuerySingleAsync<T>(this DbConnection connection, string commandText, CancellationToken cancellationToken)
-        where T : IDataReaderMapper<T>
+        where T : IDataRecordMapper<T>
     {
         ArgumentNullException.ThrowIfNull(connection);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
@@ -360,7 +360,7 @@ public static partial class DbConnectionExtensions
     /// <param name="cancellationToken">A token to cancel the asynchronous operation.</param>
     /// <returns>A task representing the asynchronous operation with the mapped <typeparamref name="T"/>.</returns>
     public static Task<T?> QuerySingleAsync<T>(this DbConnection connection, SqlInterpolatedStringHandler commandTextHandler, CancellationToken cancellationToken)
-        where T : IDataReaderMapper<T>
+        where T : IDataRecordMapper<T>
     {
         ArgumentNullException.ThrowIfNull(connection);
 
@@ -381,7 +381,7 @@ public static partial class DbConnectionExtensions
     /// </param>
     /// <returns>A task representing the asynchronous operation with the mapped <typeparamref name="T"/>.</returns>
     public static Task<T?> QuerySingleAsync<T>(this DbConnection connection, string commandText, params DbPlaceholderParameter[] parameters)
-        where T : IDataReaderMapper<T>
+        where T : IDataRecordMapper<T>
     {
         ArgumentNullException.ThrowIfNull(connection);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
@@ -404,7 +404,7 @@ public static partial class DbConnectionExtensions
     /// </param>
     /// <returns>A task representing the asynchronous operation with the mapped <typeparamref name="T"/>.</returns>
     public static Task<T?> QuerySingleAsync<T>(this DbConnection connection, string commandText, CancellationToken cancellationToken, params DbPlaceholderParameter[] parameters)
-        where T : IDataReaderMapper<T>
+        where T : IDataRecordMapper<T>
     {
         ArgumentNullException.ThrowIfNull(connection);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
@@ -423,7 +423,7 @@ public static partial class DbConnectionExtensions
     /// <param name="configureParameters">A delegate to configured the <see cref="DbParameterCollection"/> before the command is executed.</param>
     /// <returns>A task representing the asynchronous operation with the mapped <typeparamref name="T"/>.</returns>
     public static Task<T?> QuerySingleAsync<T>(this DbConnection connection, string commandText, Action<DbParameterCollection> configureParameters)
-        where T : IDataReaderMapper<T>
+        where T : IDataRecordMapper<T>
     {
         ArgumentNullException.ThrowIfNull(connection);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
@@ -443,7 +443,7 @@ public static partial class DbConnectionExtensions
     /// <param name="cancellationToken">A token to cancel the asynchronous operation.</param>
     /// <returns>A task representing the asynchronous operation with the mapped <typeparamref name="T"/>.</returns>
     public static Task<T?> QuerySingleAsync<T>(this DbConnection connection, string commandText, Action<DbParameterCollection> configureParameters, CancellationToken cancellationToken)
-        where T : IDataReaderMapper<T>
+        where T : IDataRecordMapper<T>
     {
         ArgumentNullException.ThrowIfNull(connection);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
@@ -461,7 +461,7 @@ public static partial class DbConnectionExtensions
     /// <param name="commandText">The SQL command text.</param>
     /// <returns>A task representing the asynchronous operation with the mapped <typeparamref name="T"/>s.</returns>
     public static IAsyncEnumerable<T> QueryAsync<T>(this DbConnection connection, string commandText)
-        where T : IDataReaderMapper<T>
+        where T : IDataRecordMapper<T>
     {
         ArgumentNullException.ThrowIfNull(connection);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
@@ -479,7 +479,7 @@ public static partial class DbConnectionExtensions
     /// <param name="commandTextHandler">The SQL command text.</param>
     /// <returns>A task representing the asynchronous operation with the mapped <typeparamref name="T"/>s.</returns>
     public static IAsyncEnumerable<T> QueryAsync<T>(this DbConnection connection, SqlInterpolatedStringHandler commandTextHandler)
-        where T : IDataReaderMapper<T>
+        where T : IDataRecordMapper<T>
     {
         ArgumentNullException.ThrowIfNull(connection);
 
@@ -497,7 +497,7 @@ public static partial class DbConnectionExtensions
     /// <param name="cancellationToken">A token to cancel the asynchronous operation.</param>
     /// <returns>A task representing the asynchronous operation with the mapped <typeparamref name="T"/>s.</returns>
     public static IAsyncEnumerable<T> QueryAsync<T>(this DbConnection connection, string commandText, CancellationToken cancellationToken)
-        where T : IDataReaderMapper<T>
+        where T : IDataRecordMapper<T>
     {
         ArgumentNullException.ThrowIfNull(connection);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
@@ -516,7 +516,7 @@ public static partial class DbConnectionExtensions
     /// <param name="cancellationToken">A token to cancel the asynchronous operation.</param>
     /// <returns>A task representing the asynchronous operation with the mapped <typeparamref name="T"/>s.</returns>
     public static IAsyncEnumerable<T> QueryAsync<T>(this DbConnection connection, SqlInterpolatedStringHandler commandTextHandler, CancellationToken cancellationToken)
-        where T : IDataReaderMapper<T>
+        where T : IDataRecordMapper<T>
     {
         ArgumentNullException.ThrowIfNull(connection);
 
@@ -537,7 +537,7 @@ public static partial class DbConnectionExtensions
     /// </param>
     /// <returns>A task representing the asynchronous operation with the mapped <typeparamref name="T"/>s.</returns>
     public static IAsyncEnumerable<T> QueryAsync<T>(this DbConnection connection, string commandText, params DbPlaceholderParameter[] parameters)
-        where T : IDataReaderMapper<T>
+        where T : IDataRecordMapper<T>
     {
         ArgumentNullException.ThrowIfNull(connection);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
@@ -560,7 +560,7 @@ public static partial class DbConnectionExtensions
     /// </param>
     /// <returns>A task representing the asynchronous operation with the mapped <typeparamref name="T"/>s.</returns>
     public static IAsyncEnumerable<T> QueryAsync<T>(this DbConnection connection, string commandText, CancellationToken cancellationToken, params DbPlaceholderParameter[] parameters)
-        where T : IDataReaderMapper<T>
+        where T : IDataRecordMapper<T>
     {
         ArgumentNullException.ThrowIfNull(connection);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
@@ -579,7 +579,7 @@ public static partial class DbConnectionExtensions
     /// <param name="configureParameters">A delegate to configured the <see cref="DbParameterCollection"/> before the command is executed.</param>
     /// <returns>A task representing the asynchronous operation with the mapped <typeparamref name="T"/>s.</returns>
     public static IAsyncEnumerable<T> QueryAsync<T>(this DbConnection connection, string commandText, Action<DbParameterCollection> configureParameters)
-        where T : IDataReaderMapper<T>
+        where T : IDataRecordMapper<T>
     {
         ArgumentNullException.ThrowIfNull(connection);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
@@ -599,7 +599,7 @@ public static partial class DbConnectionExtensions
     /// <param name="cancellationToken">A token to cancel the asynchronous operation.</param>
     /// <returns>A task representing the asynchronous operation with the mapped <typeparamref name="T"/>s.</returns>
     public static IAsyncEnumerable<T> QueryAsync<T>(this DbConnection connection, string commandText, Action<DbParameterCollection> configureParameters, CancellationToken cancellationToken)
-        where T : IDataReaderMapper<T>
+        where T : IDataRecordMapper<T>
     {
         ArgumentNullException.ThrowIfNull(connection);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);

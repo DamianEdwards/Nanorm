@@ -1,7 +1,7 @@
-﻿namespace Systems.Collections.Generic;
+﻿namespace Nanorm;
 
 /// <summary>
-/// Extension methods for <see cref="IAsyncEnumerable{T}"/> from the <c>Nanorm.Npgsql</c> package.
+/// Extension methods for <see cref="IAsyncEnumerable{T}"/> from the <c>Nanorm</c> package.
 /// </summary>
 public static class AsyncEnumerableExtensions
 {
@@ -12,7 +12,7 @@ public static class AsyncEnumerableExtensions
     /// <param name="enumerable">The <see cref="IAsyncEnumerable{T}"/>.</param>
     /// <param name="initialCapacity">An optional initial capacity for the returned <see cref="List{T}"/>.</param>
     /// <param name="cancellationToken"></param>
-    /// <returns></returns>
+    /// <returns>The <see cref="List{T}"/>.</returns>
     public static async Task<List<T>> ToListAsync<T>(this IAsyncEnumerable<T> enumerable, int? initialCapacity = null, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(enumerable);
