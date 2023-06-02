@@ -18,7 +18,7 @@ public static class DbDataReaderExtensions
     /// <param name="reader">The <see cref="DbDataReader"/>.</param>
     /// <returns>An instance of <typeparamref name="T"/> if the reader contains rows, otherwise <c>default(<typeparamref name="T"/>)</c>.</returns>
     public static Task<T?> MapSingleAsync<T>(this DbDataReader reader)
-        where T : IDataReaderMapper<T>
+        where T : IDataRecordMapper<T>
     {
         ArgumentNullException.ThrowIfNull(reader);
 
@@ -33,7 +33,7 @@ public static class DbDataReaderExtensions
     /// <param name="cancellationToken">A token to cancel the asynchronous operation.</param>
     /// <returns>An instance of <typeparamref name="T"/> if the reader contains rows, otherwise <c>default(<typeparamref name="T"/>)</c>.</returns>
     public static Task<T?> MapSingleAsync<T>(this DbDataReader reader, CancellationToken cancellationToken)
-        where T : IDataReaderMapper<T>
+        where T : IDataRecordMapper<T>
     {
         ArgumentNullException.ThrowIfNull(reader);
 
@@ -74,7 +74,7 @@ public static class DbDataReaderExtensions
 
 #if NET7_0_OR_GREATER
     internal static async Task<T?> MapSingleAsyncImpl<T>(this DbDataReader reader, CancellationToken cancellationToken)
-        where T : IDataReaderMapper<T>
+        where T : IDataRecordMapper<T>
     {
         if (!reader.HasRows)
         {
@@ -107,7 +107,7 @@ public static class DbDataReaderExtensions
     /// <param name="reader">The <see cref="DbDataReader"/>.</param>
     /// <returns>An <see cref="IAsyncEnumerable{T}"/>.</returns>
     public static IAsyncEnumerable<T> MapAsync<T>(this DbDataReader reader)
-        where T : IDataReaderMapper<T>
+        where T : IDataRecordMapper<T>
     {
         ArgumentNullException.ThrowIfNull(reader);
 
@@ -122,7 +122,7 @@ public static class DbDataReaderExtensions
     /// <param name="cancellationToken">A token to cancel the asynchronous operation.</param>
     /// <returns>An <see cref="IAsyncEnumerable{T}"/>.</returns>
     public static IAsyncEnumerable<T> MapAsync<T>(this DbDataReader reader, CancellationToken cancellationToken)
-        where T : IDataReaderMapper<T>
+        where T : IDataRecordMapper<T>
     {
         ArgumentNullException.ThrowIfNull(reader);
 
@@ -163,7 +163,7 @@ public static class DbDataReaderExtensions
 
 #if NET7_0_OR_GREATER
     internal static async IAsyncEnumerable<T> MapAsyncImpl<T>(this DbDataReader reader, [EnumeratorCancellation] CancellationToken cancellationToken)
-        where T : IDataReaderMapper<T>
+        where T : IDataRecordMapper<T>
     {
         if (!reader.HasRows)
         {

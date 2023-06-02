@@ -127,7 +127,7 @@ async Task EnsureDb(DbConnection db)
     }
 }
 
-sealed class Todo : IDataReaderMapper<Todo>
+sealed class Todo : IDataRecordMapper<Todo>
 {
     public int Id { get; set; }
 
@@ -135,11 +135,11 @@ sealed class Todo : IDataReaderMapper<Todo>
 
     public bool IsComplete { get; set; }
 
-    public static Todo Map(DbDataReader dataReader) =>
+    public static Todo Map(IDataRecord dataRecord) =>
         new()
         {
-            Id = dataReader.GetInt32(nameof(Id)),
-            Title = dataReader.GetString(nameof(Title)),
-            IsComplete = dataReader.GetBoolean(nameof(IsComplete))
+            Id = dataRecord.GetInt32(nameof(Id)),
+            Title = dataRecord.GetString(nameof(Title)),
+            IsComplete = dataRecord.GetBoolean(nameof(IsComplete))
         };
 }

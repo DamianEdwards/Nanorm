@@ -1,4 +1,6 @@
-﻿namespace Npgsql;
+﻿using Npgsql;
+
+namespace Nanorm;
 
 /// <summary>
 /// Extension methods related to working with <see cref="NpgsqlParameter"/> from the <c>Nanorm.Npgsql</c> package.

@@ -9,9 +9,9 @@
 
 #if NET7_0_OR_GREATER
 using System.CodeDom.Compiler;
-using Nanorm;
+using System.Data.Common;
 
-namespace System.Data.Common;
+namespace Nanorm;
 
 /// <summary>
 /// Extension methods for <see cref="DbDataSource"/> from the <c>Nanorm</c> package.
@@ -42,7 +42,7 @@ public static partial class DbDataSourceExtensions
         DbPlaceholderParameter param<#= paramNum #>
 <#          } #>
         )
-        where T : IDataReaderMapper<T>
+        where T : IDataRecordMapper<T>
     {
         ArgumentNullException.ThrowIfNull(dataSource);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
@@ -88,7 +88,7 @@ public static partial class DbDataSourceExtensions
 <#          } #>
         CancellationToken cancellationToken
         )
-        where T : IDataReaderMapper<T>
+        where T : IDataRecordMapper<T>
     {
         ArgumentNullException.ThrowIfNull(dataSource);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);

@@ -1,9 +1,7 @@
 ﻿using System.Runtime.CompilerServices;
-#if NET7_0_OR_GREATER
-using Nanorm.Npgsql;
-#endif
+using Npgsql;
 
-namespace Npgsql;
+namespace Nanorm;
 
 /// <summary>
 /// Extension methods for <see cref="NpgsqlDataReader"/> from the <c>Nanorm.Npgsql</c> package.
@@ -18,7 +16,7 @@ public static class NpgsqlDataReaderExtensions
     /// <param name="reader">The <see cref="NpgsqlDataReader"/>.</param>
     /// <returns>An instance of <typeparamref name="T"/> if the reader contains rows, otherwise <c>default(<typeparamref name="T"/>)</c>.</returns>
     public static Task<T?> MapSingleAsync<T>(this NpgsqlDataReader reader)
-        where T : IDataReaderMapper<T>
+        where T : IDataRecordMapper<T>
     {
         ArgumentNullException.ThrowIfNull(reader);
 
@@ -33,7 +31,7 @@ public static class NpgsqlDataReaderExtensions
     /// <param name="cancellationToken">A token to cancel the asynchronous operation.</param>
     /// <returns>An instance of <typeparamref name="T"/> if the reader contains rows, otherwise <c>default(<typeparamref name="T"/>)</c>.</returns>
     public static Task<T?> MapSingleAsync<T>(this NpgsqlDataReader reader, CancellationToken cancellationToken)
-        where T : IDataReaderMapper<T>
+        where T : IDataRecordMapper<T>
     {
         ArgumentNullException.ThrowIfNull(reader);
 
@@ -74,7 +72,7 @@ public static class NpgsqlDataReaderExtensions
 
 #if NET7_0_OR_GREATER
     internal static async Task<T?> MapSingleAsyncImpl<T>(this NpgsqlDataReader reader, CancellationToken cancellationToken)
-        where T : IDataReaderMapper<T>
+        where T : IDataRecordMapper<T>
     {
         if (!reader.HasRows)
         {
@@ -107,7 +105,7 @@ public static class NpgsqlDataReaderExtensions
     /// <param name="reader">The <see cref="NpgsqlDataReader"/>.</param>
     /// <returns>An <see cref="IAsyncEnumerable{T}"/>.</returns>
     public static IAsyncEnumerable<T> MapAsync<T>(this NpgsqlDataReader reader)
-        where T : IDataReaderMapper<T>
+        where T : IDataRecordMapper<T>
     {
         ArgumentNullException.ThrowIfNull(reader);
 
@@ -122,7 +120,7 @@ public static class NpgsqlDataReaderExtensions
     /// <param name="cancellationToken">A token to cancel the asynchronous operation.</param>
     /// <returns>An <see cref="IAsyncEnumerable{T}"/>.</returns>
     public static IAsyncEnumerable<T> MapAsync<T>(this NpgsqlDataReader reader, CancellationToken cancellationToken)
-        where T : IDataReaderMapper<T>
+        where T : IDataRecordMapper<T>
     {
         ArgumentNullException.ThrowIfNull(reader);
 
@@ -163,7 +161,7 @@ public static class NpgsqlDataReaderExtensions
 
 #if NET7_0_OR_GREATER
     internal static async IAsyncEnumerable<T> MapAsyncImpl<T>(this NpgsqlDataReader reader, [EnumeratorCancellation] CancellationToken cancellationToken)
-        where T : IDataReaderMapper<T>
+        where T : IDataRecordMapper<T>
     {
         if (!reader.HasRows)
         {

@@ -3,9 +3,9 @@
 
 #if NET7_0_OR_GREATER
 using System.CodeDom.Compiler;
-using Nanorm;
+using System.Data.Common;
 
-namespace System.Data.Common;
+namespace Nanorm;
 
 /// <summary>
 /// Extension methods for <see cref="DbConnection"/> from the <c>Nanorm</c> package.
@@ -29,7 +29,7 @@ public static partial class DbConnectionExtensions
         string commandText,
         DbPlaceholderParameter param1
         )
-        where T : IDataReaderMapper<T>
+        where T : IDataRecordMapper<T>
     {
         ArgumentNullException.ThrowIfNull(connection);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
@@ -66,7 +66,7 @@ public static partial class DbConnectionExtensions
         DbPlaceholderParameter param1,
         CancellationToken cancellationToken
         )
-        where T : IDataReaderMapper<T>
+        where T : IDataRecordMapper<T>
     {
         ArgumentNullException.ThrowIfNull(connection);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
@@ -106,7 +106,7 @@ public static partial class DbConnectionExtensions
         DbPlaceholderParameter param1, 
         DbPlaceholderParameter param2
         )
-        where T : IDataReaderMapper<T>
+        where T : IDataRecordMapper<T>
     {
         ArgumentNullException.ThrowIfNull(connection);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
@@ -157,7 +157,7 @@ public static partial class DbConnectionExtensions
         DbPlaceholderParameter param2,
         CancellationToken cancellationToken
         )
-        where T : IDataReaderMapper<T>
+        where T : IDataRecordMapper<T>
     {
         ArgumentNullException.ThrowIfNull(connection);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
@@ -211,7 +211,7 @@ public static partial class DbConnectionExtensions
         DbPlaceholderParameter param2, 
         DbPlaceholderParameter param3
         )
-        where T : IDataReaderMapper<T>
+        where T : IDataRecordMapper<T>
     {
         ArgumentNullException.ThrowIfNull(connection);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
@@ -276,7 +276,7 @@ public static partial class DbConnectionExtensions
         DbPlaceholderParameter param3,
         CancellationToken cancellationToken
         )
-        where T : IDataReaderMapper<T>
+        where T : IDataRecordMapper<T>
     {
         ArgumentNullException.ThrowIfNull(connection);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
@@ -344,7 +344,7 @@ public static partial class DbConnectionExtensions
         DbPlaceholderParameter param3, 
         DbPlaceholderParameter param4
         )
-        where T : IDataReaderMapper<T>
+        where T : IDataRecordMapper<T>
     {
         ArgumentNullException.ThrowIfNull(connection);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
@@ -423,7 +423,7 @@ public static partial class DbConnectionExtensions
         DbPlaceholderParameter param4,
         CancellationToken cancellationToken
         )
-        where T : IDataReaderMapper<T>
+        where T : IDataRecordMapper<T>
     {
         ArgumentNullException.ThrowIfNull(connection);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
@@ -505,7 +505,7 @@ public static partial class DbConnectionExtensions
         DbPlaceholderParameter param4, 
         DbPlaceholderParameter param5
         )
-        where T : IDataReaderMapper<T>
+        where T : IDataRecordMapper<T>
     {
         ArgumentNullException.ThrowIfNull(connection);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
@@ -598,7 +598,7 @@ public static partial class DbConnectionExtensions
         DbPlaceholderParameter param5,
         CancellationToken cancellationToken
         )
-        where T : IDataReaderMapper<T>
+        where T : IDataRecordMapper<T>
     {
         ArgumentNullException.ThrowIfNull(connection);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
@@ -694,7 +694,7 @@ public static partial class DbConnectionExtensions
         DbPlaceholderParameter param5, 
         DbPlaceholderParameter param6
         )
-        where T : IDataReaderMapper<T>
+        where T : IDataRecordMapper<T>
     {
         ArgumentNullException.ThrowIfNull(connection);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
@@ -801,7 +801,7 @@ public static partial class DbConnectionExtensions
         DbPlaceholderParameter param6,
         CancellationToken cancellationToken
         )
-        where T : IDataReaderMapper<T>
+        where T : IDataRecordMapper<T>
     {
         ArgumentNullException.ThrowIfNull(connection);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
@@ -911,7 +911,7 @@ public static partial class DbConnectionExtensions
         DbPlaceholderParameter param6, 
         DbPlaceholderParameter param7
         )
-        where T : IDataReaderMapper<T>
+        where T : IDataRecordMapper<T>
     {
         ArgumentNullException.ThrowIfNull(connection);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
@@ -1032,7 +1032,7 @@ public static partial class DbConnectionExtensions
         DbPlaceholderParameter param7,
         CancellationToken cancellationToken
         )
-        where T : IDataReaderMapper<T>
+        where T : IDataRecordMapper<T>
     {
         ArgumentNullException.ThrowIfNull(connection);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
@@ -1156,7 +1156,7 @@ public static partial class DbConnectionExtensions
         DbPlaceholderParameter param7, 
         DbPlaceholderParameter param8
         )
-        where T : IDataReaderMapper<T>
+        where T : IDataRecordMapper<T>
     {
         ArgumentNullException.ThrowIfNull(connection);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
@@ -1291,7 +1291,7 @@ public static partial class DbConnectionExtensions
         DbPlaceholderParameter param8,
         CancellationToken cancellationToken
         )
-        where T : IDataReaderMapper<T>
+        where T : IDataRecordMapper<T>
     {
         ArgumentNullException.ThrowIfNull(connection);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);

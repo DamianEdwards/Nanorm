@@ -4,7 +4,7 @@ using System.Globalization;
 using System.Runtime.CompilerServices;
 using Microsoft.Data.Sqlite;
 
-namespace Nanorm.Sqlite;
+namespace Nanorm;
 
 /// <summary>
 /// Custom interpolated string handler for Sqlite queries.

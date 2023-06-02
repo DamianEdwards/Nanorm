@@ -1,8 +1,8 @@
 ﻿using System.Data;
 using System.Runtime.CompilerServices;
-using Nanorm.Npgsql;
+using Npgsql;
 
-namespace Npgsql;
+namespace Nanorm;
 
 /// <summary>
 /// Extension methods for <see cref="NpgsqlConnection"/> from the <c>Nanorm.Npgsql</c> package.
@@ -306,7 +306,7 @@ public static partial class NpgsqlConnectionExtensions
     /// <param name="commandText">The SQL command text.</param>
     /// <returns>A task representing the asynchronous operation with the mapped <typeparamref name="T"/>.</returns>
     public static Task<T?> QuerySingleAsync<T>(this NpgsqlConnection connection, string commandText)
-        where T : IDataReaderMapper<T>
+        where T : IDataRecordMapper<T>
     {
         ArgumentNullException.ThrowIfNull(connection);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
@@ -324,7 +324,7 @@ public static partial class NpgsqlConnectionExtensions
     /// <param name="commandTextHandler">The SQL command text.</param>
     /// <returns>A task representing the asynchronous operation with the mapped <typeparamref name="T"/>.</returns>
     public static Task<T?> QuerySingleAsync<T>(this NpgsqlConnection connection, NpgsqlInterpolatedStringHandler commandTextHandler)
-        where T : IDataReaderMapper<T>
+        where T : IDataRecordMapper<T>
     {
         ArgumentNullException.ThrowIfNull(connection);
 
@@ -342,7 +342,7 @@ public static partial class NpgsqlConnectionExtensions
     /// <param name="cancellationToken">A token to cancel the asynchronous operation.</param>
     /// <returns>A task representing the asynchronous operation with the mapped <typeparamref name="T"/>.</returns>
     public static Task<T?> QuerySingleAsync<T>(this NpgsqlConnection connection, string commandText, CancellationToken cancellationToken)
-        where T : IDataReaderMapper<T>
+        where T : IDataRecordMapper<T>
     {
         ArgumentNullException.ThrowIfNull(connection);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
@@ -361,7 +361,7 @@ public static partial class NpgsqlConnectionExtensions
     /// <param name="cancellationToken">A token to cancel the asynchronous operation.</param>
     /// <returns>A task representing the asynchronous operation with the mapped <typeparamref name="T"/>.</returns>
     public static Task<T?> QuerySingleAsync<T>(this NpgsqlConnection connection, NpgsqlInterpolatedStringHandler commandTextHandler, CancellationToken cancellationToken)
-        where T : IDataReaderMapper<T>
+        where T : IDataRecordMapper<T>
     {
         ArgumentNullException.ThrowIfNull(connection);
 
@@ -382,7 +382,7 @@ public static partial class NpgsqlConnectionExtensions
     /// </param>
     /// <returns>A task representing the asynchronous operation with the mapped <typeparamref name="T"/>.</returns>
     public static Task<T?> QuerySingleAsync<T>(this NpgsqlConnection connection, string commandText, params NpgsqlParameter[] parameters)
-        where T : IDataReaderMapper<T>
+        where T : IDataRecordMapper<T>
     {
         ArgumentNullException.ThrowIfNull(connection);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
@@ -405,7 +405,7 @@ public static partial class NpgsqlConnectionExtensions
     /// </param>
     /// <returns>A task representing the asynchronous operation with the mapped <typeparamref name="T"/>.</returns>
     public static Task<T?> QuerySingleAsync<T>(this NpgsqlConnection connection, string commandText, CancellationToken cancellationToken, params NpgsqlParameter[] parameters)
-        where T : IDataReaderMapper<T>
+        where T : IDataRecordMapper<T>
     {
         ArgumentNullException.ThrowIfNull(connection);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
@@ -424,7 +424,7 @@ public static partial class NpgsqlConnectionExtensions
     /// <param name="configureParameters">A delegate to configured the <see cref="NpgsqlParameterCollection"/> before the command is executed.</param>
     /// <returns>A task representing the asynchronous operation with the mapped <typeparamref name="T"/>.</returns>
     public static Task<T?> QuerySingleAsync<T>(this NpgsqlConnection connection, string commandText, Action<NpgsqlParameterCollection> configureParameters)
-        where T : IDataReaderMapper<T>
+        where T : IDataRecordMapper<T>
     {
         ArgumentNullException.ThrowIfNull(connection);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
@@ -444,7 +444,7 @@ public static partial class NpgsqlConnectionExtensions
     /// <param name="cancellationToken">A token to cancel the asynchronous operation.</param>
     /// <returns>A task representing the asynchronous operation with the mapped <typeparamref name="T"/>.</returns>
     public static Task<T?> QuerySingleAsync<T>(this NpgsqlConnection connection, string commandText, Action<NpgsqlParameterCollection> configureParameters, CancellationToken cancellationToken)
-        where T : IDataReaderMapper<T>
+        where T : IDataRecordMapper<T>
     {
         ArgumentNullException.ThrowIfNull(connection);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
@@ -462,7 +462,7 @@ public static partial class NpgsqlConnectionExtensions
     /// <param name="commandText">The SQL command text.</param>
     /// <returns>A task representing the asynchronous operation with the mapped <typeparamref name="T"/>s.</returns>
     public static IAsyncEnumerable<T> QueryAsync<T>(this NpgsqlConnection connection, string commandText)
-        where T : IDataReaderMapper<T>
+        where T : IDataRecordMapper<T>
     {
         ArgumentNullException.ThrowIfNull(connection);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
@@ -480,7 +480,7 @@ public static partial class NpgsqlConnectionExtensions
     /// <param name="commandTextHandler">The SQL command text.</param>
     /// <returns>A task representing the asynchronous operation with the mapped <typeparamref name="T"/>s.</returns>
     public static IAsyncEnumerable<T> QueryAsync<T>(this NpgsqlConnection connection, NpgsqlInterpolatedStringHandler commandTextHandler)
-        where T : IDataReaderMapper<T>
+        where T : IDataRecordMapper<T>
     {
         ArgumentNullException.ThrowIfNull(connection);
 
@@ -498,7 +498,7 @@ public static partial class NpgsqlConnectionExtensions
     /// <param name="cancellationToken">A token to cancel the asynchronous operation.</param>
     /// <returns>A task representing the asynchronous operation with the mapped <typeparamref name="T"/>s.</returns>
     public static IAsyncEnumerable<T> QueryAsync<T>(this NpgsqlConnection connection, string commandText, CancellationToken cancellationToken)
-        where T : IDataReaderMapper<T>
+        where T : IDataRecordMapper<T>
     {
         ArgumentNullException.ThrowIfNull(connection);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
@@ -517,7 +517,7 @@ public static partial class NpgsqlConnectionExtensions
     /// <param name="cancellationToken">A token to cancel the asynchronous operation.</param>
     /// <returns>A task representing the asynchronous operation with the mapped <typeparamref name="T"/>s.</returns>
     public static IAsyncEnumerable<T> QueryAsync<T>(this NpgsqlConnection connection, NpgsqlInterpolatedStringHandler commandTextHandler, CancellationToken cancellationToken)
-        where T : IDataReaderMapper<T>
+        where T : IDataRecordMapper<T>
     {
         ArgumentNullException.ThrowIfNull(connection);
 
@@ -538,7 +538,7 @@ public static partial class NpgsqlConnectionExtensions
     /// </param>
     /// <returns>A task representing the asynchronous operation with the mapped <typeparamref name="T"/>s.</returns>
     public static IAsyncEnumerable<T> QueryAsync<T>(this NpgsqlConnection connection, string commandText, params NpgsqlParameter[] parameters)
-        where T : IDataReaderMapper<T>
+        where T : IDataRecordMapper<T>
     {
         ArgumentNullException.ThrowIfNull(connection);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
@@ -561,7 +561,7 @@ public static partial class NpgsqlConnectionExtensions
     /// </param>
     /// <returns>A task representing the asynchronous operation with the mapped <typeparamref name="T"/>s.</returns>
     public static IAsyncEnumerable<T> QueryAsync<T>(this NpgsqlConnection connection, string commandText, CancellationToken cancellationToken, params NpgsqlParameter[] parameters)
-        where T : IDataReaderMapper<T>
+        where T : IDataRecordMapper<T>
     {
         ArgumentNullException.ThrowIfNull(connection);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
@@ -580,7 +580,7 @@ public static partial class NpgsqlConnectionExtensions
     /// <param name="configureParameters">A delegate to configured the <see cref="NpgsqlParameterCollection"/> before the command is executed.</param>
     /// <returns>A task representing the asynchronous operation with the mapped <typeparamref name="T"/>s.</returns>
     public static IAsyncEnumerable<T> QueryAsync<T>(this NpgsqlConnection connection, string commandText, Action<NpgsqlParameterCollection> configureParameters)
-        where T : IDataReaderMapper<T>
+        where T : IDataRecordMapper<T>
     {
         ArgumentNullException.ThrowIfNull(connection);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);
@@ -600,7 +600,7 @@ public static partial class NpgsqlConnectionExtensions
     /// <param name="cancellationToken">A token to cancel the asynchronous operation.</param>
     /// <returns>A task representing the asynchronous operation with the mapped <typeparamref name="T"/>s.</returns>
     public static IAsyncEnumerable<T> QueryAsync<T>(this NpgsqlConnection connection, string commandText, Action<NpgsqlParameterCollection> configureParameters, CancellationToken cancellationToken)
-        where T : IDataReaderMapper<T>
+        where T : IDataRecordMapper<T>
     {
         ArgumentNullException.ThrowIfNull(connection);
         ExceptionHelpers.ThrowIfNullOrEmpty(commandText);

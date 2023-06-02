@@ -1,11 +1,9 @@
 ﻿using System.Data;
 using System.Data.Common;
 using System.Runtime.CompilerServices;
-#if NET7_0_OR_GREATER
-using Nanorm.Sqlite;
-#endif
+using Microsoft.Data.Sqlite;
 
-namespace Microsoft.Data.Sqlite;
+namespace Nanorm;
 
 /// <summary>
 /// Extension methods for <see cref="SqliteCommand"/> from the <c>Nanorm.Sqlite</c> package.
@@ -168,7 +166,7 @@ public static class SqliteCommandExtensions
 
 #if NET7_0_OR_GREATER
     internal static async Task<T?> QuerySingleAsyncImpl<T>(this SqliteCommand command, SqliteConnection connection, CancellationToken cancellationToken)
-        where T : IDataReaderMapper<T>
+        where T : IDataRecordMapper<T>
     {
         await connection.OpenAsync(cancellationToken);
         await using (command)
@@ -180,7 +178,7 @@ public static class SqliteCommandExtensions
     }
 
     internal static async IAsyncEnumerable<T> QueryAsyncImpl<T>(this SqliteCommand command, SqliteConnection connection, [EnumeratorCancellation] CancellationToken cancellationToken)
-        where T : IDataReaderMapper<T>
+        where T : IDataRecordMapper<T>
     {
         await connection.OpenAsync(cancellationToken);
         await using (command)

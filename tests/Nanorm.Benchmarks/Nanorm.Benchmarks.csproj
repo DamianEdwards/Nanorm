@@ -14,6 +14,5 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Nanorm.Npgsql\Nanorm.Npgsql.csproj" />
-    <ProjectReference Include="..\..\src\Nanorm\Nanorm.csproj" />
   </ItemGroup>
 </Project>

@@ -189,14 +189,14 @@ public static class DbCommandExtensions
 
 #if NET7_0_OR_GREATER
     internal static async Task<T?> QuerySingleAsyncImpl<T>(this DbCommand command, DbConnection connection, CancellationToken cancellationToken)
-        where T : IDataReaderMapper<T>
+        where T : IDataRecordMapper<T>
     {
         await connection.OpenAsync(cancellationToken);
         return await command.QuerySingleAsyncImpl<T>(cancellationToken);
     }
 
     internal static async Task<T?> QuerySingleAsyncImpl<T>(this DbCommand command, CancellationToken cancellationToken)
-        where T : IDataReaderMapper<T>
+        where T : IDataRecordMapper<T>
     {
         await using (command)
         {
@@ -207,7 +207,7 @@ public static class DbCommandExtensions
     }
 
     internal static async IAsyncEnumerable<T> QueryAsyncImpl<T>(this DbCommand command, DbConnection connection, [EnumeratorCancellation] CancellationToken cancellationToken)
-        where T : IDataReaderMapper<T>
+        where T : IDataRecordMapper<T>
     {
         await connection.OpenAsync(cancellationToken);
         await using (command)
@@ -222,7 +222,7 @@ public static class DbCommandExtensions
     }
 
     internal static async IAsyncEnumerable<T> QueryAsyncImpl<T>(this DbCommand command, [EnumeratorCancellation] CancellationToken cancellationToken)
-        where T : IDataReaderMapper<T>
+        where T : IDataRecordMapper<T>
     {
         await using (command)
         {

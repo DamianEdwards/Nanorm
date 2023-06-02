@@ -1,8 +1,8 @@
 ﻿using System.Data;
 using System.Runtime.CompilerServices;
-using Nanorm.Npgsql;
+using Npgsql;
 
-namespace Npgsql;
+namespace Nanorm;
 
 /// <summary>
 /// Extension methods for <see cref="NpgsqlCommand"/> from the <c>Nanorm.Npgsql</c> package.
@@ -179,14 +179,14 @@ public static class NpgsqlCommandExtensions
 
 #if NET7_0_OR_GREATER
     internal static async Task<T?> QuerySingleAsyncImpl<T>(this NpgsqlCommand command, NpgsqlConnection connection, CancellationToken cancellationToken)
-        where T : IDataReaderMapper<T>
+        where T : IDataRecordMapper<T>
     {
         await connection.OpenAsync(cancellationToken);
         return await command.QuerySingleAsyncImpl<T>(cancellationToken);
     }
 
     internal static async Task<T?> QuerySingleAsyncImpl<T>(this NpgsqlCommand command, CancellationToken cancellationToken)
-        where T : IDataReaderMapper<T>
+        where T : IDataRecordMapper<T>
     {
         await using (command)
         {
@@ -197,7 +197,7 @@ public static class NpgsqlCommandExtensions
     }
 
     internal static async IAsyncEnumerable<T> QueryAsyncImpl<T>(this NpgsqlCommand command, NpgsqlConnection connection, [EnumeratorCancellation] CancellationToken cancellationToken)
-        where T : IDataReaderMapper<T>
+        where T : IDataRecordMapper<T>
     {
         await connection.OpenAsync(cancellationToken);
         await using (command)
@@ -212,7 +212,7 @@ public static class NpgsqlCommandExtensions
     }
 
     internal static async IAsyncEnumerable<T> QueryAsyncImpl<T>(this NpgsqlCommand command, [EnumeratorCancellation] CancellationToken cancellationToken)
-        where T : IDataReaderMapper<T>
+        where T : IDataRecordMapper<T>
     {
         await using (command)
         {
