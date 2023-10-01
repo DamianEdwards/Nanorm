@@ -12,13 +12,15 @@
     <PackageVersion Include="BenchmarkDotNet" Version="0.13.5" />
     <PackageVersion Include="Microsoft.Data.Sqlite" Version="6.0.0" Condition=" '$(TargetFramework)' == 'net6.0' " />
     <PackageVersion Include="Microsoft.Data.Sqlite" Version="7.0.0" Condition=" '$(TargetFramework)' == 'net7.0' " />
-    <PackageVersion Include="Microsoft.Data.Sqlite" Version="8.0.0-preview.4.23259.3" Condition=" '$(TargetFramework)' == 'net8.0' " />
+    <PackageVersion Include="Microsoft.Data.Sqlite" Version="8.0.0-rc.1.23419.6" Condition=" '$(TargetFramework)' == 'net8.0' " />
     <PackageVersion Include="Npgsql" Version="6.0.0" Condition=" '$(TargetFramework)' == 'net6.0' " />
     <PackageVersion Include="Npgsql" Version="7.0.0" Condition=" '$(TargetFramework)' == 'net7.0' " />
     <PackageVersion Include="Npgsql" Version="8.0.0-preview.4" Condition=" '$(TargetFramework)' == 'net8.0' " />
     <PackageVersion Include="Microsoft.AspNetCore.Mvc.Testing" Version="6.0.15" Condition=" '$(TargetFramework)' == 'net6.0' " />
     <PackageVersion Include="Microsoft.AspNetCore.Mvc.Testing" Version="7.0.4" Condition=" '$(TargetFramework)' == 'net7.0' " />
-    <PackageVersion Include="Microsoft.AspNetCore.Mvc.Testing" Version="8.0.0-preview.4.23260.4" Condition=" '$(TargetFramework)' == 'net8.0' " />
+    <PackageVersion Include="Microsoft.AspNetCore.Mvc.Testing" Version="8.0.0-rc.1.23421.29" Condition=" '$(TargetFramework)' == 'net8.0' " />
     <PackageVersion Include="Dapper" Version="2.0.123" />
+    <PackageVersion Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.2" />
+    <PackageVersion Include="Microsoft.CodeAnalysis.CSharp" Version="4.0.1" />
   </ItemGroup>
 </Project>

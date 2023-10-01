@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Console.Todos.Npgsql": {
+      "commandName": "DebugRoslynComponent",
+      "targetProject": "..\\..\\samples\\Nanorm.Samples.Console.Todos.Npgsql\\Nanorm.Samples.Console.Todos.Npgsql.csproj"
+    }
+  }
+}
