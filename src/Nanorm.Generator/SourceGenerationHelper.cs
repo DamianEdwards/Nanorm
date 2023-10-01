@@ -5,17 +5,6 @@ namespace Nanorm.Generator;
 
 internal static class SourceGenerationHelper
 {
-    public const string DataRecordMapperAttribute = """
-        namespace Nanorm
-        {
-            /// <summary>Indicates the partial class should have an implementation of <see cref="Nanorm.IDataRecordMapper{T}" /> generated.</summary>
-            [System.AttributeUsage(System.AttributeTargets.Class)]
-            internal class DataRecordMapperAttribute : System.Attribute
-            {
-            }
-        }
-        """;
-
     public static readonly Dictionary<string, string> GetMethodsMap = new()
     {
         { "byte", "GetByte" },
@@ -62,6 +51,7 @@ internal static class SourceGenerationHelper
 
             foreach (var member in classToGenerate.Members)
             {
+                // TODO: Optimize this by setting backing field directly using UnsafeAccessor in .NET 8
                 sb.AppendLine($"""
                             {member.Name} = dataRecord.{GetMethodsMap[member.Type.ToString()]}("{member.Name}"),
             """);

@@ -14,7 +14,7 @@
 
   <ItemGroup>
     <!-- Reference the source generator just to ensure it's built but don't reference its output -->
-    <ProjectReference Include="..\Nanorm.Generator\Nanorm.Generator.csproj" ReferenceOutputAssembly="false" Private="true" />
+    <ProjectReference Include="..\Nanorm.Generator\Nanorm.Generator.csproj" OutputItemType="None" ReferenceOutputAssembly="false" Private="true" />
     <!-- Include source generator assembly in this project's package output -->
     <None Include="@(ProjectReference->'%(RootDir)%(Directory)\bin\$(Configuration)\netstandard2.0\%(Filename).dll')" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
   </ItemGroup>

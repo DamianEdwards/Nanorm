@@ -12,11 +12,6 @@ internal class DataRecordMapperGenerator : IIncrementalGenerator
 {
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
-        // Add the marker attribute
-        context.RegisterPostInitializationOutput(ctx => ctx.AddSource(
-            "DataRecordMapperAttribute.g.cs",
-            SourceText.From(SourceGenerationHelper.DataRecordMapperAttribute, Encoding.UTF8)));
-
         // Do a simple filter for classes
         IncrementalValuesProvider<ClassDeclarationSyntax> classDeclarations = context.SyntaxProvider
             .CreateSyntaxProvider(
@@ -24,11 +19,9 @@ internal class DataRecordMapperGenerator : IIncrementalGenerator
                 transform: static (ctx, _) => GetSemanticTargetForGeneration(ctx)) // select the class with the [DataRecordMapper] attribute
             .Where(static m => m is not null)!; // filter out attributed classes that we don't care about
 
-        IncrementalValueProvider<(Compilation, ImmutableArray<ClassDeclarationSyntax>)> compilationAndEnums
-            = context.CompilationProvider.Combine(classDeclarations.Collect());
+        var compilationAndClasses = context.CompilationProvider.Combine(classDeclarations.Collect());
 
-        context.RegisterSourceOutput(compilationAndEnums,
-            static (spc, source) => Execute(source.Item1, source.Item2, spc));
+        context.RegisterSourceOutput(compilationAndClasses, static (spc, source) => Execute(source.Left, source.Right, spc));
     }
 
     private static bool IsSyntaxTargetForGeneration(SyntaxNode node) =>
@@ -94,10 +87,11 @@ internal class DataRecordMapperGenerator : IIncrementalGenerator
     {
         // Create a list to hold our output
         var classesToGenerate = new List<ClassToGenerate>();
-        // Get the semantic representation of our marker attribute 
-        INamedTypeSymbol? enumAttribute = compilation.GetTypeByMetadataName("Nanorm.DataRecordMapperAttribute");
 
-        if (enumAttribute == null)
+        // Get the semantic representation of our marker attribute 
+        var mapperAttribute = compilation.GetTypeByMetadataName("Nanorm.DataRecordMapperAttribute");
+
+        if (mapperAttribute == null)
         {
             // If this is null, the compilation couldn't find the marker attribute type
             // which suggests there's something very wrong! Bail out..
@@ -138,8 +132,7 @@ internal class DataRecordMapperGenerator : IIncrementalGenerator
                     members.Add((member.Name, field.Type));
                 }
                 else if (member is IPropertySymbol property && property.SetMethod is not null && !property.IsReadOnly && !property.IsStatic
-                    && SourceGenerationHelper.IsMappableType(property.Type)
-                    )
+                    && SourceGenerationHelper.IsMappableType(property.Type))
                 {
                     members.Add((member.Name, property.Type));
                 }
