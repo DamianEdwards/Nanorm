@@ -24,8 +24,8 @@ internal class DataRecordMapperGenerator : IIncrementalGenerator
         context.RegisterSourceOutput(compilationAndClasses, static (spc, source) => Execute(source.Left, source.Right, spc));
     }
 
-    private static bool IsSyntaxTargetForGeneration(SyntaxNode node) =>
-        node is ClassDeclarationSyntax c && c.AttributeLists.Count > 0;
+    // TODO: Support records and structs
+    private static bool IsSyntaxTargetForGeneration(SyntaxNode node) => node is ClassDeclarationSyntax c && c.AttributeLists.Count > 0;
 
     private static ClassDeclarationSyntax? GetSemanticTargetForGeneration(GeneratorSyntaxContext context)
     {
