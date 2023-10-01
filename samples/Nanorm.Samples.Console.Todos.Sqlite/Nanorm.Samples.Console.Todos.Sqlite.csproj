@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Nanorm.Sqlite\Nanorm.Sqlite.csproj" />
+    <ProjectReference Include="..\..\src\Nanorm.Generator\Nanorm.Generator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
     <!-- Analyze the whole library -->
     <TrimmerRootAssembly Include="Nanorm.Sqlite" />
   </ItemGroup>

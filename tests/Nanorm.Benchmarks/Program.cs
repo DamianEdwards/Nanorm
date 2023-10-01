@@ -187,19 +187,12 @@ public class NanormBenchmarks
     }
 }
 
-public sealed class Todo : IDataRecordMapper<Todo>
+[DataRecordMapper]
+public sealed partial class Todo
 {
     public int Id { get; set; }
 
     public required string Title { get; set; }
 
     public bool IsComplete { get; set; }
-
-    public static Todo Map(IDataRecord dataRecord) =>
-       new()
-       {
-           Id = dataRecord.GetInt32(nameof(Id)),
-           Title = dataRecord.GetString(nameof(Title)),
-           IsComplete = dataRecord.GetBoolean(nameof(IsComplete))
-       };
 }
