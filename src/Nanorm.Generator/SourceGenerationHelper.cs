@@ -38,7 +38,7 @@ internal static class SourceGenerationHelper
             }
 
             sb.AppendLine($$"""
-                public partial class {{classToGenerate.Name}} : IDataRecordMapper<{{classToGenerate.Name}}>
+                partial class {{classToGenerate.Name}} : IDataRecordMapper<{{classToGenerate.Name}}>
                 {
                     public static {{classToGenerate.Name}} Map(System.Data.IDataRecord dataRecord) =>
                         new()
