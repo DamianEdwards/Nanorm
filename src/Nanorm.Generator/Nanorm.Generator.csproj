@@ -6,7 +6,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <IsRoslynComponent>true</IsRoslynComponent>
-    <IsPackage>false</IsPackage>
+    <IsPackable>false</IsPackable>
   </PropertyGroup>
 
   <ItemGroup>
