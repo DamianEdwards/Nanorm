@@ -88,8 +88,10 @@ internal class DataRecordMapperGenerator : IIncrementalGenerator
         // Create a list to hold our output
         var classesToGenerate = new List<ClassToGenerate>();
 
-        // Get the semantic representation of our marker attribute 
+        // Get the semantic representation of our marker attributes
         var mapperAttribute = compilation.GetTypeByMetadataName("Nanorm.DataRecordMapperAttribute");
+        var mapColumnAttribute = compilation.GetTypeByMetadataName("Nanorm.MapColumnAttribute");
+        var noMapAttribute = compilation.GetTypeByMetadataName("Nanorm.NoMapAttribute");
 
         if (mapperAttribute == null)
         {
@@ -121,20 +123,43 @@ internal class DataRecordMapperGenerator : IIncrementalGenerator
 
             // Get all the members in the class
             var classMembers = classSymbol.GetMembers();
-            var members = new List<(string Name, ITypeSymbol type)>(classMembers.Length);
+            var members = new List<(string Name, string ColumnName, ITypeSymbol type)>(classMembers.Length);
 
             // Get all the settable fields and properties from the class, and add their name and type to the list
             foreach (ISymbol member in classMembers)
             {
+                var attributes = member.GetAttributes();
+
+                var columnName = member.Name;
+                var skipMember = false;
+
+                foreach (var attribute in attributes)
+                {
+                    if (attribute.AttributeClass?.Equals(noMapAttribute, SymbolEqualityComparer.Default) ?? false)
+                    {
+                        // Mapping disabled for this field, skip
+                        skipMember = true;
+                        break;
+                    }
+                    if (attribute.AttributeClass?.Equals(mapColumnAttribute, SymbolEqualityComparer.Default) ?? false)
+                    {
+                        // Custom mapping for this field, use the specified column name
+                        columnName = attribute.ConstructorArguments[0].Value?.ToString() ?? member.Name;
+                        break;
+                    }
+                }
+
+                if (skipMember) continue;
+
                 if (member is IFieldSymbol field && field.ConstantValue is not null && !field.IsReadOnly
                     && SourceGenerationHelper.IsMappableType(field.Type))
                 {
-                    members.Add((member.Name, field.Type));
+                    members.Add((member.Name, columnName, field.Type));
                 }
                 else if (member is IPropertySymbol property && property.SetMethod is not null && !property.IsReadOnly && !property.IsStatic
                     && SourceGenerationHelper.IsMappableType(property.Type))
                 {
-                    members.Add((member.Name, property.Type));
+                    members.Add((member.Name, columnName, property.Type));
                 }
             }
 

@@ -17,7 +17,7 @@ internal static class SourceGenerationHelper
         { "string", "GetString" },
         { "bool", "GetBoolean" },
         { "System.Guid", "GetGuid" },
-        { "System.Char", "GetChar" },
+        { "char", "GetChar" },
     };
 
     public static bool IsMappableType(ITypeSymbol typeSymbol) => GetMethodsMap.ContainsKey(typeSymbol.ToString());
@@ -53,7 +53,7 @@ internal static class SourceGenerationHelper
             {
                 // TODO: Optimize this by setting backing field directly using UnsafeAccessor in .NET 8
                 sb.AppendLine($"""
-                            {member.Name} = dataRecord.{GetMethodsMap[member.Type.ToString()]}("{member.Name}"),
+                            {member.Name} = dataRecord.{GetMethodsMap[member.Type.ToString()]}("{member.ColumnName}"),
             """);
             }
 

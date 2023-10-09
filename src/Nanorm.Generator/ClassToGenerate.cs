@@ -8,9 +8,9 @@ internal readonly struct ClassToGenerate
 
     public readonly string Name;
 
-    public readonly List<(string Name, ITypeSymbol Type)> Members;
+    public readonly List<(string Name, string ColumnName, ITypeSymbol Type)> Members;
 
-    public ClassToGenerate(string? @namespace, string name, List<(string Name, ITypeSymbol Type)> members)
+    public ClassToGenerate(string? @namespace, string name, List<(string Name, string ColumnName, ITypeSymbol Type)> members)
     {
         Namespace = @namespace;
         Name = name;

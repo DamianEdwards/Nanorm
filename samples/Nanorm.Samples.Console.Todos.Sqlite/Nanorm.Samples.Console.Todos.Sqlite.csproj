@@ -9,6 +9,7 @@
     <LangVersion>11</LangVersion>
     <PublishAot Condition=" '$(TargetFramework)' == 'net8.0' ">true</PublishAot>
     <TrimmerSingleWarn Condition=" '$(TargetFramework)' == 'net8.0' ">false</TrimmerSingleWarn>
+    <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
   </PropertyGroup>
 
   <ItemGroup>
