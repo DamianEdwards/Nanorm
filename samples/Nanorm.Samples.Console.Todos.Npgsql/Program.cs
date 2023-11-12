@@ -1,5 +1,4 @@
-﻿using System.Data;
-using Nanorm;
+﻿using Nanorm;
 using Npgsql;
 
 var connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING") ?? "Server=localhost;Port=5432;Username=postgres;Database=postgres";

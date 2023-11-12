@@ -12,28 +12,28 @@ internal class DataRecordMapperGenerator : IIncrementalGenerator
 {
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
-        // Do a simple filter for classes
-        IncrementalValuesProvider<ClassDeclarationSyntax> classDeclarations = context.SyntaxProvider
+        // Do a simple filter for types
+        IncrementalValuesProvider<TypeDeclarationSyntax> typeDeclarations = context.SyntaxProvider
             .CreateSyntaxProvider(
-                predicate: static (s, _) => IsSyntaxTargetForGeneration(s), // select classes with attributes
-                transform: static (ctx, _) => GetSemanticTargetForGeneration(ctx)) // select the class with the [DataRecordMapper] attribute
-            .Where(static m => m is not null)!; // filter out attributed classes that we don't care about
+                predicate: static (s, _) => IsSyntaxTargetForGeneration(s), // select types with attributes
+                transform: static (ctx, _) => GetSemanticTargetForGeneration(ctx)) // select the types with the [DataRecordMapper] attribute
+            .Where(static m => m is not null)!; // filter out attributed types that we don't care about
 
-        var compilationAndClasses = context.CompilationProvider.Combine(classDeclarations.Collect());
+        var compilationAndTypes = context.CompilationProvider.Combine(typeDeclarations.Collect());
 
-        context.RegisterSourceOutput(compilationAndClasses, static (spc, source) => Execute(source.Left, source.Right, spc));
+        context.RegisterSourceOutput(compilationAndTypes, static (spc, source) => Execute(source.Left, source.Right, spc));
     }
 
-    // TODO: Support records and structs
-    private static bool IsSyntaxTargetForGeneration(SyntaxNode node) => node is ClassDeclarationSyntax c && c.AttributeLists.Count > 0;
+    private static bool IsSyntaxTargetForGeneration(SyntaxNode node) => (node is ClassDeclarationSyntax or RecordDeclarationSyntax or StructDeclarationSyntax)
+        && ((TypeDeclarationSyntax)node).AttributeLists.Count > 0;
 
-    private static ClassDeclarationSyntax? GetSemanticTargetForGeneration(GeneratorSyntaxContext context)
+    private static TypeDeclarationSyntax? GetSemanticTargetForGeneration(GeneratorSyntaxContext context)
     {
-        // we know the node is a ClassDeclarationSyntax thanks to IsSyntaxTargetForGeneration
-        var classDeclarationSyntax = (ClassDeclarationSyntax)context.Node;
+        // we know the node is a TypeDeclarationSyntax thanks to IsSyntaxTargetForGeneration
+        var typeDeclarationSyntax = (TypeDeclarationSyntax)context.Node;
 
         // loop through all the attributes on the method
-        foreach (AttributeListSyntax attributeListSyntax in classDeclarationSyntax.AttributeLists)
+        foreach (AttributeListSyntax attributeListSyntax in typeDeclarationSyntax.AttributeLists)
         {
             foreach (AttributeSyntax attributeSyntax in attributeListSyntax.Attributes)
             {
@@ -50,7 +50,7 @@ internal class DataRecordMapperGenerator : IIncrementalGenerator
                 if (fullName == "Nanorm.DataRecordMapperAttribute")
                 {
                     // return the enum
-                    return classDeclarationSyntax;
+                    return typeDeclarationSyntax;
                 }
             }
         }
@@ -59,34 +59,34 @@ internal class DataRecordMapperGenerator : IIncrementalGenerator
         return null;
     }
 
-    private static void Execute(Compilation compilation, ImmutableArray<ClassDeclarationSyntax> classes, SourceProductionContext context)
+    private static void Execute(Compilation compilation, ImmutableArray<TypeDeclarationSyntax> types, SourceProductionContext context)
     {
-        if (classes.IsDefaultOrEmpty)
+        if (types.IsDefaultOrEmpty)
         {
             // nothing to do yet
             return;
         }
 
         // I'm not sure if this is actually necessary, but `[LoggerMessage]` does it, so seems like a good idea!
-        IEnumerable<ClassDeclarationSyntax> distinctClasses = classes.Distinct();
+        IEnumerable<TypeDeclarationSyntax> distinctTypes = types.Distinct();
 
-        // Convert each ClassDeclarationSyntax to a ClassToGenerate
-        var classesToGenerate = GetTypesToGenerate(compilation, distinctClasses, context.CancellationToken);
+        // Convert each TypeDeclarationSyntax to a TypeToGenerate
+        var typesToGenerate = GetTypesToGenerate(compilation, distinctTypes, context.CancellationToken);
 
-        // If there were errors in the ClassDeclarationSyntax, we won't create an ClassToGenerate for it, so make sure we have
+        // If there were errors in the TypeDeclarationSyntax, we won't create an TypeToGenerate for it, so make sure we have
         // something to generate
-        if (classesToGenerate.Count > 0)
+        if (typesToGenerate.Count > 0)
         {
             // generate the source code and add it to the output
-            string result = SourceGenerationHelper.GenerateExtensionClass(classesToGenerate);
-            context.AddSource("DataRecordMapperPartialClasses.g.cs", SourceText.From(result, Encoding.UTF8));
+            string result = SourceGenerationHelper.GenerateExtensionTypes(typesToGenerate);
+            context.AddSource("DataRecordMapperPartialTypes.g.cs", SourceText.From(result, Encoding.UTF8));
         }
     }
 
-    static List<ClassToGenerate> GetTypesToGenerate(Compilation compilation, IEnumerable<ClassDeclarationSyntax> classes, CancellationToken ct)
+    static List<TypeToGenerate> GetTypesToGenerate(Compilation compilation, IEnumerable<TypeDeclarationSyntax> types, CancellationToken ct)
     {
         // Create a list to hold our output
-        var classesToGenerate = new List<ClassToGenerate>();
+        var typesToGenerate = new List<TypeToGenerate>();
 
         // Get the semantic representation of our marker attributes
         var mapperAttribute = compilation.GetTypeByMetadataName("Nanorm.DataRecordMapperAttribute");
@@ -97,36 +97,36 @@ internal class DataRecordMapperGenerator : IIncrementalGenerator
         {
             // If this is null, the compilation couldn't find the marker attribute type
             // which suggests there's something very wrong! Bail out..
-            return classesToGenerate;
+            return typesToGenerate;
         }
 
-        foreach (ClassDeclarationSyntax classDeclarationSyntax in classes)
+        foreach (TypeDeclarationSyntax typeDeclarationSyntax in types)
         {
             // stop if we're asked to
             ct.ThrowIfCancellationRequested();
 
-            // Get the semantic representation of the class syntax
-            var semanticModel = compilation.GetSemanticModel(classDeclarationSyntax.SyntaxTree);
-            if (semanticModel.GetDeclaredSymbol(classDeclarationSyntax) is not INamedTypeSymbol classSymbol)
+            // Get the semantic representation of the type syntax
+            var semanticModel = compilation.GetSemanticModel(typeDeclarationSyntax.SyntaxTree);
+            if (semanticModel.GetDeclaredSymbol(typeDeclarationSyntax) is not INamedTypeSymbol typeSymbol)
             {
                 // something went wrong, bail out
                 continue;
             }
 
-            var classNamespace = classSymbol.ContainingNamespace.IsGlobalNamespace
+            var typeNamespace = typeSymbol.ContainingNamespace.IsGlobalNamespace
                 ? null
-                : classSymbol.ContainingNamespace.ToString();
+                : typeSymbol.ContainingNamespace.ToString();
 
-            // Get the full type name of the class e.g. Customer,
+            // Get the full type name of the type e.g. Customer,
             // or OuterClass<T>.Customer if it was nested in a generic type (for example)
-            var className = classSymbol.ToString();
+            var typeName = typeSymbol.ToString();
 
-            // Get all the members in the class
-            var classMembers = classSymbol.GetMembers();
-            var members = new List<(string Name, string ColumnName, ITypeSymbol type)>(classMembers.Length);
+            // Get all the members in the type
+            var typeMembers = typeSymbol.GetMembers();
+            var members = new List<(string Name, string ColumnName, ITypeSymbol type)>(typeMembers.Length);
 
-            // Get all the settable fields and properties from the class, and add their name and type to the list
-            foreach (ISymbol member in classMembers)
+            // Get all the settable fields and properties from the type, and add their name and type to the list
+            foreach (ISymbol member in typeMembers)
             {
                 var attributes = member.GetAttributes();
 
@@ -163,10 +163,10 @@ internal class DataRecordMapperGenerator : IIncrementalGenerator
                 }
             }
 
-            // Create an EnumToGenerate for use in the generation phase
-            classesToGenerate.Add(new ClassToGenerate(classNamespace, className, members));
+            // Create a TypeToGenerate for use in the generation phase
+            typesToGenerate.Add(new TypeToGenerate(typeNamespace, typeName, typeSymbol.TypeKind, members));
         }
 
-        return classesToGenerate;
+        return typesToGenerate;
     }
 }

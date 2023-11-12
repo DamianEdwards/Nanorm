@@ -5,6 +5,7 @@ using BenchmarkDotNet.Running;
 using Nanorm;
 using Npgsql;
 using Dapper;
+using Testcontainers.PostgreSql;
 
 BenchmarkRunner.Run<NanormBenchmarks>();
 
@@ -12,13 +13,16 @@ BenchmarkRunner.Run<NanormBenchmarks>();
 public class NanormBenchmarks
 {
     private readonly Todo _todo = new() { Title = "Wash the dishes" };
-    private readonly string _connectionString = "Server=localhost;Port=5432;Username=postgres;Database=postgres;";
+    private readonly PostgreSqlContainer _postgresContainer = new PostgreSqlBuilder()
+        .WithImage("postgres:15-alpine")
+        .Build();
     private NpgsqlDataSource _dataSource = null!;
 
     [GlobalSetup]
     public void Setup()
     {
-        _dataSource = NpgsqlDataSource.Create(_connectionString);
+        _postgresContainer.StartAsync().GetAwaiter().GetResult();
+        _dataSource = NpgsqlDataSource.Create(_postgresContainer.GetConnectionString());
         const string sql = $"""
             CREATE TABLE IF NOT EXISTS public.Todos
             (
@@ -37,6 +41,7 @@ public class NanormBenchmarks
         const string sql = "DROP TABLE IF EXISTS public.Todos;";
         _dataSource.ExecuteAsync(sql).GetAwaiter().GetResult();
         _dataSource.Dispose();
+        _postgresContainer.DisposeAsync().AsTask().GetAwaiter().GetResult();
     }
 
     [Benchmark(Baseline = true)]
@@ -80,7 +85,7 @@ public class NanormBenchmarks
         
         var dbFactory = NpgsqlFactory.Instance;
         await using var connection = dbFactory.CreateConnection();
-        connection.ConnectionString = _connectionString;
+        connection.ConnectionString = _postgresContainer.GetConnectionString();
 
         await using var command = dbFactory.CreateCommand();
         command.Connection = connection;

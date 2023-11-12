@@ -1,4 +1,3 @@
-using System.Data;
 using Microsoft.Data.Sqlite;
 using Nanorm;
 
@@ -32,10 +31,7 @@ static async Task ListCurrentTodos(SqliteConnection db)
 
     await foreach (var todo in todos)
     {
-        if (todo is not null)
-        {
-            todosList.Add(todo);
-        }
+        todosList.Add(todo);
     }
 
     if (todosList.Count == 0)
@@ -76,7 +72,7 @@ static async Task AddTodo(SqliteConnection db, string title)
         RETURNING *
         """);
     
-    Console.WriteLine($"Added todo {createdTodo?.Id}");
+    Console.WriteLine($"Added todo {createdTodo.Id}");
 }
 
 static async Task MarkComplete(SqliteConnection db, string title)
@@ -127,7 +123,7 @@ async Task EnsureDb(SqliteConnection db)
 }
 
 [DataRecordMapper]
-sealed partial class Todo
+partial struct Todo
 {
     public int Id { get; set; }
     

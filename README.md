@@ -1,6 +1,6 @@
 # Nanorm
 
-A tiny data-access helper library for ADO.NET. Linker and native AOT friendly.
+A tiny data-access helper library for ADO.NET. Trimming and native AOT friendly.
 
 This library is still a work in progress and some parts are not yet ready for use.
 

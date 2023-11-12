@@ -4,7 +4,7 @@
 /// <summary>
 /// Indicates the partial class should have an implementation of <see cref="IDataRecordMapper{T}" /> generated.
 /// </summary>
-[AttributeUsage(AttributeTargets.Class)]
+[AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct)]
 public sealed class DataRecordMapperAttribute : Attribute
 {
 

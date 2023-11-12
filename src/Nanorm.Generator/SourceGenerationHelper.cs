@@ -22,34 +22,34 @@ internal static class SourceGenerationHelper
 
     public static bool IsMappableType(ITypeSymbol typeSymbol) => GetMethodsMap.ContainsKey(typeSymbol.ToString());
 
-    public static string GenerateExtensionClass(List<ClassToGenerate> classesToGenerate)
+    public static string GenerateExtensionTypes(List<TypeToGenerate> typesToGenerate)
     {
         var sb = new StringBuilder();
         sb.AppendLine("using Nanorm;");
 
-        foreach (var classToGenerate in classesToGenerate)
+        foreach (var typeToGenerate in typesToGenerate)
         {
-            if (!string.IsNullOrEmpty(classToGenerate.Namespace))
+            if (!string.IsNullOrEmpty(typeToGenerate.Namespace))
             {
                 sb.AppendLine($$"""
-            namespace {{classToGenerate.Namespace}}
+            namespace {{typeToGenerate.Namespace}}
             {
             """);
             }
 
             sb.AppendLine($$"""
-                partial class {{classToGenerate.Name}} : IDataRecordMapper<{{classToGenerate.Name}}>
+                partial {{ToKeyword(typeToGenerate.Kind)}} {{typeToGenerate.Name}} : IDataRecordMapper<{{typeToGenerate.Name}}>
                 {
-                    public static {{classToGenerate.Name}} Map(System.Data.IDataRecord dataRecord) =>
+                    public static {{typeToGenerate.Name}} Map(System.Data.IDataRecord dataRecord) =>
                         new()
                         {
             """);
 
             sb.AppendLine($$"""
-                            // {{classToGenerate.Members.Count}} members
+                            // {{typeToGenerate.Members.Count}} members
             """);
 
-            foreach (var member in classToGenerate.Members)
+            foreach (var member in typeToGenerate.Members)
             {
                 // TODO: Optimize this by setting backing field directly using UnsafeAccessor in .NET 8
                 sb.AppendLine($"""
@@ -67,7 +67,7 @@ internal static class SourceGenerationHelper
                 }
             """);
 
-            if (!string.IsNullOrEmpty(classToGenerate.Namespace))
+            if (!string.IsNullOrEmpty(typeToGenerate.Namespace))
             {
                 // Close the namespace
                 sb.AppendLine("""
@@ -78,4 +78,11 @@ internal static class SourceGenerationHelper
 
         return sb.ToString();
     }
+
+    public static string ToKeyword(TypeKind typeKind) => typeKind switch
+    {
+        TypeKind.Class => "class",
+        TypeKind.Struct or TypeKind.Structure => "struct",
+        _ => throw new InvalidOperationException(),
+    };
 }
