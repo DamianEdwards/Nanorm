@@ -2,8 +2,6 @@
 
 A tiny data-access helper library for ADO.NET. Trimming and native AOT friendly.
 
-This library is still a work in progress and some parts are not yet ready for use.
-
 It supports:
 
 - Any ADO.NET data provider via [`System.Data.Common`](https://learn.microsoft.com/dotnet/api/system.data.common)
