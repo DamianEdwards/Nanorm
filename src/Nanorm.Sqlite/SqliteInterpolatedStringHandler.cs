@@ -37,7 +37,7 @@ public ref struct SqliteInterpolatedStringHandler
         // Total number of string fragments
         _builder = ArrayPool<string>.Shared.Rent(literalLength + formattedCount);
         _parameterCount = formattedCount;
-        _parameters = formattedCount > 0 ? ArrayPool<SqliteParameter>.Shared.Rent(_parameterCount) : Array.Empty<SqliteParameter>();
+        _parameters = formattedCount > 0 ? ArrayPool<SqliteParameter>.Shared.Rent(_parameterCount) : [];
         _hashCode = HashCode.Combine(_parameterCount);
     }
 

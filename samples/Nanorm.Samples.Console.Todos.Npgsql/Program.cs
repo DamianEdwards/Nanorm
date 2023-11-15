@@ -31,15 +31,7 @@ Console.WriteLine();
 static async Task ListCurrentTodos(NpgsqlDataSource db)
 {
     var todos = db.QueryAsync<Todo>("SELECT * FROM Todos");
-    var todosList = new List<Todo>();
-
-    await foreach (var todo in todos)
-    {
-        if (todo is not null)
-        {
-            todosList.Add(todo);
-        }
-    }
+    var todosList = await todos.ToListAsync();
 
     if (todosList.Count == 0)
     {

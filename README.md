@@ -4,20 +4,138 @@ A tiny data-access helper library for ADO.NET. Trimming and native AOT friendly.
 
 It supports:
 
-- Any ADO.NET data provider via [`System.Data.Common`](https://learn.microsoft.com/dotnet/api/system.data.common)
-- PostgreSQL via [`Npgsql`](https://www.npgsql.org/)
+- [PostgreSQL](https://www.postgresql.org/) via [`Npgsql`](https://www.npgsql.org/)
 - [SQLite](https://www.sqlite.org/) via [`Microsoft.Data.SQLite`](https://learn.microsoft.com/dotnet/standard/data/sqlite/)
+- Any ADO.NET data provider via [`System.Data.Common`](https://learn.microsoft.com/dotnet/api/system.data.common)
+
+## How to use
+
+Nanorm supports .NET 6+, with special support for .NET 7+ thanks to [static virtual members on interfaces](https://learn.microsoft.com/dotnet/csharp/whats-new/tutorials/static-virtual-interface-members) and source generators.
+
+### Getting started
+
+1. Install the `Nanorm` package that's suitable for the ADO.NET provider (i.e. database) you're using. Using the `dotnet` command line in the project directory:
+    - PostgreSQL:
+
+        ```shell
+        dotnet add package Nanorm.Npgsql --prerelease
+        ```
+
+    - SQLite:
+
+        ```shell
+        dotnet add package Nanorm.Sqlite --prerelease
+        ```
+
+    - All other ADO.NET providers:
+
+        ```shell
+        dotnet add package Nanorm --prerelease
+        ```
+
+1. Create a `class`, `record`, or `struct` to map a database query result to. If you're using .NET 7 or .NET 8, you can make it `partial` and decorate it with the `[DataRecordMapper]` attribute to enable the source generator which will take care of implementing the `IDataRecordMapper<T>` interface for you:
+
+    ```csharp
+    [DataRecordMapper]
+    public partial class Todo
+    {
+        public int Id { get; set; }
+
+        public required string Title { get; set; }
+
+        public bool IsComplete { get; set; }
+    }
+
+    // Generated for you if .NET 7+, otherwise you'll need to write it yourself
+    partial class Todo : IDataRecordMapper<Todo>
+    {
+        public static Todo Map(System.Data.IDataRecord dataRecord) =>
+            new()
+            {
+                Id = dataRecord.GetInt32("Id"),
+                Title = dataRecord.GetString("Title"),
+                IsComplete = dataRecord.GetBoolean("IsComplete"),
+            };
+    }
+    ```
+
+1. Create an instance of the appropriate `IDbConnection` type and use one of the Nanorm extension methods to execute a query. The `QueryAsync` methods return `IAsyncEnumerable` so you can `await foreach` over the results or simply call `ToListAsync()` to asynchronously get a `List<T>` result:
+
+    ```csharp
+    // Using Npgsql to query a local PostgreSQL instance
+    var connectionString = "Server=localhost;Port=5432;Username=postgres;Database=postgres";
+    await using var db = new NpgsqlDataSourceBuilder(connectionString).Build();
+
+    var todos = db.QueryAsync<Todo>("SELECT * FROM Todos");
+    var todosList = await todos.ToListAsync();
+
+    if (todosList.Count == 0)
+    {
+        Console.WriteLine("There are currently no todos!");
+    }
+    else
+    {
+        Console.WriteLine($"Found {todosList.Count} todo(s):");
+        foreach (var todo in todosList)
+        {
+            Console.WriteLine($"({todo.Id}) {todo.Title}");
+        }
+    }
+    ```
+
+### Using parameters
+
+Nanorm supports a few different ways to pass parameters to queries:
+
+- Passing an interpolated string that is processed by Nanorm's [custom string interpolation handler](https://learn.microsoft.com/dotnet/csharp/whats-new/tutorials/interpolated-string-handler). This is the preferred approach. The query is automatically parameterized in an optimal way, i.e. no string concatenation, uses pooled allocations, etc.:
+
+    ```csharp
+    var title = "Do the dishes";
+    var result = db.QueryAsync<Todo>($"SELECT * FROM Todos WHERE Title = {title}")
+    ```
+
+- Passing instances of the ADO.NET provider's `DbParameter` implementation as parameters, e.g.:
+
+    ```csharp
+    var title = "Do the dishes";
+    var sql = "SELECT * FROM Todos WHERE Title = $1";
+    var result = db.QueryAsync<Todo>(sql, new NpgsqlParameter { Value =  title }))
+    ```
+
+- Passing a callback that modifies the ADO.NET provider's parameter collection implementation, e.g.:
+
+    ```csharp
+    var title = "Do the dishes";
+    var sql = "SELECT * FROM Todos WHERE Title = $1";
+    var result = db.QueryAsync<Todo>(sql, parameters => parameters.Add(title))
+    ```
+
+### Extension methods
+
+The following extension methods are provided to make it easier to work against your database:
+
+Method | Description
+------ | -----------
+`ExecuteAsync` | Executes a command that does not return any results.
+`ExecuteScalarAsync` | Executes a command and returns the first column of the first row in the first returned result set. All other columns, rows, and result sets are ignored.
+`QueryAsync` | Executes a command and returns the result as an appropriately typed `DbDataReader`
+`QueryAsync<T>` | Executes a command and returns the rows mapped to instances of `T` as an `IAsyncEnumerable<T>`
+`QuerySingleAsync<T>` | Executes a command and maps the first row returned to an instance of `T`
+`AsDbParameter` | Creates a provider-specific parameter object from the `object` value
+`AsTypedDbParameter<T>` | Creates a generic parameter from the `T` value ([Npgsql only](https://www.npgsql.org/doc/basic-usage.html#strongly-typed-parameters))
+`ToListAsync<T>` | Asynchronously converts an `IAsyncEnumerable<T>` to a `List<T>`
 
 ## Benchmarks
 
-Results of latest benchmarks 
+Nanorm is intended to be a very thin layer over ADO.NET with support for trimming and native AOT. Here's how it compares to raw ADO.NET and Dapper for a [simple insert & return operation](./tests/Nanorm.Benchmarks/Program.cs) with regards to execution time and memory allocations:
 
-|                            Method |     Mean |     Error |    StdDev | Ratio | RatioSD | Allocated | Alloc Ratio |
-|---------------------------------- |---------:|----------:|----------:|------:|--------:|----------:|------------:|
-|                            AdoNet | 2.513 ms | 0.0498 ms | 0.0553 ms |  1.00 |    0.00 |   3.23 KB |        1.00 |
-|                    AdoNetDbCommon | 2.506 ms | 0.0319 ms | 0.0283 ms |  0.99 |    0.03 |   3.52 KB |        1.09 |
-|                            Dapper | 2.499 ms | 0.0461 ms | 0.0431 ms |  0.99 |    0.03 |   3.35 KB |        1.04 |
-|                NanormDbParameters | 2.532 ms | 0.0496 ms | 0.0488 ms |  1.01 |    0.02 |   3.39 KB |        1.05 |
-|         NanormStringInterpolation | 2.478 ms | 0.0220 ms | 0.0183 ms |  0.98 |    0.02 |   3.41 KB |        1.06 |
-|          NanormDbCommonParameters | 2.515 ms | 0.0484 ms | 0.0475 ms |  1.00 |    0.02 |   3.57 KB |        1.11 |
-| NanormDbCommonStringInterpolation | 2.515 ms | 0.0319 ms | 0.0283 ms |  1.00 |    0.02 |   3.84 KB |        1.19 |
+| Method                            | Mean     | Error    | StdDev   | Median   | Ratio | RatioSD | Allocated | Alloc Ratio |
+|---------------------------------- |---------:|---------:|---------:|---------:|------:|--------:|----------:|------------:|
+| AdoNet                            | 443.5 us | 12.67 us | 37.17 us | 432.9 us |  1.00 |    0.00 |   3.28 KB |        1.00 |
+| AdoNetDbCommon                    | 443.1 us |  8.75 us | 21.63 us | 437.7 us |  1.00 |    0.10 |   4.97 KB |        1.51 |
+| Dapper                            | 424.3 us | 10.70 us | 30.86 us | 415.0 us |  0.96 |    0.11 |   3.51 KB |        1.07 |
+| DapperAot                         | 403.6 us |  7.92 us | 12.56 us | 402.5 us |  0.91 |    0.07 |   3.54 KB |        1.08 |
+| NanormDbParameters                | 404.9 us |  7.87 us | 10.51 us | 402.3 us |  0.91 |    0.07 |   3.44 KB |        1.05 |
+| NanormStringInterpolation         | 412.8 us |  8.07 us | 14.77 us | 408.6 us |  0.93 |    0.08 |   3.46 KB |        1.05 |
+| NanormDbCommonParameters          | 417.6 us |  8.32 us | 16.62 us | 415.0 us |  0.94 |    0.09 |   3.63 KB |        1.11 |
+| NanormDbCommonStringInterpolation | 414.7 us |  8.20 us | 15.99 us | 410.1 us |  0.94 |    0.08 |    3.9 KB |        1.19 |

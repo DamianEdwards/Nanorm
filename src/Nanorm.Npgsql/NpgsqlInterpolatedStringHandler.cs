@@ -36,7 +36,7 @@ public ref struct NpgsqlInterpolatedStringHandler
         // Total number of string fragments
         _builder = ArrayPool<string>.Shared.Rent(literalLength + formattedCount);
         _parameterCount = formattedCount;
-        _parameters = formattedCount > 0 ? ArrayPool<NpgsqlParameter>.Shared.Rent(_parameterCount) : Array.Empty<NpgsqlParameter>();
+        _parameters = formattedCount > 0 ? ArrayPool<NpgsqlParameter>.Shared.Rent(_parameterCount) : [];
         _hashCode = HashCode.Combine(_parameterCount);
     }
 
