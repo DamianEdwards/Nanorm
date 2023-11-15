@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Console.Todos.Sqlite": {
+      "commandName": "DebugRoslynComponent",
+      "targetProject": "..\\..\\samples\\Nanorm.Samples.Console.Todos.Sqlite\\Nanorm.Samples.Console.Todos.Sqlite.csproj"
+    }
+  }
+}

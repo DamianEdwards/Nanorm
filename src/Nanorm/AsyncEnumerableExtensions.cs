@@ -17,7 +17,7 @@ public static class AsyncEnumerableExtensions
     {
         ArgumentNullException.ThrowIfNull(enumerable);
 
-        var list = initialCapacity.HasValue ? new List<T>(initialCapacity.Value) : new List<T>();
+        var list = initialCapacity.HasValue ? new List<T>(initialCapacity.Value) : [];
 
         await foreach (var item in enumerable.WithCancellation(cancellationToken))
         {

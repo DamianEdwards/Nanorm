@@ -300,7 +300,7 @@ public static partial class NpgsqlDataSourceExtensions
 
 #if NET7_0_OR_GREATER
     /// <summary>
-    /// Executes a command maps the first row returned to an instance of <typeparamref name="T"/>.
+    /// Executes a command and maps the first row returned to an instance of <typeparamref name="T"/>.
     /// </summary>
     /// <typeparam name="T">The type the result is being map to.</typeparam>
     /// <param name="dataSource">The <see cref="NpgsqlDataSource"/>.</param>
@@ -318,7 +318,7 @@ public static partial class NpgsqlDataSourceExtensions
     }
 
     /// <summary>
-    /// Executes a command maps the first row returned to an instance of <typeparamref name="T"/>.
+    /// Executes a command and maps the first row returned to an instance of <typeparamref name="T"/>.
     /// </summary>
     /// <typeparam name="T">The type the result is being map to.</typeparam>
     /// <param name="dataSource">The <see cref="NpgsqlDataSource"/>.</param>
@@ -335,7 +335,7 @@ public static partial class NpgsqlDataSourceExtensions
     }
 
     /// <summary>
-    /// Executes a command maps the first row returned to an instance of <typeparamref name="T"/>.
+    /// Executes a command and maps the first row returned to an instance of <typeparamref name="T"/>.
     /// </summary>
     /// <typeparam name="T">The type the result is being map to.</typeparam>
     /// <param name="dataSource">The <see cref="NpgsqlDataSource"/>.</param>
@@ -354,7 +354,7 @@ public static partial class NpgsqlDataSourceExtensions
     }
 
     /// <summary>
-    /// Executes a command maps the first row returned to an instance of <typeparamref name="T"/>.
+    /// Executes a command and maps the first row returned to an instance of <typeparamref name="T"/>.
     /// </summary>
     /// <typeparam name="T">The type the result is being map to.</typeparam>
     /// <param name="dataSource">The <see cref="NpgsqlDataSource"/>.</param>
@@ -372,7 +372,7 @@ public static partial class NpgsqlDataSourceExtensions
     }
 
     /// <summary>
-    /// Executes a command maps the first row returned to an instance of <typeparamref name="T"/>.
+    /// Executes a command and maps the first row returned to an instance of <typeparamref name="T"/>.
     /// </summary>
     /// <typeparam name="T">The type the result is being map to.</typeparam>
     /// <param name="dataSource">The <see cref="NpgsqlDataSource"/>.</param>
@@ -394,7 +394,7 @@ public static partial class NpgsqlDataSourceExtensions
     }
 
     /// <summary>
-    /// Executes a command maps the first row returned to an instance of <typeparamref name="T"/>.
+    /// Executes a command and maps the first row returned to an instance of <typeparamref name="T"/>.
     /// </summary>
     /// <typeparam name="T">The type the result is being map to.</typeparam>
     /// <param name="dataSource">The <see cref="NpgsqlDataSource"/>.</param>
@@ -417,7 +417,7 @@ public static partial class NpgsqlDataSourceExtensions
     }
 
     /// <summary>
-    /// Executes a command maps the first row returned to an instance of <typeparamref name="T"/>.
+    /// Executes a command and maps the first row returned to an instance of <typeparamref name="T"/>.
     /// </summary>
     /// <typeparam name="T">The type the result is being map to.</typeparam>
     /// <param name="dataSource">The <see cref="NpgsqlDataSource"/>.</param>
@@ -436,7 +436,7 @@ public static partial class NpgsqlDataSourceExtensions
     }
 
     /// <summary>
-    /// Executes a command maps the first row returned to an instance of <typeparamref name="T"/>.
+    /// Executes a command and maps the first row returned to an instance of <typeparamref name="T"/>.
     /// </summary>
     /// <typeparam name="T">The type the result is being map to.</typeparam>
     /// <param name="dataSource">The <see cref="NpgsqlDataSource"/>.</param>

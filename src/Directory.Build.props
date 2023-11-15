@@ -1,7 +1,7 @@
 <Project>
 
   <PropertyGroup>
-    <VersionPrefix>0.0.6</VersionPrefix>
+    <VersionPrefix>0.1.0</VersionPrefix>
     <!-- VersionSuffix used for local builds -->
     <VersionSuffix>dev</VersionSuffix>
     <!-- VersionSuffix to be used for CI builds -->
@@ -20,12 +20,13 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <LangVersion>preview</LangVersion>
+    <LangVersion>Latest</LangVersion>
     <AnalysisMode>Recommended</AnalysisMode>
     <AnalysisModeReliability>All</AnalysisModeReliability>
     <AnalysisModePerformance>All</AnalysisModePerformance>
     <AnalysisModeSecurity>All</AnalysisModeSecurity>
     <SuppressNETCoreSdkPreviewMessage>true</SuppressNETCoreSdkPreviewMessage>
+    <IsAotCompatible Condition=" '$(TargetFramework)' == 'net7.0' ">true</IsAotCompatible>
   </PropertyGroup>
 
 </Project>

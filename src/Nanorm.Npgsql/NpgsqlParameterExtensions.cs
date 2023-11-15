@@ -27,7 +27,7 @@ public static class NpgsqlParameterExtensions
     }
 
     /// <summary>
-    /// Creates a strong a strongly-typed parameter from the value.
+    /// Creates a strongly-typed parameter from the value.
     /// </summary>
     /// <typeparam name="T">The type of the parameter value.</typeparam>
     /// <param name="value">The parameter value.</param>

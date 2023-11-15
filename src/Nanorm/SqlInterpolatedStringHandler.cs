@@ -37,7 +37,7 @@ public ref struct SqlInterpolatedStringHandler
         // Total number of string fragments
         _builder = ArrayPool<string>.Shared.Rent(literalLength + formattedCount);
         _parameterCount = formattedCount;
-        _parameters = formattedCount > 0 ? ArrayPool<DbPlaceholderParameter>.Shared.Rent(_parameterCount) : Array.Empty<DbPlaceholderParameter>();
+        _parameters = formattedCount > 0 ? ArrayPool<DbPlaceholderParameter>.Shared.Rent(_parameterCount) : [];
         _hashCode = HashCode.Combine(_parameterCount);
     }
 

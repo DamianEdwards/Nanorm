@@ -1,4 +1,3 @@
-using System.Data;
 using Microsoft.Data.Sqlite;
 using Nanorm;
 
@@ -28,15 +27,7 @@ Console.WriteLine();
 static async Task ListCurrentTodos(SqliteConnection db)
 {
     var todos = db.QueryAsync<Todo>("SELECT * FROM Todos");
-    var todosList = new List<Todo>();
-
-    await foreach (var todo in todos)
-    {
-        if (todo is not null)
-        {
-            todosList.Add(todo);
-        }
-    }
+    var todosList = await todos.ToListAsync();
 
     if (todosList.Count == 0)
     {
@@ -72,11 +63,11 @@ static async Task AddTodo(SqliteConnection db, string title)
 
     var createdTodo = await db.QuerySingleAsync<Todo>($"""
         INSERT INTO Todos(Title, IsComplete)
-        Values({todo.Title}, {todo.IsComplete})
+        Values({todo.Title}, {todo.IsCompleted})
         RETURNING *
         """);
     
-    Console.WriteLine($"Added todo {createdTodo?.Id}");
+    Console.WriteLine($"Added todo {createdTodo.Id}");
 }
 
 static async Task MarkComplete(SqliteConnection db, string title)
@@ -113,7 +104,7 @@ async Task EnsureDb(SqliteConnection db)
             (
                 {nameof(Todo.Id)} INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
                 {nameof(Todo.Title)} TEXT NOT NULL,
-                {nameof(Todo.IsComplete)} INTEGER DEFAULT 0 NOT NULL CHECK({nameof(Todo.IsComplete)} IN (0, 1))
+                IsComplete INTEGER DEFAULT 0 NOT NULL CHECK(IsComplete IN (0, 1))
             );
             """;
         await db.ExecuteAsync(sql);
@@ -126,19 +117,16 @@ async Task EnsureDb(SqliteConnection db)
     }
 }
 
-sealed class Todo : IDataRecordMapper<Todo>
+[DataRecordMapper]
+partial struct Todo
 {
     public int Id { get; set; }
     
     public required string Title { get; set; }
 
-    public bool IsComplete { get; set; }
+    [MapColumn("IsComplete")]
+    public bool IsCompleted { get; set; }
 
-    public static Todo Map(IDataRecord dataRecord) => 
-        new()
-        {
-            Id = dataRecord.GetInt32(nameof(Id)),
-            Title = dataRecord.GetString(nameof(Title)),
-            IsComplete = dataRecord.GetBoolean(nameof(IsComplete))
-        };
+    [NoMap]
+    public string? NotMapped { get; set; }
 }

@@ -9,7 +9,7 @@ namespace Nanorm;
 public static class DbParameterExtensions
 {
     /// <summary>
-    /// Creates a strong a strongly-typed parameter from the value.
+    /// Creates a strongly-typed parameter from the value.
     /// </summary>
     /// <param name="value">The parameter value.</param>
     /// <param name="name">The parameter name.</param>
