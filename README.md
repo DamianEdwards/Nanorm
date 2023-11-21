@@ -129,13 +129,13 @@ Method | Description
 
 Nanorm is intended to be a very thin layer over ADO.NET with support for trimming and native AOT. Here's how it compares to raw ADO.NET and Dapper for a [simple insert & return operation](./tests/Nanorm.Benchmarks/Program.cs) with regards to execution time and memory allocations:
 
-| Method                            | Mean     | Error    | StdDev   | Median   | Ratio | RatioSD | Allocated | Alloc Ratio |
-|---------------------------------- |---------:|---------:|---------:|---------:|------:|--------:|----------:|------------:|
-| AdoNet                            | 443.5 us | 12.67 us | 37.17 us | 432.9 us |  1.00 |    0.00 |   3.28 KB |        1.00 |
-| AdoNetDbCommon                    | 443.1 us |  8.75 us | 21.63 us | 437.7 us |  1.00 |    0.10 |   4.97 KB |        1.51 |
-| Dapper                            | 424.3 us | 10.70 us | 30.86 us | 415.0 us |  0.96 |    0.11 |   3.51 KB |        1.07 |
-| DapperAot                         | 403.6 us |  7.92 us | 12.56 us | 402.5 us |  0.91 |    0.07 |   3.54 KB |        1.08 |
-| NanormDbParameters                | 404.9 us |  7.87 us | 10.51 us | 402.3 us |  0.91 |    0.07 |   3.44 KB |        1.05 |
-| NanormStringInterpolation         | 412.8 us |  8.07 us | 14.77 us | 408.6 us |  0.93 |    0.08 |   3.46 KB |        1.05 |
-| NanormDbCommonParameters          | 417.6 us |  8.32 us | 16.62 us | 415.0 us |  0.94 |    0.09 |   3.63 KB |        1.11 |
-| NanormDbCommonStringInterpolation | 414.7 us |  8.20 us | 15.99 us | 410.1 us |  0.94 |    0.08 |    3.9 KB |        1.19 |
+| Method                            | Mean     | Error   | StdDev  | Ratio | RatioSD | Allocated | Alloc Ratio |
+|---------------------------------- |---------:|--------:|--------:|------:|--------:|----------:|------------:|
+| AdoNet                            | 401.7 us | 3.83 us | 3.58 us |  1.00 |    0.00 |   2.49 KB |        1.00 |
+| AdoNetDbCommon                    | 417.6 us | 8.33 us | 7.79 us |  1.04 |    0.03 |   4.18 KB |        1.68 |
+| Dapper                            | 400.7 us | 4.57 us | 4.28 us |  1.00 |    0.01 |   3.19 KB |        1.28 |
+| DapperAot                         | 409.2 us | 5.80 us | 5.43 us |  1.02 |    0.01 |   3.27 KB |        1.32 |
+| NanormDbParameters                | 402.7 us | 5.47 us | 5.12 us |  1.00 |    0.02 |   2.65 KB |        1.07 |
+| NanormStringInterpolation         | 403.5 us | 5.75 us | 5.38 us |  1.00 |    0.02 |   2.68 KB |        1.08 |
+| NanormDbCommonParameters          | 404.0 us | 5.48 us | 5.12 us |  1.01 |    0.01 |   2.86 KB |        1.15 |
+| NanormDbCommonStringInterpolation | 406.8 us | 3.60 us | 3.19 us |  1.01 |    0.01 |   3.12 KB |        1.26 |
