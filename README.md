@@ -1,4 +1,4 @@
-# Nanorm
+# Nanorm ![CI](https://github.com/DamianEdwards/Nanorm/actions/workflows/ci.yml/badge.svg) [![NuGet](https://img.shields.io/nuget/v/Nanorm?logo=nuget)](https://www.nuget.org/packages/Nanorm/)
 
 A tiny data-access helper library for ADO.NET. Trimming and native AOT friendly.
 
