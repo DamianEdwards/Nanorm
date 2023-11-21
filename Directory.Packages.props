@@ -16,12 +16,12 @@
     <PackageVersion Include="Microsoft.Data.Sqlite" Version="8.0.0" Condition=" '$(TargetFramework)' == 'net8.0' " />
     <PackageVersion Include="Npgsql" Version="6.0.0" Condition=" '$(TargetFramework)' == 'net6.0' " />
     <PackageVersion Include="Npgsql" Version="7.0.0" Condition=" '$(TargetFramework)' == 'net7.0' " />
-    <PackageVersion Include="Npgsql" Version="8.0.0-rc.2" Condition=" '$(TargetFramework)' == 'net8.0' " />
+    <PackageVersion Include="Npgsql" Version="8.0.0" Condition=" '$(TargetFramework)' == 'net8.0' " />
     <PackageVersion Include="Microsoft.AspNetCore.Mvc.Testing" Version="6.0.25" Condition=" '$(TargetFramework)' == 'net6.0' " />
     <PackageVersion Include="Microsoft.AspNetCore.Mvc.Testing" Version="7.0.14" Condition=" '$(TargetFramework)' == 'net7.0' " />
     <PackageVersion Include="Microsoft.AspNetCore.Mvc.Testing" Version="8.0.0" Condition=" '$(TargetFramework)' == 'net8.0' " />
     <PackageVersion Include="Dapper" Version="2.1.21" />
-	<PackageVersion Include="Dapper.AOT" Version="1.0.2" />
+    <PackageVersion Include="Dapper.AOT" Version="1.0.23" />
     <PackageVersion Include="Microsoft.CodeAnalysis.Analyzers" Version="3.11.0-beta1.23525.2" />
     <PackageVersion Include="Microsoft.CodeAnalysis.CSharp" Version="4.8.0-3.final" />
   </ItemGroup>
