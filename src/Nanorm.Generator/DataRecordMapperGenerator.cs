@@ -119,7 +119,8 @@ internal class DataRecordMapperGenerator : IIncrementalGenerator
 
             // Get the full type name of the type e.g. Customer,
             // or OuterClass<T>.Customer if it was nested in a generic type (for example)
-            var typeName = typeSymbol.ToString();
+            var typeIdentifier = typeDeclarationSyntax.Identifier.ToString();
+            var typeName = typeSymbol.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
 
             // Get all the members in the type
             var typeMembers = typeSymbol.GetMembers();
@@ -164,7 +165,7 @@ internal class DataRecordMapperGenerator : IIncrementalGenerator
             }
 
             // Create a TypeToGenerate for use in the generation phase
-            typesToGenerate.Add(new TypeToGenerate(typeNamespace, typeName, typeSymbol.TypeKind, members));
+            typesToGenerate.Add(new TypeToGenerate(typeNamespace, typeIdentifier, typeName, typeSymbol.TypeKind, members));
         }
 
         return typesToGenerate;

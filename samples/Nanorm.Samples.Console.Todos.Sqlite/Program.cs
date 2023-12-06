@@ -1,5 +1,6 @@
 using Microsoft.Data.Sqlite;
 using Nanorm;
+using Models;
 
 var connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING") ?? "Data Source=todos.db;Cache=Shared";
 using var db = new SqliteConnection(connectionString);
@@ -117,16 +118,19 @@ async Task EnsureDb(SqliteConnection db)
     }
 }
 
-[DataRecordMapper]
-partial struct Todo
+namespace Models
 {
-    public int Id { get; set; }
-    
-    public required string Title { get; set; }
+    [DataRecordMapper]
+    partial struct Todo
+    {
+        public int Id { get; set; }
 
-    [MapColumn("IsComplete")]
-    public bool IsCompleted { get; set; }
+        public required string Title { get; set; }
 
-    [NoMap]
-    public string? NotMapped { get; set; }
+        [MapColumn("IsComplete")]
+        public bool IsCompleted { get; set; }
+
+        [NoMap]
+        public string? NotMapped { get; set; }
+    }
 }
