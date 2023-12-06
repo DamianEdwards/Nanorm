@@ -25,7 +25,7 @@ internal static class SourceGenerationHelper
     public static string GenerateExtensionTypes(List<TypeToGenerate> typesToGenerate)
     {
         var sb = new StringBuilder();
-        sb.AppendLine("using Nanorm;");
+        sb.AppendLine("using global::Nanorm;");
 
         foreach (var typeToGenerate in typesToGenerate)
         {
@@ -38,9 +38,9 @@ internal static class SourceGenerationHelper
             }
 
             sb.AppendLine($$"""
-                partial {{ToKeyword(typeToGenerate.Kind)}} {{typeToGenerate.Name}} : IDataRecordMapper<{{typeToGenerate.Name}}>
+                partial {{ToKeyword(typeToGenerate.Kind)}} {{typeToGenerate.Identifier}} : IDataRecordMapper<{{typeToGenerate.Name}}>
                 {
-                    public static {{typeToGenerate.Name}} Map(System.Data.IDataRecord dataRecord) =>
+                    public static {{typeToGenerate.Name}} Map(global::System.Data.IDataRecord dataRecord) =>
                         new()
                         {
             """);
