@@ -79,7 +79,7 @@ public ref struct SqlInterpolatedStringHandler
         return command;
     }
 
-#if NET7_0_OR_GREATER
+#if NET8_0_OR_GREATER
     internal readonly DbCommand GetCommand(DbDataSource dataSource)
     {
         var command = dataSource.CreateCommand(GetCommandText());

@@ -1,5 +1,5 @@
 ﻿using System.Runtime.CompilerServices;
-#if NET7_0_OR_GREATER
+#if NET8_0_OR_GREATER
 using Nanorm;
 #endif
 
@@ -10,7 +10,7 @@ namespace System.Data.Common;
 /// </summary>
 public static class DbDataReaderExtensions
 {
-#if NET7_0_OR_GREATER
+#if NET8_0_OR_GREATER
     /// <summary>
     /// Maps a single row from the reader to a new instance of <typeparamref name="T"/>.
     /// </summary>
@@ -72,7 +72,7 @@ public static class DbDataReaderExtensions
         return MapSingleAsyncImpl(reader, mapper, cancellationToken);
     }
 
-#if NET7_0_OR_GREATER
+#if NET8_0_OR_GREATER
     internal static async Task<T?> MapSingleAsyncImpl<T>(this DbDataReader reader, CancellationToken cancellationToken)
         where T : IDataRecordMapper<T>
     {
@@ -99,7 +99,7 @@ public static class DbDataReaderExtensions
         return mapper(reader);
     }
 
-#if NET7_0_OR_GREATER
+#if NET8_0_OR_GREATER
     /// <summary>
     /// Maps all rows from the reader to new instances of <typeparamref name="T"/>.
     /// </summary>
@@ -161,7 +161,7 @@ public static class DbDataReaderExtensions
         return MapAsyncImpl(reader, mapper, cancellationToken);
     }
 
-#if NET7_0_OR_GREATER
+#if NET8_0_OR_GREATER
     internal static async IAsyncEnumerable<T> MapAsyncImpl<T>(this DbDataReader reader, [EnumeratorCancellation] CancellationToken cancellationToken)
         where T : IDataRecordMapper<T>
     {

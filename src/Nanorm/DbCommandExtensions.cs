@@ -187,7 +187,7 @@ public static class DbCommandExtensions
         }
     }
 
-#if NET7_0_OR_GREATER
+#if NET8_0_OR_GREATER
     internal static async Task<T?> QuerySingleAsyncImpl<T>(this DbCommand command, DbConnection connection, CancellationToken cancellationToken)
         where T : IDataRecordMapper<T>
     {

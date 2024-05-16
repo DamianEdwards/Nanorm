@@ -2,7 +2,7 @@
 
 namespace Nanorm;
 
-#if NET7_0_OR_GREATER
+#if NET8_0_OR_GREATER
 /// <summary>
 /// Interface for statically creating an instance of <typeparamref name="T"/> from an <see cref="IDataRecord"/>.
 /// </summary>

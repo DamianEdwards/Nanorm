@@ -1,4 +1,4 @@
-﻿#if NET7_0_OR_GREATER
+﻿#if NET8_0_OR_GREATER
 using System.Data;
 using System.Runtime.CompilerServices;
 using Npgsql;
@@ -298,7 +298,7 @@ public static partial class NpgsqlDataSourceExtensions
         return cmd.ExecuteScalarAsyncImpl(cancellationToken);
     }
 
-#if NET7_0_OR_GREATER
+#if NET8_0_OR_GREATER
     /// <summary>
     /// Executes a command and maps the first row returned to an instance of <typeparamref name="T"/>.
     /// </summary>
@@ -633,7 +633,7 @@ public static partial class NpgsqlDataSourceExtensions
         return cmd.ExecuteReaderAsyncImpl(commandBehavior, default);
     }
 
-#if NET7_0_OR_GREATER
+#if NET8_0_OR_GREATER
     /// <summary>
     /// Executes a command and returns the <see cref="NpgsqlDataReader"/>.
     /// </summary>

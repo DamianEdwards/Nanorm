@@ -296,7 +296,7 @@ public static partial class DbConnectionExtensions
         return cmd.ExecuteScalarAsyncImpl(connection, cancellationToken);
     }
 
-#if NET7_0_OR_GREATER
+#if NET8_0_OR_GREATER
     /// <summary>
     /// Executes a command maps the first row returned to an instance of <typeparamref name="T"/>.
     /// </summary>
@@ -631,7 +631,7 @@ public static partial class DbConnectionExtensions
         return cmd.ExecuteReaderAsyncImpl(connection, commandBehavior, default);
     }
 
-#if NET7_0_OR_GREATER
+#if NET8_0_OR_GREATER
     /// <summary>
     /// Executes a command and returns the <see cref="DbDataReader"/>.
     /// </summary>

@@ -76,7 +76,7 @@ public ref struct NpgsqlInterpolatedStringHandler
         return command;
     }
 
-#if NET7_0_OR_GREATER
+#if NET8_0_OR_GREATER
     internal readonly NpgsqlCommand GetCommand(NpgsqlDataSource dataSource)
     {
         var command = dataSource.CreateCommand(GetCommandText());
