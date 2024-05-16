@@ -1,6 +1,6 @@
 ﻿namespace Nanorm;
 
-#if NET7_0_OR_GREATER
+#if NET8_0_OR_GREATER
 /// <summary>
 /// Indicates the property or field should not be mapped to a column in the database.<br />
 /// Use in conjunction with <see cref="DataRecordMapperAttribute"/>.

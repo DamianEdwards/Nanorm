@@ -2,13 +2,13 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFrameworks>net7.0;net8.0</TargetFrameworks>
+    <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <PublishRelease>true</PublishRelease>
     <LangVersion>11</LangVersion>
-    <PublishAot Condition=" '$(TargetFramework)' == 'net8.0' ">true</PublishAot>
-    <TrimmerSingleWarn Condition=" '$(TargetFramework)' == 'net8.0' ">false</TrimmerSingleWarn>
+    <PublishAot>true</PublishAot>
+    <TrimmerSingleWarn>false</TrimmerSingleWarn>
     <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
   </PropertyGroup>
 

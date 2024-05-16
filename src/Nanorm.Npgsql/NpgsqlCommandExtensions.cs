@@ -177,7 +177,7 @@ public static class NpgsqlCommandExtensions
         }
     }
 
-#if NET7_0_OR_GREATER
+#if NET8_0_OR_GREATER
     internal static async Task<T?> QuerySingleAsyncImpl<T>(this NpgsqlCommand command, NpgsqlConnection connection, CancellationToken cancellationToken)
         where T : IDataRecordMapper<T>
     {

@@ -8,7 +8,7 @@ namespace Nanorm;
 /// </summary>
 public static class SqliteDataReaderExtensions
 {
-#if NET7_0_OR_GREATER
+#if NET8_0_OR_GREATER
     /// <summary>
     /// Maps a single row from the reader to a new instance of <typeparamref name="T"/>.
     /// </summary>
@@ -70,7 +70,7 @@ public static class SqliteDataReaderExtensions
         return reader.MapSingleAsyncImpl(mapper, cancellationToken);
     }
 
-#if NET7_0_OR_GREATER
+#if NET8_0_OR_GREATER
     internal static async Task<T?> MapSingleAsyncImpl<T>(this SqliteDataReader reader, CancellationToken cancellationToken)
         where T : IDataRecordMapper<T>
     {
@@ -97,7 +97,7 @@ public static class SqliteDataReaderExtensions
         return mapper(reader);
     }
 
-#if NET7_0_OR_GREATER
+#if NET8_0_OR_GREATER
     /// <summary>
     /// Maps all rows from the reader to new instances of <typeparamref name="T"/>.
     /// </summary>
@@ -159,7 +159,7 @@ public static class SqliteDataReaderExtensions
         return reader.MapAsyncImpl(mapper, cancellationToken);
     }
 
-#if NET7_0_OR_GREATER
+#if NET8_0_OR_GREATER
     internal static async IAsyncEnumerable<T> MapAsyncImpl<T>(this SqliteDataReader reader, [EnumeratorCancellation] CancellationToken cancellationToken)
         where T : IDataRecordMapper<T>
     {

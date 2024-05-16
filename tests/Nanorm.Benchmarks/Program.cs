@@ -135,7 +135,7 @@ public class NanormBenchmarks
 
     [Benchmark]
     [DapperAot]
-    public async Task<TodoDapperAot> DapperAot()
+    public async Task<Todo> DapperAot()
     {
         const string sql = """
             INSERT INTO Todos(Title, IsComplete)
@@ -144,7 +144,7 @@ public class NanormBenchmarks
             """;
         await using var connection = _dataSource.CreateConnection();
         IDbConnection dbConnection = connection;
-        var createdTodo = await dbConnection.QuerySingleAsync<TodoDapperAot>(sql, _todo);
+        var createdTodo = await dbConnection.QuerySingleAsync<Todo>(sql, _todo);
 
         return createdTodo;
     }
@@ -214,18 +214,6 @@ public sealed partial class Todo
     public int Id { get; set; }
 
     public required string Title { get; set; }
-
-    public bool IsComplete { get; set; }
-}
-
-[DataRecordMapper]
-public sealed partial class TodoDapperAot
-{
-    public int Id { get; set; }
-
-    // BUG: Dapper.AOT doesn't support required properties
-    // https://github.com/DapperLib/DapperAOT/issues/71
-    public string? Title { get; set; }
 
     public bool IsComplete { get; set; }
 }
