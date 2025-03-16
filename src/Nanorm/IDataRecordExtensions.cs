@@ -21,6 +21,21 @@ public static class IDataRecordExtensions
 
         return record.GetBoolean(record.GetOrdinal(name));
     }
+    
+    /// <summary>
+    /// Gets the value of the specified column as a nullable <see cref="Boolean"/>.
+    /// </summary>
+    /// <param name="record">The <see cref="IDataRecord"/>.</param>
+    /// <param name="name">The column name.</param>
+    /// <returns>The nullable value of the column.</returns>
+    public static bool? GetNullableBoolean(this IDataRecord record, string name)
+    {
+        ArgumentNullException.ThrowIfNull(record);
+        
+        var i = record.GetOrdinal(name);
+
+        return record.IsDBNull(i) ? null : record.GetBoolean(i);
+    }
 
     /// <summary>
     /// Gets the 8-bit unsigned integer value of the specified column.
@@ -33,6 +48,21 @@ public static class IDataRecordExtensions
         ArgumentNullException.ThrowIfNull(record);
 
         return record.GetByte(record.GetOrdinal(name));
+    }
+    
+    /// <summary>
+    /// Gets the nullable 8-bit unsigned integer value of the specified column.
+    /// </summary>
+    /// <param name="record">The <see cref="IDataRecord"/>.</param>
+    /// <param name="name">The column name.</param>
+    /// <returns>The nullable value of the column.</returns>
+    public static byte? GetNullableByte(this IDataRecord record, string name)
+    {
+        ArgumentNullException.ThrowIfNull(record);
+        
+        var i = record.GetOrdinal(name);
+
+        return record.IsDBNull(i) ? null : record.GetByte(i);
     }
 
     /// <summary>
@@ -63,6 +93,21 @@ public static class IDataRecordExtensions
         ArgumentNullException.ThrowIfNull(record);
 
         return record.GetChar(record.GetOrdinal(name));
+    }
+    
+    /// <summary>
+    /// Gets the nullable character value of the specified column.
+    /// </summary>
+    /// <param name="record">The <see cref="IDataRecord"/>.</param>
+    /// <param name="name">The column name.</param>
+    /// <returns>The nullable value of the column.</returns>
+    public static char? GetNullableChar(this IDataRecord record, string name)
+    {
+        ArgumentNullException.ThrowIfNull(record);
+        
+        var i = record.GetOrdinal(name);
+
+        return record.IsDBNull(i) ? null : record.GetChar(i);
     }
 
     /// <summary>
@@ -136,6 +181,21 @@ public static class IDataRecordExtensions
     }
 
     /// <summary>
+    /// Gets the nullable fixed-position numeric value of the specified field.
+    /// </summary>
+    /// <param name="record">The <see cref="IDataRecord"/>.</param>
+    /// <param name="name">The column name.</param>
+    /// <returns>The nullable fixed-position numeric value of the specified field.</returns>
+    public static decimal? GetNullableDecimal(this IDataRecord record, string name)
+    {
+        ArgumentNullException.ThrowIfNull(record);
+        
+        var i = record.GetOrdinal(name);
+
+        return record.IsDBNull(i) ? null : record.GetDecimal(i);
+    }
+
+    /// <summary>
     /// Gets the double-precision floating point number of the specified field.
     /// </summary>
     /// <param name="record">The <see cref="IDataRecord"/>.</param>
@@ -146,6 +206,21 @@ public static class IDataRecordExtensions
         ArgumentNullException.ThrowIfNull(record);
 
         return record.GetDouble(record.GetOrdinal(name));
+    }
+    
+    /// <summary>
+    /// Gets the nullable double-precision floating point number of the specified field.
+    /// </summary>
+    /// <param name="record">The <see cref="IDataRecord"/>.</param>
+    /// <param name="name">The column name.</param>
+    /// <returns>The nullable double-precision floating point number of the specified field.</returns>
+    public static double? GetNullableDouble(this IDataRecord record, string name)
+    {
+        ArgumentNullException.ThrowIfNull(record);
+        
+        var i = record.GetOrdinal(name);
+
+        return record.IsDBNull(i) ? null : record.GetDouble(i);
     }
 
     /// <summary>
@@ -178,6 +253,21 @@ public static class IDataRecordExtensions
 
         return record.GetFloat(record.GetOrdinal(name));
     }
+    
+    /// <summary>
+    /// Gets the nullable single-precision floating point number of the specified field.
+    /// </summary>
+    /// <param name="record">The <see cref="IDataRecord"/>.</param>
+    /// <param name="name">The column name.</param>
+    /// <returns>The nullable single-precision floating point number of the specified field.</returns>
+    public static float? GetNullableFloat(this IDataRecord record, string name)
+    {
+        ArgumentNullException.ThrowIfNull(record);
+        
+        var i = record.GetOrdinal(name);
+
+        return record.IsDBNull(i) ? null : record.GetFloat(i);
+    }
 
     /// <summary>
     /// Returns the <see cref="Guid"/> value of the specified field.
@@ -193,6 +283,21 @@ public static class IDataRecordExtensions
     }
 
     /// <summary>
+    /// Returns the nullable <see cref="Guid"/> value of the specified field.
+    /// </summary>
+    /// <param name="record">The <see cref="IDataRecord"/>.</param>
+    /// <param name="name">The column name.</param>
+    /// <returns>The nullable <see cref="Guid"/> value of the specified field.</returns>
+    public static Guid? GetNullableGuid(this IDataRecord record, string name)
+    {
+        ArgumentNullException.ThrowIfNull(record);
+        
+        var i = record.GetOrdinal(name);
+
+        return record.IsDBNull(i) ? null : record.GetGuid(i);
+    }
+
+    /// <summary>
     /// Gets the 16-bit signed integer value of the specified field.
     /// </summary>
     /// <param name="record">The <see cref="IDataRecord"/>.</param>
@@ -203,6 +308,21 @@ public static class IDataRecordExtensions
         ArgumentNullException.ThrowIfNull(record);
 
         return record.GetInt16(record.GetOrdinal(name));
+    }
+    
+    /// <summary>
+    /// Gets the nullable 16-bit signed integer value of the specified field.
+    /// </summary>
+    /// <param name="record">The <see cref="IDataRecord"/>.</param>
+    /// <param name="name">The column name.</param>
+    /// <returns>The nullable 16-bit signed integer value of the specified field.</returns>
+    public static short? GetNullableInt16(this IDataRecord record, string name)
+    {
+        ArgumentNullException.ThrowIfNull(record);
+        
+        var i = record.GetOrdinal(name);
+
+        return record.IsDBNull(i) ? null : record.GetInt16(i);
     }
 
     /// <summary>
@@ -217,6 +337,21 @@ public static class IDataRecordExtensions
 
         return record.GetInt32(record.GetOrdinal(name));
     }
+    
+    /// <summary>
+    /// Gets the nullable 32-bit signed integer value of the specified field.
+    /// </summary>
+    /// <param name="record">The <see cref="IDataRecord"/>.</param>
+    /// <param name="name">The column name.</param>
+    /// <returns>The nullable 32-bit signed integer value of the specified field.</returns>
+    public static int? GetNullableInt32(this IDataRecord record, string name)
+    {
+        ArgumentNullException.ThrowIfNull(record);
+
+        var i = record.GetOrdinal(name);
+
+        return record.IsDBNull(i) ? null : record.GetInt32(i);
+    }
 
     /// <summary>
     /// Gets the 64-bit signed integer value of the specified field.
@@ -230,6 +365,21 @@ public static class IDataRecordExtensions
 
         return record.GetInt64(record.GetOrdinal(name));
     }
+    
+    /// <summary>
+    /// Gets the nullable 64-bit signed integer value of the specified field.
+    /// </summary>
+    /// <param name="record">The <see cref="IDataRecord"/>.</param>
+    /// <param name="name">The column name.</param>
+    /// <returns>The nullable 64-bit signed integer value of the specified field.</returns>
+    public static long? GetNullableInt64(this IDataRecord record, string name)
+    {
+        ArgumentNullException.ThrowIfNull(record);
+        
+        var i = record.GetOrdinal(name);
+
+        return record.IsDBNull(i) ? null : record.GetInt64(i);
+    }
 
     /// <summary>
     /// Gets the <see cref="string"/> value of the specified field.
@@ -242,6 +392,21 @@ public static class IDataRecordExtensions
         ArgumentNullException.ThrowIfNull(record);
 
         return record.GetString(record.GetOrdinal(name));
+    }
+    
+    /// <summary>
+    /// Gets the nullable <see cref="string"/> value of the specified field.
+    /// </summary>
+    /// <param name="record">The <see cref="IDataRecord"/>.</param>
+    /// <param name="name">The column name.</param>
+    /// <returns>The nullable <see cref="string"/> value of the specified field.</returns>
+    public static string? GetNullableString(this IDataRecord record, string name)
+    {
+        ArgumentNullException.ThrowIfNull(record);
+        
+        var i = record.GetOrdinal(name);
+
+        return record.IsDBNull(i) ? null : record.GetString(i);
     }
 
     /// <summary>

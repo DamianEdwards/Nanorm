@@ -18,6 +18,18 @@ internal static class SourceGenerationHelper
         { "bool", "GetBoolean" },
         { "System.Guid", "GetGuid" },
         { "char", "GetChar" },
+        
+        { "byte?", "GetNullableByte" },
+        { "short?", "GetNullableInt16" },
+        { "int?", "GetNullableInt32" },
+        { "long?", "GetNullableInt64" },
+        { "float?", "GetNullableFloat" },
+        { "double?", "GetNullableDouble" },
+        { "decimal?", "GetNullableDecimal" },
+        { "string?", "GetNullableString" },
+        { "bool?", "GetNullableBoolean" },
+        { "System.Guid?", "GetNullableGuid" },
+        { "char?", "GetNullableChar" },
     };
 
     public static bool IsMappableType(ITypeSymbol typeSymbol) => GetMethodsMap.ContainsKey(typeSymbol.ToString());

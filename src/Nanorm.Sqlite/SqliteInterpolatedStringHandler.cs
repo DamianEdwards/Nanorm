@@ -61,7 +61,11 @@ public ref struct SqliteInterpolatedStringHandler
     {
         var parameterName = GetParameterName(_parameterIndex);
 
-        _parameters[_parameterIndex] = new SqliteParameter(parameterName, value);
+        var sqliteParameter = value is null
+            ? new SqliteParameter(parameterName, DBNull.Value)
+            : new SqliteParameter(parameterName, value);
+        
+        _parameters[_parameterIndex] = sqliteParameter;
         _builder[_builderIndex] = _parameterMarker;
 
         _parameterIndex++;

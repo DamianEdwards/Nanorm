@@ -24,5 +24,6 @@
     <PackageVersion Include="Dapper.AOT" Version="1.0.23" />
     <PackageVersion Include="Microsoft.CodeAnalysis.Analyzers" Version="3.11.0-beta1.23525.2" />
     <PackageVersion Include="Microsoft.CodeAnalysis.CSharp" Version="4.8.0-3.final" />
+    <PackageVersion Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.13.0"/>
   </ItemGroup>
 </Project>

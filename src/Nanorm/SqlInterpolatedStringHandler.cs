@@ -60,8 +60,12 @@ public ref struct SqlInterpolatedStringHandler
     public void AppendFormatted<T>(T value)
     {
         var parameterName = GetParameterName(_parameterIndex);
+        
+        var sqlParameter = value is null
+            ? new DbPlaceholderParameter(parameterName, DBNull.Value)
+            : new DbPlaceholderParameter(parameterName, value);
 
-        _parameters[_parameterIndex] = new DbPlaceholderParameter(parameterName, value);
+        _parameters[_parameterIndex] = sqlParameter;
         _builder[_builderIndex] = _parameterMarker;
 
         _parameterIndex++;

@@ -58,7 +58,11 @@ public ref struct NpgsqlInterpolatedStringHandler
     /// <param name="value">The value to append.</param>
     public void AppendFormatted<T>(T value)
     {
-        _parameters[_parameterIndex] = new NpgsqlParameter<T> { Value = value };
+        var npgsqlParameter = value is null
+            ? new NpgsqlParameter { Value = DBNull.Value }
+            : new NpgsqlParameter<T> { Value = value };
+
+        _parameters[_parameterIndex] = npgsqlParameter;
         _builder[_builderIndex] = _parameterMarker;
 
         _parameterIndex++;

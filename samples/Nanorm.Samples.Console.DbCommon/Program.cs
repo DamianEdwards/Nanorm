@@ -10,9 +10,9 @@ await EnsureDb(db);
 
 await ListCurrentTodos(db);
 
-await AddTodo(db, "Do the groceries");
-await AddTodo(db, "Give the dog a bath");
-await AddTodo(db, "Wash the car");
+await AddTodo(db, "Do the groceries", "Don't forget to buy milk!");
+await AddTodo(db, "Give the dog a bath", null);
+await AddTodo(db, "Wash the car", null);
 
 Console.WriteLine();
 
@@ -40,32 +40,38 @@ static async Task ListCurrentTodos(DbConnection db)
 
     var idColHeading = "Id";
     var titleColHeading = "Title";
+    var noteColHeading = "Note";
     var idWidth = int.Max(idColHeading.Length, todosList.Max(t => t.Id).ToString().Length);
     var titleWidth = int.Max(titleColHeading.Length, todosList.Max(t => t.Title?.Length ?? 0));
-    var lineWidth = idWidth + 1 + titleWidth;
+    var noteWidth = int.Max(noteColHeading.Length, todosList.Max(t => t.Note?.Length ?? 0));
+    var lineWidth = idWidth + 1 + titleWidth + 1 + noteWidth;
 
     Console.Write(idColHeading.PadRight(idWidth));
     Console.Write(" ");
-    Console.WriteLine(titleColHeading.PadRight(titleWidth));
+    Console.Write(titleColHeading.PadRight(titleWidth));
+    Console.Write(" ");
+    Console.WriteLine(noteColHeading.PadRight(noteWidth));
     Console.WriteLine(new string('-', lineWidth));
 
     foreach (var todo in todosList)
     {
         Console.Write(todo.Id.ToString().PadRight(idWidth));
         Console.Write(" ");
-        Console.WriteLine(todo.Title?.PadRight(titleWidth));
+        Console.Write(todo.Title?.PadRight(titleWidth));
+        Console.Write(" ");
+        Console.WriteLine(todo.Note?.PadRight(noteWidth));
     }
 
     Console.WriteLine();
 }
 
-static async Task AddTodo(DbConnection db, string title)
+static async Task AddTodo(DbConnection db, string title, string? note)
 {
-    var todo = new Todo { Title = title };
+    var todo = new Todo { Title = title, Note = note };
 
     var createdTodo = await db.QuerySingleAsync<Todo>($"""
-        INSERT INTO Todos(Title, IsComplete)
-        Values({todo.Title}, {todo.IsComplete})
+        INSERT INTO Todos(Title, IsComplete, Note)
+        Values({todo.Title}, {todo.IsComplete}, {todo.Note})
         RETURNING *
         """);
 
@@ -106,6 +112,7 @@ async Task EnsureDb(DbConnection db)
             (
                 {nameof(Todo.Id)} INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
                 {nameof(Todo.Title)} TEXT NOT NULL,
+                {nameof(Todo.Note)} TEXT NULL,
                 {nameof(Todo.IsComplete)} INTEGER DEFAULT 0 NOT NULL CHECK({nameof(Todo.IsComplete)} IN (0, 1))
             );
             """;
@@ -125,6 +132,8 @@ sealed partial class Todo
     public int Id { get; set; }
 
     public required string Title { get; set; }
+
+    public string? Note { get; set; }
 
     public bool IsComplete { get; set; }
 }

@@ -152,7 +152,13 @@ internal class DataRecordMapperGenerator : IIncrementalGenerator
 
                 if (skipMember) continue;
 
-                if (member is IFieldSymbol field && field.ConstantValue is not null && !field.IsReadOnly
+                // Skip backing fields
+                if (member is IFieldSymbol { Kind: SymbolKind.Field, DeclaredAccessibility: Accessibility.Private })
+                {
+                    continue;
+                }
+
+                if (member is IFieldSymbol field && !field.IsReadOnly
                     && SourceGenerationHelper.IsMappableType(field.Type))
                 {
                     members.Add((member.Name, columnName, field.Type));
