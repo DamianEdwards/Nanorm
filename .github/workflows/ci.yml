@@ -35,10 +35,10 @@ jobs:
 
     steps:
       - name: Download artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@9bc31d5ccc31df68ecc42ccf4149144866c47d8a # v3
 
       - name: Setup .NET SDK
-        uses: actions/setup-dotnet@v3
+        uses: actions/setup-dotnet@55ec9447dda3d1cf6bd587150f3262f30ee10815 # v3
 
       - name: Add GitHub Package Repository source
         run: dotnet nuget add source --username DamianEdwards --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text --name GPR "https://nuget.pkg.github.com/DamianEdwards/index.json"
@@ -47,7 +47,7 @@ jobs:
         run: dotnet nuget push **/ci/*.nupkg --source "GPR" --skip-duplicate
 
       - name: Delete old packages
-        uses: actions/delete-package-versions@v4
+        uses: actions/delete-package-versions@0d39a63126868f5eefaa47169615edd3c0f61e20 # v4
         with:
           min-versions-to-keep: 5
           package-type: 'nuget'
