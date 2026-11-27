@@ -7,6 +7,10 @@ on:
         required: false
         type: boolean
         default: false
+      multithreaded:
+        required: false
+        type: boolean
+        default: false
 
 jobs:
   build:
@@ -36,8 +40,8 @@ jobs:
       
     - name: Create build number
       run: |
-        now=$(date +'%Y%m%d')
-        buildNumber=$now.$GITHUB_RUN_NUMBER
+        dotnet --version
+        buildNumber=20260101.1
         echo "BUILD_NUMBER=$buildNumber" >> $GITHUB_ENV
         echo "$buildNumber"
 
@@ -49,6 +53,7 @@ jobs:
         -p:BuildNumber=$BUILD_NUMBER
         -p:SourceRevisionId=$GITHUB_SHA
         -p:ContinuousIntegrationBuild=true
+        ${{ inputs.multithreaded && '-mt' || '' }}
 
     - name: Test
       run: dotnet test --configuration Release --no-restore --no-build
@@ -91,3 +96,7 @@ jobs:
         name: nupkg
         path: ./artifacts/**/*.nupkg
         retention-days: 5
+
+    - name: Output manifest
+      run: |
+        find src samples artifacts -type f \( -path '*/bin/Release/*' -o -path 'artifacts/*' \) | sort
