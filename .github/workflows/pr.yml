@@ -9,15 +9,8 @@ on:
       - "**/*.gitattributes"
 
   workflow_dispatch:
-    inputs:
-      multithreaded:
-        description: Enable experimental MSBuild multithreading for the build
-        type: boolean
-        default: false
 
 jobs:
   build:
     name: Build & Test PR
     uses: ./.github/workflows/_build.yml
-    with:
-      multithreaded: ${{ inputs.multithreaded || false }}
